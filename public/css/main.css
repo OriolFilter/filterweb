@@ -31,14 +31,22 @@ header{
     flex-wrap: wrap;
     flex-flow: wrap;
     justify-content: space-between;
-    align-items: baseline;
+    align-items: center;
     align-content: flex-start;
     width: auto;
+    padding: 0 10vh;
 }
 
 #logo {
     order: 1;
-    flex-grow: 1;
+    flex-grow: 0;
+    margin: 0 10vh 0 0;
+}
+#logo > img {
+    max-height: 96px;
+    max-width: 432px;
+    object-fit: contain;
+    width: 60vw;
 }
 
 #nav-buttons {
@@ -47,8 +55,9 @@ header{
 }
 
 #right-buttons {
+    padding: 0 0 0 10vh;
     order: 3;
-    flex-grow: 1;
+    flex-grow: 2;
 }
 
 /*<nav>*/
@@ -122,8 +131,11 @@ header{
 
 
 /*text*/
-p,a {
-    font-size: 0.9375em;
+html {
+    font-size: 30px;
+}
+a {
+    font-size: 1em;
 }
 
 /*tmp*/

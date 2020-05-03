@@ -1,4 +1,8 @@
 #nav-buttons {
     order: 4;
     flex-grow: 1;
+    width: 100vw;
+}
+header,#right-buttons {
+    padding: 0;
 }

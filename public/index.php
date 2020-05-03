@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <link rel="stylesheet" href="css/main.css"/>
-    <link rel="stylesheet" media="screen and (max-width: 300px)" href="css/small.css" type="text/css">
+    <link rel="stylesheet" media="screen and (max-width: 800px)" href="css/small.css" type="text/css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FilterWeb</title>
@@ -10,7 +10,7 @@
 <body>
     <header>
         <div id="logo">
-            <img src="" alt="LOGO">
+            <img src="src/logo.png" alt="LOGO">
         </div>
         <div id="nav-buttons">
             <nav>
