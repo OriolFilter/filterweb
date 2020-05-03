@@ -3,6 +3,10 @@
     flex-grow: 1;
     width: 100vw;
 }
-header,#right-buttons {
+header{
+    flex-direction: column;
+}
+header,#right-buttons,#logo {
     padding: 0;
+    margin: 0;
 }

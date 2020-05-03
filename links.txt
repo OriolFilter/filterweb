@@ -1,1 +1,2 @@
 https://openclassrooms.com/en/courses/5295881-create-web-page-layouts-with-css/5341491-set-media-queries-for-different-devices
+https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_js_dropdown
