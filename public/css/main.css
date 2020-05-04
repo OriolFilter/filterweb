@@ -1,7 +1,7 @@
 header {
     background-color: grey;
 }
-#logo > img{
+#logo > a > img{
     background: mediumpurple;
 }
 
@@ -42,7 +42,7 @@ header{
     flex-grow: 0;
     margin: 0 10vh 0 0;
 }
-#logo > img {
+#logo > a > img {
     max-height: 96px;
     /*max-width: 432px;*/
     max-width: 90vw;
@@ -154,6 +154,8 @@ body {
 #productList {
     display: flex;
     align-items: flex-start;
+    flex-direction: row;
+    flex-wrap: wrap;
 }
 .product {
     background-color: red;
@@ -161,6 +163,7 @@ body {
     /*width: 250px;*/
     height: fit-content;
     margin: 15px 32px;
+
 }
 #price {
     color: azure;
@@ -168,5 +171,5 @@ body {
 #prodImg {
     margin-top: 10px;
     width: 250px;
-    height: 166px;
+    height: 200px;
 }

@@ -1,11 +1,11 @@
 <?php
 
 ;include "headerFile.html";
-;echo "<h1>Joysticks</h1><hr>";
+;echo "<h1>Buttons</h1><hr>";
 ;echo "<div id='filters'><p>BUTONS PER FILTRAR PER MARCA</p></div>";
 //;$scanner=glob("productTxt/buttons/bt-*.php");
 //;$scanner=glob("productTxt/joysticks/js-*.php");
-;$scanner=glob("productTxt/joysticks/js-*.php");
+;$scanner=glob("productTxt/buttons/bt-*.php");
 ;echo "<div id='productList'>";
 
 ;foreach ($scanner as $product) {
