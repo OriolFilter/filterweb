@@ -25,7 +25,6 @@ header{
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    flex-flow: wrap;
     justify-content: space-between;
     align-items: center;
     align-content: flex-start;
@@ -35,6 +34,7 @@ header{
     border-style: solid;
     border-width: 0 0 0 thin;
     /*border-bottom-width: thin;*/
+    order: 1;
 }
 
 #logo {
@@ -74,7 +74,6 @@ header{
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    flex-flow: wrap;
     justify-content: left;
     align-items: baseline;
     align-content: center;
@@ -106,7 +105,6 @@ header{
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    flex-flow: wrap;
     justify-content: left;
     align-items: baseline;
     align-content: center;
@@ -128,8 +126,14 @@ header{
     text-decoration: none;
 }
 
+main {text-align: center;
+    order: 2;
+}
+
 footer {
+    text-align: center;
     background-color: #394047;
+    order: 3;
 }
 
 /*text*/
@@ -137,5 +141,32 @@ html {
     font-size: 30px;
 }
 
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
 
 /*tmp*/
+
+/*content*/
+/*product*/
+#productList {
+    display: flex;
+    align-items: flex-start;
+}
+.product {
+    background-color: red;
+    width: 400px;
+    /*width: 250px;*/
+    height: fit-content;
+    margin: 15px 32px;
+}
+#price {
+    color: azure;
+}
+#prodImg {
+    margin-top: 10px;
+    width: 250px;
+    height: 166px;
+}
