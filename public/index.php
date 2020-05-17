@@ -9,4 +9,7 @@ echo"<p>prod-list</p>";
 echo "</div>";
 
 include "footerFile.html";
+//https://www.w3schools.com/jsref/tryit.asp?filename=tryjsref_touchmove2 FEATURED
+//https://www.w3schools.com/jsref/tryit.asp?filename=tryjsref_transitionend idk where
 ;?>
+

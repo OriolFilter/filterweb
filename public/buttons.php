@@ -1,19 +1,19 @@
 <?php
 
+//;echo "<div id='filters'><p>BUTONS PER FILTRAR PER MARCA</p>
 ;include "headerFile.html";
 ;echo "<script src=\"scripts/products_script.js\"></script>"
 ;echo "<h1>Buttons</h1><hr>";
-;echo "<div id='filters'><p>BUTONS PER FILTRAR PER MARCA</p>
-        <select id=\"sortList\">
+;echo "<div id='filters'>
+        <p>Sort By <select id=\"sortList\" onchange=\"btFilter()\"></p>
             <option value=\"all\">All</option>
             <option value=\"sanwa\">Sanwa</option>
             <option value=\"seimitsu\">Seimitsu</option>
           </select>
-        <button type=\"button\" onclick=\"btFilter()\">Sort</button>
         </div>";
 //;$scanner=glob("productTxt/buttons/bt-*.php");
 //;$scanner=glob("productTxt/joysticks/js-*.php");
-;$scanner=glob("productTxt/buttons/bt-*.php");
+;$scanner=glob("../productTxt/buttons/bt-*.php");
 ;echo "<div id='productList'>";
 
 ;foreach ($scanner as $product) {
