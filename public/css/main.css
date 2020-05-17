@@ -1,3 +1,7 @@
+@font-face {
+    font-family: Multicolore;
+    src: url(/css/Multicolore.otf);
+}
 /*-------------------------------------------------------------------*/
 
 html,body {
@@ -21,8 +25,9 @@ header{
     padding: 0 10vh;
 
     border-style: solid;
-    border-width: 0 0 0 thin;
-    border: 5px #ff0000;
+    border-width: 0 0 thin 0;
+    /*border: 5px #ff0000;*/
+
     /*border-bottom-width: thin;*/
     order: 1;
 
@@ -80,7 +85,8 @@ header{
 }
 #nav-buttons>nav>ul>li>a {
     display: block;
-    color: white;
+    /*color: white;*/
+    color: #cacaca;
     text-align: center;
     padding: 16px;
     text-decoration: none;
@@ -111,18 +117,22 @@ header{
     float: left;
     flex-grow: 1;
 }
-#right-buttons>li a {
+#right-buttons>ul>li>a {
     display: block;
-    color: white;
+    /*color: white;*/
     text-align: center;
     padding: 16px;
     text-decoration: none;
+    color: #cacaca;
 }
 
 main {
     text-align: center;
     order: 2;
     width: inherit;
+}
+main>h1{
+    color: #c0ca75;
 }
 
 footer {
@@ -140,6 +150,7 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
+    overflow-x: hidden;
 }
 
 /*tmp*/
@@ -154,13 +165,25 @@ body {
     flex-wrap: wrap;
 }
 .product {
-    background-color: red;
+    background-color: #353333;
     width: 400px;
     /*width: 250px;*/
     height: fit-content;
     margin: 15px 32px;
-
+    box-shadow: 11px 12px 6px 0 rgba(0,0,0,0.42);
+    -webkit-box-shadow: 11px 12px 6px 0 rgba(0,0,0,0.42);
+    box-sizing: border-box;
+    border-radius: 4px;
+    /*border: #050607;*/
+    border-style: solid;
+    border-width: 7px;
+    border-color: #5f5f5f;
 }
+.product>a,.product>a:hover,.product>a:visited{
+    text-decoration: none;
+    color: #a8c4d6;
+}
+
 #price {
     color: azure;
 }
@@ -170,12 +193,19 @@ body {
     height: 200px;
 }
 
-@font-face {
-    font-family: Multicolore;
-    src: url(/css/Multicolore.otf);
-}
 
 
 html {
-    font-family: Multicolore;
+    font-family: Multicolore, Courier, monospace;
 }
+
+#slideshow {
+    background-color: #050607;
+}
+#slideshow>img {
+    max-width: 90vw;
+    width: auto;
+    object-fit: contain;
+}
+
+
