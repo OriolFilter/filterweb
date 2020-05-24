@@ -7,5 +7,6 @@ function formSend() {
         alert("Care! Seems like you missed to fill an element");
     } else {
         alert("Your message was sent correctly");
+        window.location.replace(window.location.origin +"/contact.php");
     }
 }

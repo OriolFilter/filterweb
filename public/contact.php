@@ -60,7 +60,7 @@ include "../format/headerFile.html";
                     <tr><td colspan='2'><textarea style='width: 40vw;height: 40px' cols='20' data-val='true' data-val-required='Please enter your message' id='contactMsg'></textarea></td></tr>               
                     </table>
                     <br>
-                    <a onclick='formSend()' href='contact.php'>Send</a>
+                    <a id='link' onclick='formSend()'>Send</a>
                 </form>
             </div>
         </div>

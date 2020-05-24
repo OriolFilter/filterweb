@@ -44,9 +44,9 @@ include "../format/headerFile.html";
         echo "</a>";
         echo "</div>";
 }
+
+;echo "<script>onload(prodFilter(window.location.hash.replace('#','')))</script>"
 ;echo "</div>";
-
-
 
 
 ;
