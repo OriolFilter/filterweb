@@ -3,14 +3,16 @@
 include "../format/headerFile.html";
 ;echo "<div id='contact'>";
 ;echo "
+    <script src='scripts/contact.js'></script>
     <div id='contactMethodsList'>
         <table>
         <tr>
             <th rowspan='3'>Contact methods:</th>
-            <td><a href='#email'>Email</a></td>
+            <td><pre style=\"margin-bottom: 0px;margin-top: 0px;\">   </pre></td><td><a href='#email'>E-mail</a></td>
         </tr>
-        <tr><td><a href='#phone'>Phone</a></td></tr>
-        <tr><td><a href='#form'>Fill a form and we will contact you</a></td></tr>
+                
+        <tr><td></td><td><a href='#phone'>Phone</a></td></tr>
+        <tr><td></td><td><a href='#form'>Fill a form</a></td></tr>
         </table>
         <ul>
             <li></li>
@@ -20,7 +22,7 @@ include "../format/headerFile.html";
     </div>
     
     <div id='contactMethods'>
-        <div id='email'><p>Email: <a href='mailto:arcadeshop_bcn@gmail.com'>arcadeshop_bcn@gmail.com</a></p>
+        <div id='email'><p>E-mail: <a href='mailto:arcadeshop_bcn@gmail.com'>arcadeshop_bcn@gmail.com</a></p>
         <p>Average time response:</p>
             <table>
                 <tbody>
@@ -41,6 +43,26 @@ include "../format/headerFile.html";
 
                 </tbody>
             </table>
+        </div>
+        <div id='form'><h3 >Fill this form and our experts will contact you as soon as possible</h3>
+            <div class=\"form-single-column\">
+                <form id='contactForm'>
+                <table>
+                    <tr>
+                        <th><label>Your name:</label></th>
+                        <td><textarea cols='20' data-val='true' data-val-required='Please enter your name.' id='contactName' rows='2'></textarea></td>
+                    </tr>
+                    <tr>
+                        <th><label>Your e-mail address:</label></th>
+                        <td><textarea cols='20' data-val='true' data-val-required='Please enter your contact information' id='contactEmail'></textarea></td>
+                    </tr>
+                    <tr><th colspan='2'><label>Your message:</label></th></tr>
+                    <tr><td colspan='2'><textarea style='width: 40vw;height: 40px' cols='20' data-val='true' data-val-required='Please enter your message' id='contactMsg'></textarea></td></tr>               
+                    </table>
+                    <br>
+                    <a onclick='formSend()' href='contact.php'>Send</a>
+                </form>
+            </div>
         </div>
     </div>
 

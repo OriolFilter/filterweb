@@ -1,1 +1,6 @@
-/*placeholder*/
+#contactMethods  #email , #contactMethods #phone,#contactMethods #form {
+    font-size: 1.75vw;
+}
+footer{
+    font-size: 13px;
+}

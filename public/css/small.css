@@ -10,3 +10,15 @@ header,#right-buttons,#logo {
     padding: 0;
     margin: 0;
 }
+
+#contactMethodsList{
+    order: 1;
+    font-size: 3vw ;
+}
+
+#contactMethods  #email , #contactMethods #phone,#contactMethods #form {
+    font-size: 2.2vw;
+}
+footer{
+    font-size: 12px;
+}

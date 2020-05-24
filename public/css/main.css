@@ -99,6 +99,9 @@ main {
     text-align: center;
     order: 2;
     width: inherit;
+    /*background-image: url("/css/backgrounds/texture_black01.jpg");*/
+    /*background-repeat: no-repeat;*/
+    /*background-size: cover;*/
 }
 main>h1{
     color: #c0ca75;
@@ -106,9 +109,12 @@ main>h1{
 
 footer {
     text-align: center;
-    /*background-color: #394047; *//*OLD*/
-    background-color: #6c7075;/*NEW*/
+    background-color: #394047; /*OLD*/
+    /*background-color: #6c7075;!*NEW*!*/
     order: 3;
+    font-family: arial, Times new roman, monospace;
+    font-size: 25px;
+    color: #8e9dbd;
 }
 
 /*text*/
@@ -188,24 +194,43 @@ html {
 }
 
 #contact {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+}
+#contact,#logIn {
     margin: 5px;
-    padding: 10px;
-    background-color: #d0d0d0;
-    font-family: arial, Times new roman, monospace;
-    font-size: 25px;
+    /*background-color: #d0d0d0;*/
+    /*font-family: arial, Times new roman, monospace;*/ /*Possible versió*/
+    font-size: 1.5vw;
     width: inherit;
     padding: 5vh 0;
+    color: azure;
+
+
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+}
+#contact a,#logInBox a{
+    color: #8e9dbd;
+    /*color: #bcd6e6;*/
+}
+
+#contactMethodsList{
+    order: 1;
+    margin: 5vw 0 ;
 }
 #contactMethodsList  a,li {
     list-style-type: none;
     text-decoration: none;
-    color: #4467b8;
-
-    text-decoration: none;
-/*    color: #a8c4d6;*/
+}
+#contactMethodsList td {
+    text-align: left;
 }
 
 #contactMethods{
+    order: 2;
     display: flex;
     flex-wrap: nowrap;
     flex-direction: column;
@@ -225,22 +250,21 @@ html {
 #form{
     order: 3;
 }
-#contactMethods  #email , #contactMethods #phone,#contactMethods #form{
+#contactMethods  #email , #contactMethods #phone,#contactMethods #form, #logInBox{
     border-radius: 4px;
     border-style: solid;
     border-width: 2px;
     border-color: rgba(86, 198, 213, 0.68);
     margin: 5px;
     padding: 10px;
-    font-family: arial, Times new roman, monospace;
+    /*font-family: arial, Times new roman, monospace;*/
     font-size: 25px;
 }
 
 
-
 #contactMethods table, #contactMethods td, #contactMethods th{
     border: 1px solid black;
-    border-color: gray;
+    border-color: #eee;
 }
 #contactMethods  table{
     border-collapse: collapse;
@@ -250,13 +274,65 @@ html {
     line-height: 2;
     width: 30em;
 }
-
+#form {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+}
+#form>#contactForm{
+    order: 1;
+}
+#form textarea {
+    margin: 17px 10px 5px 10px;
+}
 #contactMethods table tr:nth-child(even) {
-    background-color: #fff0de;
+    /*background-color: #fff0de;*/
+    background-color: #525252;
     /*background-color: #fff;*/
 }
 #contactMethods  table tr:nth-child(odd) {
-    background-color: #eee;
+    /*background-color: #eee;*/
+    background-color: #363636;
+}
+
+#logIn{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-content: center;
+    justify-content: space-around;
+    align-items: center;
+}
+
+#logInBox{
+    order: 1;
+    width: max-content;
+    text-align: center;
 }
 
 
+
+#logInForm{
+    width: 30vw;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+}
+
+#logInResponse{
+    margin-top: 15px;
+    font-size: 15px;
+    color: red;
+}
+
+#link{
+cursor: -webkit-grabbing;
+cursor: grabbing;
+margin-top: 15px;
+}
