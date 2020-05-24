@@ -133,7 +133,7 @@ body {
 
 /*content*/
 /*product*/
-#productList {
+#productList,#featuredList {
     /*width: 70v%;*/
     display: flex;
     align-items: flex-start;
@@ -280,7 +280,7 @@ html {
     flex-direction: column;
     align-content: center;
     justify-content: center;
-    align-items: center;
+    align-items: center;;
 }
 #form>#contactForm{
     order: 1;
@@ -313,9 +313,11 @@ html {
     text-align: center;
 }
 
+#homePage{color: #d0556c;}
 
 
 #logInForm{
+    min-width: fit-content;
     width: 30vw;
     display: flex;
     flex-wrap: nowrap;

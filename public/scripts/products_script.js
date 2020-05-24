@@ -1,5 +1,5 @@
-function btFilter() {
-    switch (document.getElementById("filterList").value) {
+function prodFilter(brand) {
+    switch (brand) {
         case "sanwa":
             for (var x=0; x<document.getElementsByClassName("sw").length;x++) {
                 document.getElementsByClassName("sw")[x].hidden=0;
@@ -23,3 +23,5 @@ function btFilter() {
             break;
     }
 }
+
+

@@ -12,9 +12,9 @@ include "../format/headerFile.html";
                     <table>
                         <tr>
                         <th>Username:</th>
-                        <td><input aria-label=\"Username\" cols='20' id='logName' rows='2'></input></td></tr>
+                        <td><input aria-label=\"Username\" type='text' cols='20' id='logName' rows='2'></input></td></tr>
                         <tr><th>Password:</th>
-                        <td><input aria-label=\"Password\" cols='20'  id='logPass'></input></td></tr>               
+                        <td><input aria-label=\"Password\" type='password' cols='20'  id='logPass'></input></td></tr>               
                     </table>
                     <span id='logInResponse' hidden></span>
                     <div id='link' onclick='checkLogin()'><ins>Log in</ins></div>
