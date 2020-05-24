@@ -1,5 +1,5 @@
 function btFilter() {
-    switch (document.getElementById("sortList").value) {
+    switch (document.getElementById("filterList").value) {
         case "sanwa":
             for (var x=0; x<document.getElementsByClassName("sw").length;x++) {
                 document.getElementsByClassName("sw")[x].hidden=0;

@@ -1,7 +1,9 @@
 <?php
-;include "headerFile.html";
+;
+include "../format/headerFile.html";
 
 ;echo"<p>Login Form</p>";
 
-;include "footerFile.html";
+;
+include "../format/footerFile.html";
 ;?>

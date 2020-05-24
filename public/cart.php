@@ -1,7 +1,9 @@
 <?php
-;include "headerFile.html";
+;
+include "../format/headerFile.html";
 
-;echo"<p>Llista de productes (si no sé fer cookies pare una d'exemple de llista, on es podan treure productes i modificar la cuantitat, i aixó afectar al preu)</p>";
+;echo"<p>Llista de productes (si no sé fer cookies o fare una d'exemple de llista, on es podan treure productes i modificar la quantitat, i aixó afectar al preu)</p>";
 
-;include "footerFile.html";
+;
+include "../format/footerFile.html";
 ;?>

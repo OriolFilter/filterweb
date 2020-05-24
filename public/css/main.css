@@ -1,6 +1,6 @@
 @font-face {
     font-family: Multicolore;
-    src: url(/css/Multicolore.otf);
+    src: url(/css/fonts/Multicolore.otf);
 }
 /*-------------------------------------------------------------------*/
 
@@ -18,7 +18,7 @@ header{
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     align-content: flex-start;
     width: auto;
@@ -62,12 +62,11 @@ header{
 
 /*<nav>*/
 
-#nav-buttons>nav>ul {
+header ul{
     list-style-type: none;
     margin: 0;
     padding: 0;
     overflow: hidden;
-
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -78,12 +77,12 @@ header{
     text-align: center;
 }
 
-#nav-buttons>nav>ul>li {
+header li {
     margin: 5px;
     float: left;
     flex-grow: 1;
 }
-#nav-buttons>nav>ul>li>a {
+#nav-buttons a, #right-buttons a  {
     display: block;
     /*color: white;*/
     color: #cacaca;
@@ -92,38 +91,8 @@ header{
     text-decoration: none;
 }
 
-#nav-buttons>nav>ul>li>a,#right-buttons>ul>li>a,#nav-buttons>nav>ul>li> a:hover,#right-buttons>ul>li> a:hover, #nav-buttons>nav>ul>li> a:visited,#right-buttons>ul>li> a:visited {
+header a, header a:hover, header a:visited{
     text-decoration: none;
-}
-
-#right-buttons>ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: left;
-    align-items: baseline;
-    align-content: center;
-    width: auto;
-    text-align: center;
-}
-
-#right-buttons>ul>li {
-    margin: 5px;
-    float: left;
-    flex-grow: 1;
-}
-#right-buttons>ul>li>a {
-    display: block;
-    /*color: white;*/
-    text-align: center;
-    padding: 16px;
-    text-decoration: none;
-    color: #cacaca;
 }
 
 main {
@@ -137,7 +106,8 @@ main>h1{
 
 footer {
     text-align: center;
-    background-color: #394047;
+    /*background-color: #394047; *//*OLD*/
+    background-color: #6c7075;/*NEW*/
     order: 3;
 }
 
@@ -179,7 +149,7 @@ body {
     border-width: 7px;
     border-color: #5f5f5f;
 }
-.product>a,.product>a:hover,.product>a:visited{
+.product a,.product a:hover,.product a:visited{
     text-decoration: none;
     color: #a8c4d6;
 }
@@ -206,6 +176,87 @@ html {
     max-width: 90vw;
     width: auto;
     object-fit: contain;
+}
+
+
+#filters > p{
+    color: #d0556c;
+}
+#filters > p >select {
+    font-size: 20px;
+    max-height: 30px;
+}
+
+#contact {
+    margin: 5px;
+    padding: 10px;
+    background-color: #d0d0d0;
+    font-family: arial, Times new roman, monospace;
+    font-size: 25px;
+    width: inherit;
+    padding: 5vh 0;
+}
+#contactMethodsList  a,li {
+    list-style-type: none;
+    text-decoration: none;
+    color: #4467b8;
+
+    text-decoration: none;
+/*    color: #a8c4d6;*/
+}
+
+#contactMethods{
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+    width: auto;
+}
+
+
+#email{
+    order: 1;
+}
+#phone{
+    order: 2;
+}
+#form{
+    order: 3;
+}
+#contactMethods  #email , #contactMethods #phone,#contactMethods #form{
+    border-radius: 4px;
+    border-style: solid;
+    border-width: 2px;
+    border-color: rgba(86, 198, 213, 0.68);
+    margin: 5px;
+    padding: 10px;
+    font-family: arial, Times new roman, monospace;
+    font-size: 25px;
+}
+
+
+
+#contactMethods table, #contactMethods td, #contactMethods th{
+    border: 1px solid black;
+    border-color: gray;
+}
+#contactMethods  table{
+    border-collapse: collapse;
+    display: table;
+    background-color: transparent;
+    text-align: center;
+    line-height: 2;
+    width: 30em;
+}
+
+#contactMethods table tr:nth-child(even) {
+    background-color: #fff0de;
+    /*background-color: #fff;*/
+}
+#contactMethods  table tr:nth-child(odd) {
+    background-color: #eee;
 }
 
 

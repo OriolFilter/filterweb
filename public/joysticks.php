@@ -1,6 +1,7 @@
 <?php
 
-;include "headerFile.html";
+;
+include "../format/headerFile.html";
 ;echo "<h1>Joysticks</h1><hr>";
 ;echo "<div id='filters'><p>BUTONS PER FILTRAR PER MARCA</p></div>";
 //;$scanner=glob("productTxt/buttons/bt-*.php");
@@ -44,7 +45,8 @@
 
 
 
-;include "footerFile.html";
+;
+include "../format/footerFile.html";
 
 ;?>
 
