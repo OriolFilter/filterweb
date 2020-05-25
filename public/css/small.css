@@ -23,3 +23,9 @@ footer{
     /*font-size: 12px;*/
     font-size: 18px;
 }
+
+#productImgInfo {
+    max-height: 70vw;
+    max-width: 70vw;
+    margin: 1em;
+}

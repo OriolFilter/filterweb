@@ -37,7 +37,7 @@ include "../format/headerFile.html";
     } else {
         echo "<div class='product un'>";  //un -eq unkown
     }
-        echo "<a href='$linkProd'>";
+        echo "<a href='/product.php?product=$linkProd'>";
         echo "<img alt='$Title' src='/src/prodImages/joystick/$linkImage' id='prodImg'>";
         echo "<p>$Title</p>";
         echo "<p id='price'>$Price €</p>";
