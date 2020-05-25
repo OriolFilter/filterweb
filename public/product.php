@@ -19,10 +19,10 @@ if (file_exists($filePath)){
 eval (file_get_contents($filePath));
 
 
-if (substr($productName,0,2)()=="bt"){
+if (substr($productName,0,2).strtolower()=="bt"){
     ;$prodType="button";
     ;$linkImage="/src/prodImages/button/$linkImage";
-} elseif (substr($productName,0,2)=="js"){
+} elseif (substr($productName,0,2).strtolower()=="js"){
     ;$prodType="joystick";
     ;$linkImage="/src/prodImages/joystick/$linkImage";
 }
@@ -35,7 +35,7 @@ echo "<div id='productPageContent'>";
 //echo "<p>Product Information</p>";
 
 
-echo "<img alt='' id='productImgInfo' src='$linkImage'>";
+echo "<img id='productImgInfo' src='$linkImage'>";
 echo "<div id='productPageContentContent'>";
 echo "<p id='title'>$Title</p>";
 echo "<div id='productPageContentTxt'>
