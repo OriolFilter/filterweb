@@ -178,7 +178,13 @@ html {
 #slideshow {
     background-color: #050607;
 }
-#slideshow>img {
+#slideshow>a{
+    width: fit-content;
+    width: -moz-fit-content;
+    height: fit-content;
+    height: fit-content;
+}
+#slideshow>a>img {
     max-width: 90vw;
     width: auto;
     object-fit: contain;
@@ -562,8 +568,6 @@ div#pquant{
     width: auto;
     max-width: 50vw;
     min-width: fit-content;
-    width: available;
-    max-width: available;
     display: flex;
     flex-wrap: nowrap;
     flex-direction: column;
