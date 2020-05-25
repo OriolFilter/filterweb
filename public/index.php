@@ -5,7 +5,7 @@ include "../format/headerFile.html";
 ;$buttonFolder="../productTxt/buttons/";
 ;echo "<div id='homePage'>";
 ;echo "<div id='slideshow'>";
-;echo"<img alt='featured items' src='/src/featuredImages/sanwa-obsfe-preo-banner.jpg'/>";
+;echo"<a href='/product.php?product=bt-Sanwa%20OBSFE-30'><img alt='featured items' src='/src/featuredImages/sanwa-obsfe-preo-banner.jpg'/></a>";
 ;echo "</div>";
 ;echo "<h3>Featured Items</h3>";
 ;echo "<div id='featuredList'>";
@@ -28,7 +28,6 @@ include "../format/headerFile.html";
 
 //  Procedir
 
-    echo "<a href='$linkProd'>";
     if ($Brand == 'sanwa') {
         echo "<div class='product sw'>";  //sw -eq sanwa
     } elseif ($Brand == 'seimitsu') {
@@ -36,11 +35,12 @@ include "../format/headerFile.html";
     } else {
         echo "<div class='product un'>";  //un -eq unkown
     }
-        echo "<img alt='$Title' src='/src/prodImages/joystick/$linkImage' id='prodImg'>";
-        echo "<p>$Title</p>";
-        echo "<p id='price'>$Price €</p>";
-        echo "</a>";
-        echo "</div>";
+    echo "<a href='/product.php?product=$linkProd'>";
+    echo "<img alt='$Title' src='/src/prodImages/joystick/$linkImage' id='prodImg'>";
+    echo "<p>$Title</p>";
+    echo "<p id='price'>$Price €</p>";
+    echo "</a>";
+    echo "</div>";
 }
 
 ;foreach ($BList as $product) {
@@ -57,7 +57,6 @@ include "../format/headerFile.html";
 
 //  Procedir
 
-    echo "<a href='$linkProd'>";
     if ($Brand == 'sanwa') {
         echo "<div class='product sw'>";  //sw -eq sanwa
     } elseif ($Brand == 'seimitsu') {
@@ -65,6 +64,7 @@ include "../format/headerFile.html";
     } else {
         echo "<div class='product un'>";  //un -eq unkown
     }
+    echo "<a href='/product.php?product=$linkProd'>";
     echo "<img alt='$Title' src='/src/prodImages/button/$linkImage' id='prodImg'>";
     echo "<p>$Title</p>";
     echo "<p id='price'>$Price €</p>";

@@ -4,5 +4,5 @@
 ;$Size='30';
 ;$Price='3.84';
 ;$linkImage='SANWA_OBSCS30_C_Smoke.webp';
-;$linkProd='#';
+;$linkProd='bt-Sanwa OBSCS-30';
 //https://www.arcadeworlduk.com/products/sanwa-obscs-30-c-silent-snap-in-arcade-button.html
