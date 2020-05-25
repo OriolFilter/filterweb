@@ -65,7 +65,6 @@ include "../format/headerFile.html";
             </div>
         </div>
     </div>
-
 ";
 
 
