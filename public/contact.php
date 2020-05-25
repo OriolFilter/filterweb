@@ -67,7 +67,6 @@ include "../format/headerFile.html";
     </div>
 ";
 
-
 echo "</div>";
 
 
