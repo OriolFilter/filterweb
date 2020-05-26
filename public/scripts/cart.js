@@ -31,7 +31,7 @@ function modQuantCart() {
         lessbtns[e].addEventListener("click", function() {
             this.parentElement.parentElement.getElementsByClassName("qNum")[0].textContent--;
             if (parseFloat(this.parentElement.parentElement.getElementsByClassName("qNum")[0].textContent)==0){
-                this.parentElement.parentElement.parentElement.parentElement.parentElement.style.display = 'none';
+                this.parentElement.parentElement.parentElement.parentElement.parentElement.style.display = "none";
             }
             updateCartPrice();
         });
@@ -47,13 +47,16 @@ function startupCart() {
 function updateCartPrice() {
 
     var products=document.getElementsByClassName("cartProduct");
+    var closebtns = document.getElementsByClassName("close");
     var price=0;
     for (i=0;i<products.length;i++){
-            price=price+(parseFloat(products[i].getElementsByClassName("qNum")[0].textContent)*parseFloat(products[i].getElementsByClassName("pprice")[0].textContent.replace(" €","")));
-
-        // alert(products[i].getElementsByClassName("pprice")[0]);
+            if (closebtns[i].parentElement.style.display != 'none') {
+                price=parseFloat(price)+parseFloat(products[i].getElementsByClassName("qNum")[0].textContent)*parseFloat(products[i].getElementsByClassName("pprice")[0].textContent.replace(" €",""));
+            }
     }
-    document.getElementById("cartPrice").textContent=price+" €";
+    var i=1;
+    while ( Math.pow(10,i)<(price*100) ){i++}
+    document.getElementById("cartPrice").textContent=price.toPrecision(i)+" €";
 }
 function buyCart() {
     window.location.replace(window.location.origin +"/index.php");
