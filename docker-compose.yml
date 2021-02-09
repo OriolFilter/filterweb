@@ -1,31 +1,53 @@
 version: '3'
 services:
-    php-apache:
-        image: php:7.1.2-apache 
+    nginx_shop:
+        image: nginx
         ports:
-           - target: 80 # docker port
-             published: 80 # published port
-             protocol: tcp
+          - "80:80"
+          - "443:443"
         volumes:
-          - ./volumes/web/:/var/www/
-          - ./volumes/sites-available/webstorm.conf:/etc/apache2/sites-available/000-default.conf:ro
-#          - ./volumes/www/html:/var/www/html:ro
-#          - ./volumes/sites-available/000-default.conf:/etc/apache2/sites-available/000-default.conf:ro
-#          - type: bind
-#            source: ./volumes/www/html
-#            target: /var/www/html
-#            read_only: true
-#        links:
-#            - 'mariadb'
+          - ./volumes/nginx/web.conf:/etc/nginx/conf.d/web.conf:ro
+          - ./volumes/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+          - ./volumes/filterweb/:/var/www/:ro
+          - ./volumes/cert_ssl:/shared/ssl
+        links:
+          - php
+
+    php:
+       image: php:7-fpm
+       volumes:
+          - ./volumes/filterweb/:/var/www/:ro
+
     db:
         image: postgres
         restart: always
+        ports:
+           - target: 5432 # docker port
+             published: 5432 # published port
+             protocol: tcp
         environment:
-          POSTGRES_PASSWORD: example
-#       volumes:
-#         - ./volumes/postgres/data:/var/lib/postgresql/data
+          POSTGRES_PASSWORD: test
+          POSTGRES_USER: test
+          POSTGRES_DB: shop
+        volumes:
+          - ./volumes/postgres/data:/var/lib/postgresql/data
+
     adminer:
         image: adminer
         restart: always
         ports:
           - 8080:8080
+
+
+#    php-apache:
+#        image: php:7.1.2-apache 
+#        restart: always
+#        ports:
+#           - target: 80 # docker port
+#             published: 80 # published port
+#             protocol: tcp
+#        volumes:
+#          - ./volumes/filterweb/:/var/www/
+#          - ./volumes/sites-available/webstorm.conf:/etc/apache2/sites-available/000-default.conf:ro
+#        links:
+#          - 'db'
