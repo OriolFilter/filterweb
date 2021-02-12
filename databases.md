@@ -63,8 +63,7 @@ CREATE TABLE products (
 --     country VARCHAR ( 255 ) UNIQUE NOT NULL,
     description TEXT, -- Description of the product to be inserted in the database.
     limit_per_order integer, -- Limit per command
-	created_on TIMESTAMP NOT NULL
-                      
+	created_on TIMESTAMP NOT NULL                    
 );
 ```
 
