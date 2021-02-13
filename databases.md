@@ -33,7 +33,6 @@ CREATE TABLE if not exists accounts (
 	password VARCHAR ( 50 ) NOT NULL, /* HASHED */
 	email VARCHAR ( 255 ) UNIQUE NOT NULL,
     role serial NOT NULL,
---     country VARCHAR ( 255 ) UNIQUE NOT NULL,
 	created_on TIMESTAMP NOT NULL,
         last_login TIMESTAMP 
 );
@@ -56,28 +55,23 @@ https://blog.saleslayer.com/hs-fs/hubfs/storediagram.gif?width=772&name=storedia
 ```postgresql
 -- Product table
 CREATE TABLE if not exists products (
-	product_id serial PRIMARY KEY,
-	product_name VARCHAR ( 70 ) UNIQUE NOT NULL,
-	product_category_id serial,
-    product_brand_id serial,
-    price decimal (10,2), -- euros.  si no te preu es que no esta disponible encara (falta sortir el producte)
---     country VARCHAR ( 255 ) UNIQUE NOT NULL,
-    description TEXT, -- Description of the product to be inserted in the database.
-    limit_per_order integer, -- Limit per command
-	created_on TIMESTAMP NOT NULL                    
+                                        product_id serial PRIMARY KEY,
+                                        product_name VARCHAR ( 70 ) UNIQUE NOT NULL,
+                                        product_category_id serial,
+                                        product_brand_id serial,
+                                        price decimal (10,2), -- euros.  si no te preu es que no esta disponible encara (falta sortir el producte)
+                                        description TEXT, -- Description of the product to be inserted in the database.
+                                        limit_per_order integer, -- Limit per command
+                                        created_on TIMESTAMP NOT NULL
 );
 ```
 
 ```postgresql
--- Supply table
-CREATE TABLE if not exists products (
-    supply_id serial PRIMARY KEY,
-    product_id serial UNIQUE NOT NULL,
-    quantity integer NOT NULL,
-    product_brand_id VARCHAR ( 255 ) NOT NULL,
-    price decimal (10,2), -- euros.  si no te preu es que no esta disponible encara (falta sortir el producte)
-    --     country VARCHAR ( 255 ) UNIQUE NOT NULL,
-    created_on TIMESTAMP NOT NULL
+CREATE TABLE if not exists supplies (
+                                        supply_id serial PRIMARY KEY,
+                                        product_id serial NOT NULL,
+                                        quantity integer NOT NULL,
+                                        created_on TIMESTAMP NOT NULL
 );
 ```
 
@@ -121,3 +115,4 @@ CREATE TABLE if not exists login_tokens (
     expires_on TIMESTAMP NOT NULL
 );
 ```
+
