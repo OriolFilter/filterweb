@@ -67,6 +67,23 @@ CREATE TABLE if not exists products (
 ```
 
 ```postgresql
+-- Additional_models table
+CREATE TABLE if not exists prod_models (
+                                        additional_model_key serial PRIMARY KEY,
+                                        product_id serial NOT NULL,
+                                        name_name VARCHAR ( 70 ) UNIQUE NOT NULL,
+                                        product_category_id serial,
+                                        product_brand_id serial,
+                                        price decimal (10,2), -- euros.  si no te preu es que no esta disponible encara (falta sortir el producte)
+                                        description TEXT, -- Description of the product to be inserted in the database.
+                                        limit_per_order integer, -- Limit per command
+                                        created_on TIMESTAMP NOT NULL
+);
+```
+
+
+
+```postgresql
 CREATE TABLE if not exists supplies (
                                         supply_id serial PRIMARY KEY,
                                         product_id serial NOT NULL,
@@ -116,3 +133,57 @@ CREATE TABLE if not exists login_tokens (
 );
 ```
 
+
+## Falta: product_image orders, shipping, payment methods, shipping address
+
+
+## Triggers
+
+## View
+
+## View
+
+## Routine
+
+
+
+# Relacions 
+
+## Users
+> Users 1:1 Role
+
+[comment]: <> (> Users 1:N Payment_methods)
+> Users 1:N Shipping_address
+
+# Login Tokens
+> Login_token 1: # NO te relacio
+
+## Products
+> Products 1:N Categories\
+> Products 1:N Models Addicionals\
+> Products 1:N Categories\
+> Products 1:1 Brand\
+
+## Models
+ 
+> Models N:1 Products\
+> Models 1:N Images\
+> Models 1:N Supplies\
+
+# Orders
+> Order 1:1 Payment\
+> Order 1:1 Shipping_address\
+
+# Order_details
+> Order_detail 1:1 Order\
+> Order_detail 1:N Products\
+> Order_detail 1:N Quantity\
+
+# Payments
+> No te relacio
+ 
+[comment]: <> (> Models 1:Sales # NO CONTA)
+ 
+> No es registren les targetes de credit, nomes es validen, a nivell real fariesn servir alguna aplicacio d'un banc ja que es molta responsabilitat.
+
+# Sales no es fara fins el final, ja que poden ser ofertes de categoria, de marca, de model o de producte.
