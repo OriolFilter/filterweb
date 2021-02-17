@@ -1,6 +1,6 @@
 
 -- Tables
--- Users related
+-- Users Related
 
 -- Customers table
 CREATE TABLE if not exists users (
@@ -26,7 +26,7 @@ CREATE TABLE if not exists reset_password_tokens (
                                                      user_id serial NOT NULL,
                                                      created_on TIMESTAMP NOT NULL,
                                                      expires_on TIMESTAMP NOT NULL
-);
+); -- Nomes 1 actiu
 
 -- Login tokens
 CREATE TABLE if not exists login_tokens (
@@ -39,7 +39,7 @@ CREATE TABLE if not exists login_tokens (
 
 
 
--- Products related
+-- Products Related
 
 
 -- Product table
@@ -115,7 +115,7 @@ CREATE TABLE if not exists brands (
 
 
 
--- Orders Tables
+-- Orders Related
 
 -- Orders table
 CREATE TABLE if not exists orders (
@@ -147,8 +147,7 @@ CREATE TABLE if not exists address (
 );
 
 
--- Falta: shipping address
--- https://www.researchgate.net/profile/Ali_El-Bastawissy/publication/257517242/figure/fig12/AS:268039094534190@1440916908998/Relational-schema-DS2-for-products-orders-database.png
+-- Falta:
 
 -- Triggers
 
