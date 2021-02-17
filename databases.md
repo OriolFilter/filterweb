@@ -151,12 +151,13 @@ CREATE TABLE if not exists login_tokens (
 
 ## Users
 > Users 1:1 Role
+> Users 1:N Login_token
 
 [comment]: <> (> Users 1:N Payment_methods)
 > Users 1:N Shipping_address
 
 # Login Tokens
-> Login_token 1: # NO te relacio
+> Login_token 1:1 User
 
 ## Products
 > Products 1:N Categories\
@@ -180,7 +181,7 @@ CREATE TABLE if not exists login_tokens (
 > Order_detail 1:N Quantity\
 
 # Payments
-> No te relacio
+> Payment 1:1 Payment_methods
  
 [comment]: <> (> Models 1:Sales # NO CONTA)
  

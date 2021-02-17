@@ -1,5 +1,6 @@
 
 -- Tables
+-- Users related
 
 -- Customers table
 CREATE TABLE if not exists users (
@@ -18,6 +19,27 @@ CREATE TABLE if not exists roles (
                         role_name VARCHAR (20) UNIQUE NOT NULL
 );
 
+-- reset_password table
+CREATE TABLE if not exists reset_password_tokens (
+                                                     reset_token_id serial PRIMARY KEY,
+                                                     token_code varchar (200) UNIQUE NOT NULL,
+                                                     user_id serial NOT NULL,
+                                                     created_on TIMESTAMP NOT NULL,
+                                                     expires_on TIMESTAMP NOT NULL
+);
+
+-- Login tokens
+CREATE TABLE if not exists login_tokens (
+                                            token_id serial PRIMARY KEY,
+                                            token_code varchar (200) UNIQUE NOT NULL,
+                                            created_on TIMESTAMP NOT NULL,
+                                            expires_on TIMESTAMP NOT NULL
+);
+
+
+
+
+-- Products related
 
 
 -- Product table
@@ -91,27 +113,41 @@ CREATE TABLE if not exists brands (
 );
 
 
--- Login tokens
-CREATE TABLE if not exists login_tokens (
-                              token_id serial PRIMARY KEY,
-                              token_code varchar (200) UNIQUE NOT NULL,
-                              created_on TIMESTAMP NOT NULL,
-                              expires_on TIMESTAMP NOT NULL
+
+
+-- Orders Tables
+
+-- Orders table
+CREATE TABLE if not exists orders (
+    order_id serial PRIMARY KEY,
+    payment_id serial
 );
 
 -- Payments table
 CREATE TABLE if not exists payments (
-    payment_id serial PRIMARY KEY
+    payment_id serial PRIMARY KEY,
+    payment_method_id serial
 );
 
--- Payments table
-CREATE TABLE if not exists payments (
-                                      payment_id serial PRIMARY KEY
+-- Payments_memthods table
+CREATE TABLE if not exists payment_methods (
+                                        payment_method_id serial PRIMARY KEY
+);
+
+-- Address table
+CREATE TABLE if not exists address (
+     address_id serial PRIMARY KEY,
+     user_id serial NOT NULL,
+     addr_1 VARCHAR (40) NOT NULL,
+     addr_2 VARCHAR (40),
+     addr_3 VARCHAR (40),
+     province VARCHAR (30) NOT NULL ,
+     country VARCHAR (2) NOT NULL, -- Sigles...
+     postal_code VARCHAR (16) NOT NULL
 );
 
 
-
--- Falta: product_image orders, shipping, payment methods, payment, shipping address
+-- Falta: shipping address
 -- https://www.researchgate.net/profile/Ali_El-Bastawissy/publication/257517242/figure/fig12/AS:268039094534190@1440916908998/Relational-schema-DS2-for-products-orders-database.png
 
 -- Triggers
