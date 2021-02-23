@@ -14,3 +14,4 @@ https://stackoverflow.com/questions/13135131/php-getting-variable-from-another-p
 
 [form-php]
 https://www.php.net/manual/en/language.variables.external.php
+https://www.php.net/manual/es/tutorial.forms.php

@@ -19,10 +19,10 @@ if (file_exists($filePath)){
 eval (file_get_contents($filePath));
 
 
-if (substr($productName,0,2).strtolower()=="bt"){
+if (strtolower(substr($productName,0,2))=="bt"){
     ;$prodType="button";
     ;$linkImage="/src/prodImages/button/$linkImage";
-} elseif (substr($productName,0,2).strtolower()=="js"){
+} elseif (strtolower(substr($productName,0,2))=="js"){
     ;$prodType="joystick";
     ;$linkImage="/src/prodImages/joystick/$linkImage";
 }

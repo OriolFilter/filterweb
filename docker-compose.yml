@@ -8,15 +8,26 @@ services:
         volumes:
           - ./volumes/nginx/web.conf:/etc/nginx/conf.d/web.conf:ro
           - ./volumes/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
-          - ./volumes/filterweb/:/var/www/:ro
+#          - ./volumes/filterweb/:/code
+          - ./volumes/filterweb/:/var/www
           - ./volumes/cert_ssl:/shared/ssl
         links:
           - php
 
     php:
-       image: php:7-fpm
+#       image: tripways/php-pgsql
+#       image: karllhughes/php-cli-postgres 
+       image: php:8.0.2-fpm
+#       image: php:8.0.2-fpm-buster
+#       image: php:8.0.2-cli-buster
+#       build:
+#         context: dockerfiles
+#         dockerfile: phpfile
        volumes:
-          - ./volumes/filterweb/:/var/www/:ro
+#          - ./volumes/filterweb/:/code
+          - ./volumes/filterweb/:/var/www
+       links:
+         - db
 
     db:
         image: postgres
