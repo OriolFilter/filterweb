@@ -28,6 +28,7 @@ services:
          dockerfile: php
        volumes:
 #          - ./volumes/filterweb/:/code
+#          - ./volumes/php/php.ini:/usr/local/etc/php/php.ini
           - ./volumes/filterweb/:/var/www
        links:
          - db

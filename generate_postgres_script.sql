@@ -5,8 +5,8 @@
 -- Customers table
 CREATE TABLE if not exists users (
       user_id serial,
-      username VARCHAR ( 50 ) UNIQUE NOT NULL,
-      password VARCHAR ( 50 ) NOT NULL, /* HASHED */
+      username VARCHAR ( 20 ) UNIQUE NOT NULL,
+      password VARCHAR ( 60 ) NOT NULL, /* crypted and salted, returns 60 lenght  */
       email VARCHAR ( 255 ) UNIQUE NOT NULL,
 --                          role_id serial NOT NULL,
       created_on TIMESTAMP DEFAULT now(),
@@ -18,12 +18,12 @@ CREATE TABLE if not exists users (
 -- Login tokens / session
 CREATE TABLE if not exists login_tokens (
         token_id serial,
-        user_id integer,
+        user_id integer NOT NULL,
         token_code varchar (200) UNIQUE NOT NULL,
         created_on TIMESTAMP DEFAULT now(),
         expires_on TIMESTAMP DEFAULT now() + '30 minute'::interval,
         PRIMARY KEY (token_id),
-        CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) NOT NULL
+        CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id)
 );
 
 -- Password recovery tokens
@@ -31,11 +31,11 @@ CREATE TABLE if not exists password_recovery_tokens (
         password_recovery_id serial,
         password_recovery_token VARCHAR (200) NOT NULL UNIQUE,
         token_code varchar (200) UNIQUE NOT NULL,
-        user_id integer,
+        user_id integer NOT NULL,
         created_on TIMESTAMP DEFAULT now(),
         expires_on TIMESTAMP DEFAULT now() + '30 minute'::interval,
-        PRIMARY KEY (token_id),
-        CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) NOT NULL
+        PRIMARY KEY (password_recovery_id),
+        CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id)
 );
 
 -- Activate account tokens
@@ -43,11 +43,11 @@ CREATE TABLE if not exists activate_account_tokens (
         activate_account_id serial,
         activate_account_token VARCHAR (200) NOT NULL UNIQUE,
         token_code varchar (200) UNIQUE NOT NULL,
-        user_id VARCHAR (20),
+        user_id integer NOT NULL,
         created_on TIMESTAMP DEFAULT now(),
         expires_on TIMESTAMP DEFAULT now() + '30 minute'::interval,
-        PRIMARY KEY (token_id),
-        CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) NOT NULL
+        PRIMARY KEY (activate_account_id),
+        CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id)
 );
 
 -- Roles table
@@ -61,59 +61,64 @@ CREATE TABLE if not exists activate_account_tokens (
 --                        role_name VARCHAR (20) UNIQUE NOT NULL
 --);
 
-CREATE TABLE if not exists cart (
-        cart_id serial PRIMARY KEY,
-        quantity integer NOT NULL,
-        model_id integer,
-        user_id integer,
-        CONSTRAINT model_id FOREIGN KEY (model_id) REFERENCES models (model_id) NOT NULL,
-        CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) NOT NULL
-);
+
 
 -- reset_password table
 CREATE TABLE if not exists reset_password_tokens (
         reset_token_id serial,
         token_code varchar (200) UNIQUE NOT NULL,
-        user_id serial NOT NULL,
-        created_on TIMESTAMP now(),
-        expires_on TIMESTAMP DEFAULT now() + '30 minute'::interval
+        user_id integer NOT NULL,
+        created_on TIMESTAMP DEFAULT now() ,
+        expires_on TIMESTAMP DEFAULT now() + '30 minute'::interval,
         PRIMARY KEY (reset_token_id),
-        CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) NOT NULL
+        CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id)
 );
 
 -- Login tokens
 CREATE TABLE if not exists login_tokens (
         login_token_id serial,
-        user_id integer,
+        user_id integer NOT NULL,
         token_code varchar (200) UNIQUE NOT NULL,
         created_on TIMESTAMP NOT NULL,
         expires_on TIMESTAMP DEFAULT now() + '180 minute'::interval,
-        PRIMARY KEY (token_id),
-        CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) NOT NULL
+        PRIMARY KEY (login_token_id),
+        CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id)
 );
 
 -- Activate account tokens
 CREATE TABLE if not exists activate_account_tokens (
         activate_token_id serial,
-        user_id integer,
+        user_id integer NOT NULL ,
         token_code varchar (200) UNIQUE NOT NULL,
         created_on TIMESTAMP NOT NULL,
         expires_on TIMESTAMP DEFAULT now() + '2880 minute'::interval,
-        PRIMARY KEY (token_id),
-        CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) NOT NULL
+        PRIMARY KEY (activate_token_id),
+        CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id)
 );
 
 CREATE table enabled_users (
         enabled_users_id serial,
-        user_id integer,
+        user_id integer NOT NULL,
         enabled_bool boolean NOT NULL ,
         PRIMARY KEY (enabled_users_id),
-        CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) NOT NULL
-)
+        CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id)
+);
 
 
 -- Products Related
 
+-- Categories table
+CREATE TABLE if not exists categories (
+                                          category_id serial PRIMARY KEY,
+                                          category_name VARCHAR (50) NOT NULL,
+                                          description TEXT NOT NULL
+);
+
+-- Brands table
+CREATE TABLE if not exists brands (
+                                      brand_id serial PRIMARY KEY,
+                                      brand_name VARCHAR (50) NOT NULL
+);
 
 -- Product table
 CREATE TABLE if not exists products (
@@ -126,8 +131,8 @@ CREATE TABLE if not exists products (
         --                           limit_per_order integer, -- Limit per command
         created_on TIMESTAMP DEFAULT now(),
         PRIMARY KEY (product_id),
-        CONSTRAINT product_brand_id FOREIGN KEY (product_brand_id) REFERENCES brands (product_brand_id),
-        CONSTRAINT product_category_id FOREIGN KEY (product_category_id) REFERENCES categories (product_category_id)
+        CONSTRAINT product_brand_id FOREIGN KEY (product_brand_id) REFERENCES brands (brand_id),
+        CONSTRAINT product_category_id FOREIGN KEY (product_category_id) REFERENCES categories (category_id)
 );
 
 -- Additional_models table
@@ -147,24 +152,33 @@ CREATE TABLE if not exists prod_models (
         PRIMARY KEY (model_id)
 );
 
+CREATE TABLE if not exists cart (
+        cart_id serial PRIMARY KEY,
+        quantity integer NOT NULL,
+        model_id integer NOT NULL,
+        user_id integer NOT NULL,
+        CONSTRAINT model_id FOREIGN KEY (model_id) REFERENCES prod_models (model_id),
+        CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id)
+);
+
 -- model_image table
 CREATE TABLE if not exists model_images (
-        model_id serial PRIMARY KEY,
-        model_id integer,
+        model_image_id serial PRIMARY KEY,
+        model_id integer NOT NULL,
         image_file_name VARCHAR(100), -- 100 Caracters hauria destar sobrat.
         created_on TIMESTAMP DEFAULT now(),
-        CONSTRAINT product_id FOREIGN KEY (product_id) REFERENCES products (product_id) NOT NULL,
-        PRIMARY KEY (model_id)
+        CONSTRAINT model_id FOREIGN KEY (model_id) REFERENCES products (product_id),
+        PRIMARY KEY (model_image_id)
 );
 
 
 -- Supply table
 CREATE TABLE if not exists supplies (
         supply_id serial PRIMARY KEY,
-        model_id integer,
+        model_id integer NOT NULL,
         quantity integer NOT NULL,
         updated_on TIMESTAMP DEFAULT now(),
-        CONSTRAINT model_id FOREIGN KEY (model_id) REFERENCES products (model_id) NOT NULL,
+        CONSTRAINT model_id FOREIGN KEY (model_id) REFERENCES prod_models (model_id),
         PRIMARY KEY (supply_id)
 );
 
@@ -180,19 +194,6 @@ CREATE TABLE if not exists sales (
         created_on TIMESTAMP NOT NULL
 );
 
--- Categories table
-CREATE TABLE if not exists categories (
-        category_id serial PRIMARY KEY,
-        category_name VARCHAR (50) NOT NULL,
-        description TEXT NOT NULL
-);
-
--- Brands table
-CREATE TABLE if not exists brands (
-        brand_id serial PRIMARY KEY,
-        brand_name VARCHAR (50) NOT NULL
-);
-
 
 
 
@@ -201,9 +202,9 @@ CREATE TABLE if not exists brands (
 -- Orders table
 CREATE TABLE if not exists orders (
     order_id serial PRIMARY KEY,
-    payment_id integer,
+    payment_id integer NOT NULL,
     oder_date TIMESTAMP DEFAULT now(),
-    CONSTRAINT payment_id FOREIGN KEY (payment_id) REFERENCES payments (payment_id) NOT NULL,
+    CONSTRAINT payment_id FOREIGN KEY (payment_id) REFERENCES payments (payment_id),
     PRIMARY KEY (order_id)
 );
 
@@ -214,24 +215,24 @@ CREATE TABLE if not exists payments (
 );
 
 -- Payments_memthods table
-CREATE TABLE if not exists payment_methods (
-        payment_method_id serial PRIMARY KEY,
-        random_thing_to_store VARCHAR (20),
-        CONSTRAINT payment_id FOREIGN KEY (payment_id) REFERENCES payments (payment_id) NOT NULL,
-
-);
+-- edit later
+-- CREATE TABLE if not exists payment_methods (
+--         payment_method_id serial PRIMARY KEY,
+--         random_thing_to_store VARCHAR (20),
+--         CONSTRAINT payment_id FOREIGN KEY (payment_id) REFERENCES payments (payment_id)
+-- );
 
 -- Address table
 CREATE TABLE if not exists address (
      address_id serial PRIMARY KEY,
-     user_id integer,
+     user_id integer NOT NULL,
      addr_1 VARCHAR (40) NOT NULL,
      addr_2 VARCHAR (40),
      addr_3 VARCHAR (40),
      province VARCHAR (30) NOT NULL ,
      country VARCHAR (2) NOT NULL, -- Sigles...
-     postal_code VARCHAR (16) NOT NULL
-     CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) NOT NULL
+     postal_code VARCHAR (16) NOT NULL,
+     CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id)
 );
 
 
@@ -240,12 +241,64 @@ CREATE TABLE if not exists address (
 -- Triggers
 -- Routine
 
+-- Routines
+
+CREATE EXTENSION pgcrypto; -- Crypt extension
+-- https://www.postgresql.org/docs/8.3/pgcrypto.html
+
+-- CREATE or replace PROCEDURE check_user(uname users.username%TYPE, passwd varchar(60))
+-- --     LANGUAGE plpgsql
+--     LANGUAGE sql
+-- AS $$
+--     select uname,password from users where username= uname and password = passwd;
+--
+-- --     insert into users (username, password, email) values ('test','test','email');
+-- --     select from
+-- -- INSERT INTO tbl VALUES (a);
+-- -- INSERT INTO tbl VALUES (b);
+-- $$;
+
+-- https://www.educba.com/postgresql-procedures/
+-- https://www.enterprisedb.com/postgres-tutorials/everything-you-need-know-about-postgres-stored-procedures-and-functions
+-- https://docs.oracle.com/cd/E11882_01/timesten.112/e21639/exceptions.htm#TTPLS193
+
+-- CREATE or replace function check_login(uname users.username%TYPE, passwd varchar(60)) returns integer as $$
+-- begin
+--     select * from users;
+--     return 1;
+-- end;
+-- $$ LANGUAGE plpgsql
+
+-- CREATE OR REPLACE FUNCTION test(i integer) RETURNS integer AS $$
+CREATE or replace function test(uname users.username%TYPE, passwd varchar(60)) returns integer as
+$$
+BEGIN
+--     RETURN i + 1;
+--  select username from users;
+ RETURN 2;
+END;
+$$ LANGUAGE plpgsql;
 
 
--- CREATE TABLE test (
---     id serial,
---     value VARCHAR (20),
---     PRIMARY KEY (id)
--- )
+-- Generate random string (will be used to generate random tokens)
+-- stolen from here:
+-- https://stackoverflow.com/questions/3970795/how-do-you-create-a-random-string-thats-suitable-for-a-session-id-in-postgresql
+Create or replace function random_string(length integer) returns text as
+$$
+declare
+    chars text[] := '{0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}';
+    result text := '';
+    i integer := 0;
+begin
+    if length < 0 then
+        raise exception 'Given length cannot be less than 0';
+    end if;
+    for i in 1..length loop
+            result := result || chars[1+random()*(array_length(chars, 1)-1)];
+        end loop;
+    return result;
+end;
+$$ language plpgsql;
+
 
 -- insert into test (value) values ('first_try');
