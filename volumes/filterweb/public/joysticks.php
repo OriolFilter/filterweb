@@ -1,7 +1,7 @@
 <?php
 
 ;
-include "../format/headerFile.html";
+include "../private/format/headerFile.html";
 ;echo "<script src=\"scripts/products_script.js\"></script>"
 ;echo "<h1>Joysticks</h1><hr>";
 ;echo "<div id='filters'>
@@ -13,7 +13,7 @@ include "../format/headerFile.html";
         </div>";
 //;$scanner=glob("productTxt/buttons/bt-*.php");
 //;$scanner=glob("productTxt/joysticks/js-*.php");
-;$scanner=glob("../productTxt/joysticks/js-*.php");
+;$scanner=glob("../private/productTxt/joysticks/js-*.php");
 ;echo "<div id='productList'>";
 
 ;foreach ($scanner as $product) {
@@ -50,7 +50,7 @@ include "../format/headerFile.html";
 
 
 ;
-include "../format/footerFile.html";
+include "../private/format/footerFile.html";
 
 ;?>
 

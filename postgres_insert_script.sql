@@ -2,12 +2,13 @@
 
 insert into users (username,password,email) values ('pau','a','mail.mail.mail');
 insert into users (username, password, email) values ('test','test','email');
-insert into users (username, password, email) values ('test2',crypt('johnspassword', gen_salt('bf')),'email');
-
+-- insert into users (username, password, email) values ('test2',crypt('johnspassword', gen_salt('bf')),'email');
+insert into users (username, password, email) values ('test',crypt('test', gen_salt('bf')),'email');
+delete from users where username='test';
 -- https://x-team.com/blog/storing-secure-passwords-with-postgresql/
 
 CREATE EXTENSION pgcrypto;
-select crypt('johnspassword', gen_salt('bf'));
+select crypt('test', gen_salt('bf'));
 select crypt('johnspassword', gen_salt('bf'));
 select * from users;
 
@@ -27,5 +28,6 @@ call check_login('test2','$2a$06$SPbehnRawRT8wRukc.Fsuuwk39G.QbNuV53QMksTWITJLQQ
 select * from check_login('test2','$2a$06$SPbehnRawRT8wRukc.Fsuuwk39G.QbNuV53QMksTWITJLQQDfKZby');
 
 select * from test('test2','$2a$06$SPbehnRawRT8wRukc.Fsuuwk39G.QbNuV53QMksTWITJLQQDfKZby');
+select * from check_login('test2','$2a$06$SPbehnRawRT8wRukc.Fsuuwk39G.QbNuV53QMksTWITJLQQDfKZby');
 
 -- select * from test(1);

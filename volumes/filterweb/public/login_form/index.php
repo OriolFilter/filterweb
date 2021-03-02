@@ -1,4 +1,5 @@
 <?php
+;require '../../../private/global_vars.php';
 ;// Exceptions
 ;class MissingField extends Exception { };
 ;class LoginError extends Exception { };
@@ -32,10 +33,24 @@
 ;
 ; }
 ;
+//echo  filter_input(INPUT_GET, 'uname', FILTER_SANITIZE_ENCODED);
+//echo  filter_input(INPUT_GET, 'uname', FILTER_SANITIZE_EMAIL);
+//echo  filter_input(INPUT_GET, 'email', FILTER_SANITIZE_EMAIL);
+//echo  filter_input(INPUT_GET, 'email', FILTER_VALIDATE_EMAIL);
+//$email= filter_input(INPUT_GET, 'email', FILTER_VALIDATE_EMAIL);
+//$email= filter_input(INPUT_GET, 'email', FILTER_SANITIZE_EMAIL,FILTER_FLAG_EMAIL_UNICODE);
+//$email= filter_input(INPUT_GET, 'email', FILTER_VALIDATE_EMAIL,FILTER_FLAG_EMAIL_UNICODE);
+//if ($email){
+//    echo $email;
+//} else
+//{echo '!!';}
+
 ; function normalize_str(string $str){
 ;    $string = strval($str);
+//;   FILTER_SANITIZE_EMAIL
+;
 ;    $string =htmlspecialchars($string);
-//;    Normalizer php8 library errors, look later.
+;//    Normalizer php8 library errors, look later.
 ;    // Do stuffs
 ;    return $string;
 ; }

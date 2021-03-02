@@ -1,6 +1,6 @@
 <?php
 ;
-include "../format/headerFile.html";
+include "../private/format/headerFile.html";
 ;echo "<div id='contact'>";
 ;echo "
     <script src='scripts/contact.js'></script>
@@ -73,6 +73,6 @@ echo "</div>";
 
 
 
-include "../format/footerFile.html";
+include "../private/format/footerFile.html";
 //https://www.w3schools.com/jsref/tryit.asp?filename=tryjsref_onsubmit
 ;?>

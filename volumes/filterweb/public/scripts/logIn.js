@@ -5,7 +5,7 @@ function login() {
     var form=document.forms["logInForm"];
 
     //hide_message
-    document.getElementById("logInResponse").hidden=1;
+    // document.getElementById("logInResponse").hidden=1;
 
     // var check_f=parseInt(!check_form(form,obligatory_fields));
     var response=check_form(form,obligatory_fields);

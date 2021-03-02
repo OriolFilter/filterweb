@@ -16,3 +16,4 @@ https://www.php.net/manual/es/tutorial.forms.php
 
 [AJAX]\
 https://www.w3schools.com/php/php_ajax_php.asp
+https://es.stackoverflow.com/questions/126200/ajax-post-request

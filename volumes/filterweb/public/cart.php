@@ -1,6 +1,6 @@
 <?php
 ;
-include "../format/headerFile.html";
+include "../private/format/headerFile.html";
 
 echo "<div id='cart'>";
 ;echo "<script src=\"scripts/cart.js\"></script>";
@@ -73,5 +73,5 @@ echo "<div id='cart'>";
 echo "<script>startupCart()</script>"
 ;echo "</div>";
 
-include "../format/footerFile.html";
+include "../private/format/footerFile.html";
 ;?>

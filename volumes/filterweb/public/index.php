@@ -1,15 +1,15 @@
 <?php
-include "../format/headerFile.html";
+include "../private/format/headerFile.html";
 
-;$joystickFolder="../productTxt/joysticks/";
-;$buttonFolder="../productTxt/buttons/";
+;$joystickFolder="../private/productTxt/joysticks/";
+;$buttonFolder="../private/productTxt/buttons/";
 ;echo "<div id='homePage'>";
 ;echo "<div id='slideshow'>";
 ;echo"<a href='/product.php?product=bt-Sanwa%20OBSFE-30'><img alt='featured items' src='/src/featuredImages/sanwa-obsfe-preo-banner.jpg'/></a>";
 ;echo "</div>";
 ;echo "<h3>Featured Items</h3>";
 ;echo "<div id='featuredList'>";
-;$featuredFile="../productTxt/featuredList.php"
+;$featuredFile="../private/productTxt/featuredList.php"
 ;$BList="";
 ;$JList="";
 ;eval(file_get_contents($featuredFile));
@@ -78,7 +78,7 @@ include "../format/headerFile.html";
 ;echo "</div>";
 ;echo "</div>";
 
-include "../format/footerFile.html";
+include "../private/format/footerFile.html";
 //https://www.w3schools.com/jsref/tryit.asp?filename=tryjsref_touchmove2 FEATURED
 //https://www.w3schools.com/jsref/tryit.asp?filename=tryjsref_transitionend idk where
 ;?>

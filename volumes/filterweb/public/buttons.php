@@ -2,7 +2,7 @@
 
 //;echo "<div id='filters'><p>BUTONS PER FILTRAR PER MARCA</p>
 ;
-include "../format/headerFile.html";
+require "../private/format/headerFile.html";
 ;echo "<script src=\"scripts/products_script.js\"></script>"
 ;echo "<h1>Buttons</h1><hr>";
 ;echo "<div id='filters'>
@@ -14,7 +14,7 @@ include "../format/headerFile.html";
         </div>";
 //;$scanner=glob("productTxt/buttons/bt-*.php");
 //;$scanner=glob("productTxt/joysticks/js-*.php");
-;$scanner=glob("../productTxt/buttons/bt-*.php");
+;$scanner=glob("../private/productTxt/buttons/bt-*.php");
 ;echo "<div id='productList'>";
 
 ;foreach ($scanner as $product) {

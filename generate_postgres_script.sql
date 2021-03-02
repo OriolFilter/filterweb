@@ -6,7 +6,8 @@
 CREATE TABLE if not exists users (
       user_id serial,
       username VARCHAR ( 20 ) UNIQUE NOT NULL,
-      password VARCHAR ( 60 ) NOT NULL, /* crypted and salted, returns 60 lenght  */
+--       password VARCHAR ( 60 ) NOT NULL, /* crypted and salted, returns 60 lenght  OLD*/
+      password  NOT NULL, /* SCRAM */
       email VARCHAR ( 255 ) UNIQUE NOT NULL,
 --                          role_id serial NOT NULL,
       created_on TIMESTAMP DEFAULT now(),
@@ -239,45 +240,40 @@ CREATE TABLE if not exists address (
 -- Falta:
 
 -- Triggers
--- Routine
+-- Functions
 
--- Routines
+
+-- Functions
 
 CREATE EXTENSION pgcrypto; -- Crypt extension
+
 -- https://www.postgresql.org/docs/8.3/pgcrypto.html
+ /* example select from password given*/
 
--- CREATE or replace PROCEDURE check_user(uname users.username%TYPE, passwd varchar(60))
--- --     LANGUAGE plpgsql
---     LANGUAGE sql
--- AS $$
---     select uname,password from users where username= uname and password = passwd;
---
--- --     insert into users (username, password, email) values ('test','test','email');
--- --     select from
--- -- INSERT INTO tbl VALUES (a);
--- -- INSERT INTO tbl VALUES (b);
--- $$;
 
--- https://www.educba.com/postgresql-procedures/
--- https://www.enterprisedb.com/postgres-tutorials/everything-you-need-know-about-postgres-stored-procedures-and-functions
--- https://docs.oracle.com/cd/E11882_01/timesten.112/e21639/exceptions.htm#TTPLS193
+CREATE or replace function sanitize_text(p_text varchar)
+returns text as $$
+declare
+    new_text varchar;
+begin
+    return p_text;
 
--- CREATE or replace function check_login(uname users.username%TYPE, passwd varchar(60)) returns integer as $$
--- begin
---     select * from users;
---     return 1;
--- end;
--- $$ LANGUAGE plpgsql
+end; $$ LANGUAGE plpgsql;
 
--- CREATE OR REPLACE FUNCTION test(i integer) RETURNS integer AS $$
-CREATE or replace function test(uname users.username%TYPE, passwd varchar(60)) returns integer as
-$$
+CREATE or replace function check_login(p_uname users.username%TYPE, p_passwd users.password%TYPE)
+    returns boolean as $$
+declare
+    user_found boolean;
 BEGIN
---     RETURN i + 1;
---  select username from users;
- RETURN 2;
+    select into user_found (case when exists (select from users where username=p_uname and password=crypt(p_passwd,password))
+                     then 1
+                 else 0
+        end) as found;
+    raise notice 'hey';
+    RETURN false;
 END;
 $$ LANGUAGE plpgsql;
+
 
 
 -- Generate random string (will be used to generate random tokens)

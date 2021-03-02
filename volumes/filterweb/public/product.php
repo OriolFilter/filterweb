@@ -13,7 +13,7 @@ $linkProd='#';
 
 $filePath="$prodFolder"."$productName".".php";
 
-include "../format/headerFile.html";
+include "../private/format/headerFile.html";
 if (file_exists($filePath)){
 //eval (file_get_contents("../products/bt-Sanwa OBSFE-30.php"));
 eval (file_get_contents($filePath));
@@ -74,7 +74,7 @@ echo "</div>";
     echo "<div id='error'>Couldn't find what you are looking for!</div>";
 }
 
-include "../format/footerFile.html";
+include "../private/format/footerFile.html";
 
 
 //https://www.w3schools.com/php/php_forms.asp
