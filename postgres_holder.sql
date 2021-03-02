@@ -30,4 +30,9 @@ select * from check_login('test2','$2a$06$SPbehnRawRT8wRukc.Fsuuwk39G.QbNuV53QMk
 select * from test('test2','$2a$06$SPbehnRawRT8wRukc.Fsuuwk39G.QbNuV53QMksTWITJLQQDfKZby');
 select * from check_login('test2','$2a$06$SPbehnRawRT8wRukc.Fsuuwk39G.QbNuV53QMksTWITJLQQDfKZby');
 
--- select * from test(1);
+select * from test(1);
+-- select into user_found (case when exists (select from users where username=p_uname and password=crypt(p_passwd,password))
+--                                      then 1
+--                                  else 0
+--         end) as found;
+select (case when exists (select regexp_matches('emnail@mailail.mail','^[a-zA-Z0-9.!#$%&''*+=?^_`{z|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$'))then 1 else 0 end );

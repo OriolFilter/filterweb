@@ -1,5 +1,5 @@
 <?php
-;require '../../../private/global_vars.php';
+;require '../../private/global_vars.php';
 ;// Exceptions
 ;class MissingField extends Exception { };
 ;class LoginError extends Exception { };

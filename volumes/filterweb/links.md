@@ -17,3 +17,8 @@ https://www.php.net/manual/es/tutorial.forms.php
 [AJAX]\
 https://www.w3schools.com/php/php_ajax_php.asp
 https://es.stackoverflow.com/questions/126200/ajax-post-request
+
+[REGEX]
+https://www.postgresql.org/docs/9.3/functions-matching.html
+https://stackoverflow.com/questions/38945030/regex-to-match-alphanumeric-query-rows-that-contain-numbers-in-postgresql
+https://www.w3resource.com/javascript/form/email-validation.php

@@ -6,8 +6,8 @@
 CREATE TABLE if not exists users (
       user_id serial,
       username VARCHAR ( 20 ) UNIQUE NOT NULL,
---       password VARCHAR ( 60 ) NOT NULL, /* crypted and salted, returns 60 lenght  OLD*/
-      password  NOT NULL, /* SCRAM */
+      password VARCHAR ( 20 ) NOT NULL, /* crypted and salted, returns 60 lenght  OLD*/
+--       password  NOT NULL, /* SCRAM */
       email VARCHAR ( 255 ) UNIQUE NOT NULL,
 --                          role_id serial NOT NULL,
       created_on TIMESTAMP DEFAULT now(),
@@ -250,6 +250,44 @@ CREATE EXTENSION pgcrypto; -- Crypt extension
 -- https://www.postgresql.org/docs/8.3/pgcrypto.html
  /* example select from password given*/
 
+CREATE or replace function is_alphanumeric(p_mail varchar)
+    returns boolean as $$
+declare
+
+begin
+end; $$ language plpgsql;
+
+CREATE or replace function validate_mail(p_mail varchar)
+    returns boolean as $$
+declare
+v_mail bool;
+begin
+    select into v_mail (
+        case when exists (
+        select regexp_matches(p_mail,'^[a-zA-Z0-9.!#$%&''*+/=?^_`{|}~-]+@[a-zA-Z10-9-]+\.+[a-zA-Z0-9-]+$')
+        )
+        then 1
+        else 0
+        end );
+    return v_mail; /*return true or false if email matches regex*/
+    /* text@text.text */
+end; $$ language plpgsql;
+
+
+
+
+-- CREATE or replace function create_user(p_user users.username%TYPE, p_passwd users.password%TYPE,p_email users.password%TYPE)
+--     returns boolean as $$
+-- declare
+--     user_found boolean;
+-- BEGIN
+--     select into user_found (case when exists (select from users where username=p_uname and password=crypt(p_passwd,password))
+--                                      then 1
+--                                  else 0
+--         end) as found;
+--     RETURN user_found;
+-- END;
+-- $$ LANGUAGE plpgsql;
 
 CREATE or replace function sanitize_text(p_text varchar)
 returns text as $$
@@ -269,10 +307,22 @@ BEGIN
                      then 1
                  else 0
         end) as found;
-    raise notice 'hey';
-    RETURN false;
+    RETURN user_found;
 END;
 $$ LANGUAGE plpgsql;
+
+
+
+CREATE or replace function create_user(p_user users.username%TYPE, p_passwd users.password%TYPE,p_email users.password%TYPE)
+    returns boolean as $$
+declare
+--     user_found boolean;
+BEGIN
+--     insert into
+
+END;
+$$ LANGUAGE plpgsql;
+
 
 
 
