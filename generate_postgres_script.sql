@@ -6,11 +6,11 @@
 CREATE TABLE if not exists users (
       user_id serial,
       username VARCHAR ( 20 ) UNIQUE NOT NULL,
-      password VARCHAR ( 20 ) NOT NULL, /* crypted and salted, returns 60 lenght  OLD*/
---       password  NOT NULL, /* SCRAM */
-      email VARCHAR ( 255 ) UNIQUE NOT NULL,
+      password VARCHAR ( 60 ) NOT NULL, /* crypted and salted, returns 60 lenght */
+--       email VARCHAR ( 255 ) UNIQUE NOT NULL,
+      email bytea ( 255 ) UNIQUE NOT NULL,
 --                          role_id serial NOT NULL,
-      created_on TIMESTAMP DEFAULT now(),
+      created_on TIMESTAMP DEFAULT now() NOT NULL,
 --                          last_login TIMESTAMP,
       PRIMARY KEY (user_id)
 --                          CONSTRAINT fk_role FOREIGN KEY (role_id) REFERENCES role (role_id)
@@ -250,15 +250,29 @@ CREATE EXTENSION pgcrypto; -- Crypt extension
 -- https://www.postgresql.org/docs/8.3/pgcrypto.html
  /* example select from password given*/
 
-CREATE or replace function is_alphanumeric(p_mail varchar)
-    returns boolean as $$
+CREATE or replace procedure is_alphanumeric(p_string varchar)
+as $$
 declare
-
+--     not_alphanumeric exception;
+    v_string bool;
 begin
+    select into v_string (
+                             case when exists (
+                                     select regexp_matches(p_string,'^[a-zA-Z0-9]+$')
+                                 )
+                                      then 1
+                                  else 0
+                                 end );
+    /*raises exception if not alphanumeric*/
+    if not v_string then
+        raise exception 'not_alphanumeric';
+    end if;
 end; $$ language plpgsql;
 
-CREATE or replace function validate_mail(p_mail varchar)
-    returns boolean as $$
+
+
+CREATE or replace procedure validate_mail(p_mail varchar)
+    as $$
 declare
 v_mail bool;
 begin
@@ -269,12 +283,14 @@ begin
         then 1
         else 0
         end );
-    return v_mail; /*return true or false if email matches regex*/
+    if not v_mail then
+--         raise exception 'not_valid_email';
+            raise exception
+                using errcode = 'P0003',
+                message = 'The email given does not meet the requirements.';
+    end if; /*raises exception if email matches regex*/
     /* text@text.text */
 end; $$ language plpgsql;
-
-
-
 
 -- CREATE or replace function create_user(p_user users.username%TYPE, p_passwd users.password%TYPE,p_email users.password%TYPE)
 --     returns boolean as $$
@@ -312,15 +328,21 @@ END;
 $$ LANGUAGE plpgsql;
 
 
-
-CREATE or replace function create_user(p_user users.username%TYPE, p_passwd users.password%TYPE,p_email users.password%TYPE)
-    returns boolean as $$
+CREATE or replace procedure create_user(p_user users.username%TYPE, p_passwd users.password%TYPE,p_email users.password%TYPE)
+as $$
 declare
---     user_found boolean;
+--     not_valid_email exception;
 BEGIN
+    call validate_mail(p_email);
 --     insert into
-
+--     insert into users(username, password, email) values (p_)
+EXCEPTION
+    when sqlstate 'P0003' then
+--     when others then
+        raise notice e'Error in the given mail';
+--     raise notice 'fuck';
 END;
+
 $$ LANGUAGE plpgsql;
 
 

@@ -36,3 +36,11 @@ select * from test(1);
 --                                  else 0
 --         end) as found;
 select (case when exists (select regexp_matches('emnail@mailail.mail','^[a-zA-Z0-9.!#$%&''*+=?^_`{z|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$'))then 1 else 0 end );
+
+-- select validate_mail('mail123@as')
+call is_alphanumeric('casa123asdas');
+-- drop function is_alphanumeric(p_string varchar)
+
+
+call create_user('test2',crypt('test', gen_salt('bf')),'mail.mail@mailmai');
+drop function validate_mail(p_mail varchar);
