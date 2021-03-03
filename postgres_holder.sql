@@ -69,3 +69,5 @@ delete from users where username='test';
 select encode(cast('test' as bytea),'hex');
 select pg_typeof(encode(cast('test' as bytea),'hex'));
 call create_user('test2','test','mail.mail@mailm.ai');
+drop table activate_account_tokens;
+drop table activated_users;

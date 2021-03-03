@@ -50,3 +50,34 @@ begin
     /* text@text.text */
 end; $$ language plpgsql;
 ```
+
+### create_user
+```postgresql
+CREATE or replace procedure create_user(p_user users.username%TYPE, p_passwd varchar,p_email varchar)
+as $$
+declare
+--     not_valid_email exception;
+--     row text;
+BEGIN
+call validate_username(p_user);
+call validate_password(p_passwd);
+call validate_mail(p_email);
+--     insert into
+insert into users(username, password, email) values (p_user,crypt(p_passwd, gen_salt('bf',8)),cast(encode(cast(p_email as bytea),'hex') as bytea));
+commit;
+EXCEPTION
+when sqlstate 'P0001' then
+raise notice e'Error in the given username';
+when sqlstate 'P0002' then
+raise notice e'Error in the given password';
+when sqlstate 'P0003' then
+raise notice e'Error in the given mail';
+when unique_violation then
+--     when sqlstate '23505' then
+--         set context
+raise notice 'Duplicate username or email, let''s see how we fix it...';
+
+END;
+
+$$ LANGUAGE plpgsql;
+```

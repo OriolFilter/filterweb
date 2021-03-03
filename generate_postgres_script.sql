@@ -11,9 +11,32 @@ CREATE TABLE if not exists users (
       email bytea UNIQUE NOT NULL, /* al final si es guarda en hexa perque estalvies espais i no importen les majuscules*/
 --                          role_id serial NOT NULL,
       created_on TIMESTAMP DEFAULT now() NOT NULL,
+      updated_on TIMESTAMP DEFAULT now() NOT NULL,
+      last_login TIMESTAMP DEFAULT now() NOT NULL,
 --                          last_login TIMESTAMP,
       PRIMARY KEY (user_id)
 --                          CONSTRAINT fk_role FOREIGN KEY (role_id) REFERENCES role (role_id)
+);
+
+-- Activate account tokens
+CREATE TABLE if not exists activate_account_tokens (
+    activate_account_id serial,
+    activate_account_token VARCHAR (200) NOT NULL UNIQUE,
+--     token_code varchar (200) UNIQUE NOT NULL,
+    user_id integer NOT NULL,
+    created_on TIMESTAMP DEFAULT now(),
+    expires_on TIMESTAMP DEFAULT now() + '30 minute'::interval,
+    PRIMARY KEY (activate_account_id),
+    CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id)
+);
+
+CREATE table activated_users (
+ enabled_users_id serial,
+ user_id integer NOT NULL,
+ enabled_bool boolean NOT NULL DEFAULT FALSE,
+ activation_date TIMESTAMP DEFAULT NULL,
+ PRIMARY KEY (enabled_users_id),
+ CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id)
 );
 
 -- Login tokens / session
@@ -36,18 +59,6 @@ CREATE TABLE if not exists password_recovery_tokens (
         created_on TIMESTAMP DEFAULT now(),
         expires_on TIMESTAMP DEFAULT now() + '30 minute'::interval,
         PRIMARY KEY (password_recovery_id),
-        CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id)
-);
-
--- Activate account tokens
-CREATE TABLE if not exists activate_account_tokens (
-        activate_account_id serial,
-        activate_account_token VARCHAR (200) NOT NULL UNIQUE,
-        token_code varchar (200) UNIQUE NOT NULL,
-        user_id integer NOT NULL,
-        created_on TIMESTAMP DEFAULT now(),
-        expires_on TIMESTAMP DEFAULT now() + '30 minute'::interval,
-        PRIMARY KEY (activate_account_id),
         CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id)
 );
 
@@ -94,14 +105,6 @@ CREATE TABLE if not exists activate_account_tokens (
         created_on TIMESTAMP NOT NULL,
         expires_on TIMESTAMP DEFAULT now() + '2880 minute'::interval,
         PRIMARY KEY (activate_token_id),
-        CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id)
-);
-
-CREATE table enabled_users (
-        enabled_users_id serial,
-        user_id integer NOT NULL,
-        enabled_bool boolean NOT NULL ,
-        PRIMARY KEY (enabled_users_id),
         CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id)
 );
 
@@ -366,14 +369,16 @@ CREATE or replace procedure create_user(p_user users.username%TYPE, p_passwd var
 as $$
 declare
 --     not_valid_email exception;
---     row text;
+    v_uid integer;
 BEGIN
     call validate_username(p_user);
     call validate_password(p_passwd);
     call validate_mail(p_email);
 --     insert into
     insert into users(username, password, email) values (p_user,crypt(p_passwd, gen_salt('bf',8)),cast(encode(cast(p_email as bytea),'hex') as bytea));
-    commit;
+    select into v_uid user_id from users where username=p_user;
+    insert into activated_users(user_id) values (v_uid);
+--     commit; /* Postgres manages commit or rollback alone*/
 EXCEPTION
     when sqlstate 'P0001' then
         raise notice e'Error in the given username';
