@@ -522,8 +522,8 @@ create or replace procedure proc_activate_account(p_token activate_account_token
         -- P0040 token null
         -- P0041 not found in the database/valid
         -- P0042 token expired
-        -- P0043 user already enabled
-        -- P0044 token used
+        -- P0043 token used
+        -- P0044 user already enabled
             if p_token='' then
                 raise exception
                     using errcode = 'P0040',
@@ -541,14 +541,20 @@ create or replace procedure proc_activate_account(p_token activate_account_token
                         message = 'The token has expired';
                 else null;
             end case;
-            case when not exists(select true from activate_account_tokens aat, activated_accounts aa where aat.activation_account_token=p_token and aa.user_id=aat.user_id)
+            case when not exists(select true from activate_account_tokens where activation_account_token=p_token and used_bool=false)
                 then raise exception
                     using errcode = 'P0043',
+                        message = 'The token is already used';
+                end case;
+            case when not exists(select true from activate_account_tokens aat, activated_accounts aa where aat.activation_account_token=p_token and aa.user_id=aat.user_id)
+                then raise exception
+                    using errcode = 'P0044',
                         message = 'The user is already enabled';
                 end case;
---             select into u_id user_id from activate_account_tokens where activation_account_token=p_token;
---             update activate_account_tokens set used_bool=true where activation_account_token=p_token;
---             update activated_accounts aa set activated_bool=true where u_id=aa.user_id;
+
+            select into u_id user_id from activate_account_tokens where activation_account_token=p_token;
+            update activate_account_tokens set used_bool=true where activation_account_token=p_token;
+            update activated_accounts aa set activated_bool=true,activation_date=now() where u_id=aa.user_id;
     end;
 $$  language plpgsql;
 

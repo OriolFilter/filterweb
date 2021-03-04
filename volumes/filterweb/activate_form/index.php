@@ -72,25 +72,19 @@ $activation_token=$_GET['activation_token'];
       ;$err=pg_last_notice($dbconn);
       ;$res=pg_get_result($dbconn);
       ;$state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
-      if ($state=='P0021'){
-            echo 'username already in use';
-      } elseif ($state=='P0023') {
-          echo 'email already in use';
+      if ($state=='P0040'){
+            echo 'The token is null or empty';
+      } elseif ($state=='P0041') {
+          echo 'The token was not found in the database/valid';
+      } elseif ($state=='P0042') {
+          echo 'The token has expired';
+      } elseif ($state=='P0043') {
+          echo 'The token is already used';
+      } elseif ($state=='P0044') {
+          echo 'The user is already enabled';
       }
       else {
-//          ;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=shop_db user=test password=test") or die('connection failed');
-          ;$result = pg_prepare($dbconn, "get_activation_token", 'select func_return_activation_code_from_username($1)');
-          ;$result = pg_execute($dbconn, "get_activation_token",array($uname));
-            if (!$result) {
-                echo 'ERROR GENERATING THE ACTIVATION CODE';
-            } else {
-                $activation_token = pg_fetch_result($result,0,0);
-
-                send_activation_code_email($email,$activation_token,$HOSTNAME);
-//                send_activation_code_email($email,$activation_token,$HOSTNAME);
-            }
-//          echo 'other errors or not errors.';
-
+          echo $state;
       }
   } else {throw new ErrorConnectingToDatabase('There was an error communicating with the database, contact an administrator.');}
 
