@@ -1,6 +1,6 @@
 <?php
 ;
-include "../format/headerFile.html";
+include "../private/format/headerFile.html";
 ;$message="Your account been activated correctly";
 ;echo"
     <div id='logIn'>
@@ -16,7 +16,7 @@ include "../format/headerFile.html";
 ";
 ;
 ;
-include "../format/footerFile.html";
+include "../private/format/footerFile.html";
 ;?>
 <!--                <form action='/forms/login_form.php' method='post' id='logInForm'>-->
 <!--        <div id='logInBox'>-->

@@ -35,8 +35,8 @@ function send_activation_code_email(string $email,string $activation_code, strin
         //Content
         $mail->isHTML(true);                                  //Set email format to HTML
         $mail->Subject = 'Welcome to arcadeshop, here is your activation code';
-        $mail->Body    = sprintf("Thanks for using our services, now that you have registered, it's time to activate your account!\n press the following link in order to activate your account: <a href='%'>ACTIVATE ACCOUNT<a/>",$link);
-        $mail->AltBody = sprintf("Thanks for using our services, now that you have registered, it's time to activate your account!\n access the following link in order to activate your account: %",$link);
+        $mail->Body    = sprintf("Thanks for using our services, now that you have registered, it's time to activate your account!\n press the following link in order to activate your account: <a href='%s'>ACTIVATE ACCOUNT<a/>",$link);
+        $mail->AltBody = sprintf("Thanks for using our services, now that you have registered, it's time to activate your account!\n access the following link in order to activate your account: %s",$link);
 
         $mail->send();
         echo 'Message has been sent';

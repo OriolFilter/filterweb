@@ -545,11 +545,13 @@ create or replace procedure proc_activate_account(p_token activate_account_token
                 then raise exception
                     using errcode = 'P0043',
                         message = 'The token is already used';
+                else null;
                 end case;
             case when not exists(select true from activate_account_tokens aat, activated_accounts aa where aat.activation_account_token=p_token and aa.user_id=aat.user_id)
                 then raise exception
                     using errcode = 'P0044',
                         message = 'The user is already enabled';
+                else null;
                 end case;
 
             select into u_id user_id from activate_account_tokens where activation_account_token=p_token;
