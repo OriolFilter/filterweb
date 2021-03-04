@@ -88,8 +88,48 @@ select random_string(60);
 select * from users;
 call proc_generate_activation_code(2);
 select * from activation_account_tokens where user_id=2;
-select * ge
+-- select * ge
 -- drop procedure create_activation_code(p_uid integer);
 -- drop procedure generate_activation_code(p_uid integer);
 -- call generate_activation_code(58);
 select random_string(60) as generated_string, user_id from activation_account_tokens;
+SELECT * FROM users;
+-- select generate_act
+call proc_generate_activation_code(2);
+call proc_generate_activation_code(2);
+
+-- select * from activate_account_tokens;
+select * from func_generate_activation_code(2);
+-- select * from activate_account_tokens;
+select * from activation_account_tokens;
+select * from users;
+-- drop procedure create_user(p_user varchar, p_passwd varchar, p_email varchar);
+-- drop procedure create_user(p_user varchar, p_passwd varchar, p_email varchar);
+-- select true from users where username=p_user;
+-- drop procedure register_user(p_user varchar, p_passwd varchar, p_email varchar);
+call register_user('user','pass','myemail@abada.asas');
+drop table activation_account_tokens;
+-- drop table enabled_users;
+drop table activation_account_tokens;
+drop table activated_accounts;
+drop table login_tokens;
+drop table password_recovery_tokens;
+drop table activate_account_tokens;
+drop table users;
+
+select * from users;
+select u.user_id,u.username,a.activated_bool from users u,activated_accounts a where a.user_id=u.user_id and u.username='testing3';
+select u.user_id,u.username,a.activation_account_token from users u,activation_account_tokens a where a.user_id=u.user_id and u.username='tesstinssxgss1';
+select true from activated_accounts a, users u where u.username='testing3' and a.activated_bool=true and a.user_id=u.user_id;
+select true from users where username='testing2';
+select func_return_activation_code_from_username('testing3');
+select func_return_generate_activation_code_from_id(2);
+
+call proc_generate_activation_code_from_id(2);
+call proc_generate_activation_code_from_username('testing3');
+select func_return_activation_code_from_username('testing4');
+
+select u.username , aa.activated_bool from users u,activate_account_tokens at, activated_accounts aa where at.activation_account_token='UUYV5cuxX9a3g7p6WAL2JFcRHnXNSl5RQnJCULmjutmfut2xKZsrqZaDt9L9' and aa.user_id=at.user_id and aa.user_id=u.user_id;
+-- call proc_activate_account('VPokLaWTgdQvbEdFs9WcXIofVRvgfM8cMQPonqA7wx1l7yssmaCr7k66rmR0');
+-- call proc_activate_account('b331fHxo5YM86cC9WbdmgIuHOdiSEmCsPPl1P5EoUKNW5b1UuWLe2FtokfqR');
+call proc_activate_account('UUYV5cuxX9a3g7p6WAL2JFcRHnXNSl5RQnJCULmjutmfut2xKZsrqZaDt9L9');

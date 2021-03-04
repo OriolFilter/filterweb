@@ -1,4 +1,5 @@
 <?php
+;/*Register form*/
 ;require '../../private/global_vars.php';
 ;// Exceptions
 ;class MissingField extends Exception { };

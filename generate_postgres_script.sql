@@ -19,23 +19,24 @@ CREATE TABLE if not exists users (
 );
 
 -- Activate account tokens
-CREATE TABLE if not exists activation_account_tokens (
+CREATE TABLE if not exists activate_account_tokens (
     activation_account_token_id serial,
     activation_account_token VARCHAR (200) NOT NULL UNIQUE,
 --     token_code varchar (200) UNIQUE NOT NULL,
     user_id integer NOT NULL,
+    used_bool bool DEFAULT false NOT NULL,
     created_on TIMESTAMP DEFAULT now(),
     expires_on TIMESTAMP DEFAULT now() + '30 minute'::interval,
     PRIMARY KEY (activation_account_token_id),
     CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id)
 );
 
-CREATE table enabled_users (
- enabled_users_id serial,
+CREATE table if not exists activated_accounts (
+ activated_users_id serial,
  user_id integer NOT NULL,
- enabled_bool boolean NOT NULL DEFAULT FALSE,
+ activated_bool boolean NOT NULL DEFAULT FALSE,
  activation_date TIMESTAMP DEFAULT NULL,
- PRIMARY KEY (enabled_users_id),
+ PRIMARY KEY (activated_users_id),
  CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id)
 );
 
@@ -97,16 +98,16 @@ CREATE TABLE if not exists login_tokens (
         CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id)
 );
 
--- Activate account tokens
-CREATE TABLE if not exists activate_account_tokens (
-        activate_token_id serial,
-        user_id integer NOT NULL ,
-        token_code varchar (200) UNIQUE NOT NULL,
-        created_on TIMESTAMP NOT NULL,
-        expires_on TIMESTAMP DEFAULT now() + '2880 minute'::interval,
-        PRIMARY KEY (activate_token_id),
-        CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id)
-);
+-- -- Activate account tokens /*OLD*/
+-- CREATE TABLE if not exists activate_account_tokens (
+--         activate_token_id serial,
+--         user_id integer NOT NULL ,
+--         token_code varchar (200) UNIQUE NOT NULL,
+--         created_on TIMESTAMP NOT NULL,
+--         expires_on TIMESTAMP DEFAULT now() + '2880 minute'::interval,
+--         PRIMARY KEY (activate_token_id),
+--         CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id)
+-- );
 
 
 -- Products Related
@@ -252,8 +253,24 @@ P0001 username
 P0002 password
 P0003 email
 
--- Select errors
+-- Select errors not found
 -- P0010 u_id wasn't found
+
+-- Duplicated values
+-- P0021 duplicated username
+-- P0023 duplicated email
+
+
+-- Query not desired result
+-- P0030 user_id not found
+-- P0031 username not found
+-- P0034 account is already enabled
+
+-- Working with activation tokens
+-- P0040 token not found/not valid
+-- P0041 token expired
+-- P0042 token used
+-- P0043 user already enabled
 */
 -- Functions
 
@@ -369,68 +386,168 @@ END;
 $$ LANGUAGE plpgsql;
 
 
-CREATE or replace procedure create_user(p_user users.username%TYPE, p_passwd varchar,p_email varchar)
+CREATE or replace procedure register_user(p_username users.username%TYPE, p_passwd varchar,p_email varchar)
 as $$
 declare
 --     not_valid_email exception;
     v_uid integer;
 BEGIN
-    call validate_username(p_user);
+    call validate_username(p_username);
     call validate_password(p_passwd);
     call validate_mail(p_email);
 --     insert into
-    insert into users(username, password, email) values (p_user,crypt(p_passwd, gen_salt('bf',8)),cast(encode(cast(p_email as bytea),'hex') as bytea));
-    select into v_uid user_id from users where username=p_user;
-    insert into enabled_users(user_id) values (v_uid);
-    raise notice e'>> %',v_uid;
+    case when exists(select true from users where username=p_username)
+        then raise exception
+            using errcode = 'P0021',
+                message = 'This username is alredy in use';
+        else null;
+    end case;
+    case when exists(select true from users where email=cast(encode(cast(p_email as bytea),'hex') as bytea))
+        then raise exception
+            using errcode = 'P0023',
+                message = 'This email is alredy in use';
+        else null;
+        end case;
+    insert into users(username, password, email) values (p_username,crypt(p_passwd, gen_salt('bf',8)),cast(encode(cast(p_email as bytea),'hex') as bytea));
+    select into v_uid user_id from users where username=p_username;
+    insert into activated_accounts(user_id) values (v_uid);
+--     raise notice e'>> %',v_uid;
 
 --     commit; /* Postgres manages commit or rollback alone*/
-EXCEPTION
+-- EXCEPTION
 
-    when sqlstate 'P0001' then
-        raise notice e'Error in the given username';
-    when sqlstate 'P0002' then
-        raise notice e'Error in the given password';
-    when sqlstate 'P0003' then
-        raise notice e'Error in the given mail';
-    when unique_violation then
+--     when sqlstate 'P0001' then
+--         raise notice e'Error in the given username';
+--     when sqlstate 'P0002' then
+--         raise notice e'Error in the given password';
+--     when sqlstate 'P0003' then
+--         raise notice e'Error in the given mail';
+--     when others then raise notice 'hah';
+--     when unique_violation then
 --     when sqlstate '23505' then
-        raise notice 'Duplicate username or email, let''s see how we fix it...';
+--         raise notice 'Duplicate username or email, let''s see how we fix it...';
 END;
 
 $$ LANGUAGE plpgsql;
 
-
-
-create or replace procedure proc_generate_activation_code(p_uid integer)
+create or replace procedure proc_generate_activation_code_from_id(p_uid integer)
 as $$
 declare
     v_string varchar(60);
 begin
+    /*check user not enabled*/
+    case when exists(select true from activated_accounts where user_id=p_uid and activated_bool=true)
+        then raise exception
+            using errcode = 'P0034',
+                message = 'This account is already activated';
+        else null;
+    end case;
     select into v_string random_string(60);
-    while (select true from activate_account_tokens where token_code=v_string) loop
+    while (select true from activate_account_tokens where activation_account_token=v_string) loop
             select into v_string random_string(60);
         end loop;
-
-
-    insert into activation_account_tokens(user_id,activation_account_token) values(p_uid);
+    insert into activate_account_tokens(user_id,activation_account_token) values(p_uid,v_string);
 exception
     when sqlstate '23503' then
     raise notice e'ERROR: User with u_id [%] wasn''t found',p_uid;
 end;
 $$ LANGUAGE plpgsql;
 
-create or replace procedure func_return_generate_activation_code(p_uid integer)
+create or replace procedure proc_generate_activation_code_from_username(p_username varchar)
 as $$
 declare
-
+    v_uid integer;
 begin
-    insert into enabled_users(user_id) values (p_uid);
+    /*get uid then call the other command*/
+    case when not exists(select user_id from users where username=p_username)
+        then raise exception
+            using errcode = 'P0031',
+                message = 'The given username wasn''t found';
+        else
+            select into v_uid user_id from users where username=p_username;
+        end case;
+    call proc_generate_activation_code_from_id(v_uid);
+
+end;
+$$ LANGUAGE plpgsql;
+
+create or replace function func_return_generate_activation_code_from_id(p_uid integer) returns varchar(60)
+as $$
+declare
+    v_string varchar(60);
+begin
+    /*check user not enabled*/
+    case when exists(select true from activated_accounts where user_id=p_uid and activated_bool=true)
+        then raise exception
+            using errcode = 'P0034',
+                message = 'This account is already activated';
+        else null;
+        end case;
+    select into v_string random_string(60);
+    while (select true from activate_account_tokens where activation_account_token=v_string) loop
+            select into v_string random_string(60);
+        end loop;
+    insert into activate_account_tokens(user_id,activation_account_token) values(p_uid,v_string);
+    return v_string;
 exception
     when sqlstate '23503' then
         raise notice e'ERROR: User with u_id [%] wasn''t found',p_uid;
 end;
 $$ LANGUAGE plpgsql;
+
+create or replace function func_return_activation_code_from_username(p_username varchar)
+returns varchar(60)
+as $$
+declare
+    v_uid integer;
+    v_string varchar(60);
+begin
+    /*get uid then call the other command*/
+    case when not exists(select user_id from users where username=p_username)
+        then raise exception
+        using errcode = 'P0031',
+            message = 'The given username wasn''t found';
+        else
+            select into v_uid user_id from users where username=p_username;
+    end case;
+    select into v_string func_return_generate_activation_code_from_id(v_uid);
+    return v_string;
+
+
+end;
+$$ LANGUAGE plpgsql;
+
+create or replace procedure proc_activate_account(p_token activate_account_tokens.activation_account_token%type) as $$
+    declare
+        u_id integer;
+        begin
+            case when not exists(select true from activate_account_tokens where activation_account_token=p_token) then
+
+                end case;
+            select into u_id user_id from activate_account_tokens where activation_account_token=p_token;
+            update activate_account_tokens set used_bool=true where activation_account_token=p_token;
+            update activated_accounts aa set activated_bool=true where u_id=aa.user_id;
+    end;
+$$  language plpgsql;
+
+-- create or replace function func_generate_activation_code(p_uid integer) returns varchar
+-- as
+-- declare
+--     v_string varchar(60);
+-- begin
+--     select into v_string random_string(60);
+--     while (select true from activate_account_tokens where token_code=v_string) loop
+--             raise notice e'loop';
+--             select into v_string random_string(60);
+--         end loop;
+--     insert into activate_account_tokens(user_id,activation_account_token) values(p_uid,v_string);
+--     raise notice e'inserted';
+--     return v_string;
+-- exception
+--     when sqlstate '23503' then
+--         raise notice e'ERROR: User with u_id [%] wasn''t found',p_uid;
+-- end;
+-- $$ LANGUAGE plpgsql;
 
 
 
