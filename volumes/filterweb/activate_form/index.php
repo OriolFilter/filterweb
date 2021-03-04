@@ -65,10 +65,10 @@ $activation_token=$_GET['activation_token'];
 //    https://www.php.net/manual/es/function.pg-prepare.php
 ;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=shop_db user=test password=test") or die('connection failed');
   if (!pg_connection_busy($dbconn)) {
-      ;$result = pg_prepare($dbconn, "register_user_q", 'call register_user($1,$2,$3)');
+      ;$result = pg_prepare($dbconn, "register_user_q", 'call proc_activate_account($1,$2,$3)');
       ;$res=pg_get_result($dbconn);
 
-      ;$result = pg_send_execute($dbconn, "register_user_q",array($uname,$pass,$email));
+      ;$result = pg_send_execute($dbconn, "register_user_q",array($activation_token));
       ;$err=pg_last_notice($dbconn);
       ;$res=pg_get_result($dbconn);
       ;$state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);

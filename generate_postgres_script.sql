@@ -294,8 +294,6 @@ begin
     /*raises exception if not alphanumeric*/
 end; $$ language plpgsql;
 
-
-
 CREATE or replace procedure validate_mail(p_mail varchar)
 as $$
 declare
@@ -384,7 +382,6 @@ BEGIN
     RETURN user_found;
 END;
 $$ LANGUAGE plpgsql;
-
 
 CREATE or replace procedure register_user(p_username users.username%TYPE, p_passwd varchar,p_email varchar)
 as $$
@@ -520,13 +517,38 @@ $$ LANGUAGE plpgsql;
 create or replace procedure proc_activate_account(p_token activate_account_tokens.activation_account_token%type) as $$
     declare
         u_id integer;
-        begin
-            case when not exists(select true from activate_account_tokens where activation_account_token=p_token) then
-
+    begin
+        -- Working with activation tokens
+        -- P0040 token null
+        -- P0041 not found in the database/valid
+        -- P0042 token expired
+        -- P0043 user already enabled
+        -- P0044 token used
+            if p_token='' then
+                raise exception
+                    using errcode = 'P0040',
+                        message = 'The token is null or empty';
+            end if;
+            case when not exists(select true from activate_account_tokens where activation_account_token=p_token)
+                then raise exception
+                    using errcode = 'P0041',
+                        message = 'The token was not found in the database/valid';
+                else null;
+            end case;
+            case when not exists(select true from activate_account_tokens where activation_account_token=p_token and created_on<now() and expires_on>now())
+                then raise exception
+                    using errcode = 'P0042',
+                        message = 'The token has expired';
+                else null;
+            end case;
+            case when not exists(select true from activate_account_tokens aat, activated_accounts aa where aat.activation_account_token=p_token and aa.user_id=aat.user_id)
+                then raise exception
+                    using errcode = 'P0043',
+                        message = 'The user is already enabled';
                 end case;
-            select into u_id user_id from activate_account_tokens where activation_account_token=p_token;
-            update activate_account_tokens set used_bool=true where activation_account_token=p_token;
-            update activated_accounts aa set activated_bool=true where u_id=aa.user_id;
+--             select into u_id user_id from activate_account_tokens where activation_account_token=p_token;
+--             update activate_account_tokens set used_bool=true where activation_account_token=p_token;
+--             update activated_accounts aa set activated_bool=true where u_id=aa.user_id;
     end;
 $$  language plpgsql;
 

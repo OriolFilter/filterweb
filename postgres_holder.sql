@@ -119,17 +119,17 @@ drop table users;
 
 select * from users;
 select u.user_id,u.username,a.activated_bool from users u,activated_accounts a where a.user_id=u.user_id and u.username='testing3';
-select u.user_id,u.username,a.activation_account_token from users u,activation_account_tokens a where a.user_id=u.user_id and u.username='tesstinssxgss1';
+select u.user_id,u.username,a.activation_account_token,a.expires_on as expiration_date from users u,activate_account_tokens a where a.user_id=u.user_id and u.username='test';
 select true from activated_accounts a, users u where u.username='testing3' and a.activated_bool=true and a.user_id=u.user_id;
 select true from users where username='testing2';
-select func_return_activation_code_from_username('testing3');
+select func_return_activation_code_from_username('test');
 select func_return_generate_activation_code_from_id(2);
 
 call proc_generate_activation_code_from_id(2);
 call proc_generate_activation_code_from_username('testing3');
 select func_return_activation_code_from_username('testing4');
 
-select u.username , aa.activated_bool from users u,activate_account_tokens at, activated_accounts aa where at.activation_account_token='UUYV5cuxX9a3g7p6WAL2JFcRHnXNSl5RQnJCULmjutmfut2xKZsrqZaDt9L9' and aa.user_id=at.user_id and aa.user_id=u.user_id;
+-- select u.username , aa.activated_bool from users u,activate_account_tokens at, activated_accounts aa where at.activation_account_token='UUYV5cuxX9a3g7p6WAL2JFcRHnXNSl5RQnJCULmjutmfut2xKZsrqZaDt9L9' and aa.user_id=at.user_id and aa.user_id=u.user_id;
 -- call proc_activate_account('VPokLaWTgdQvbEdFs9WcXIofVRvgfM8cMQPonqA7wx1l7yssmaCr7k66rmR0');
 -- call proc_activate_account('b331fHxo5YM86cC9WbdmgIuHOdiSEmCsPPl1P5EoUKNW5b1UuWLe2FtokfqR');
 call proc_activate_account('UUYV5cuxX9a3g7p6WAL2JFcRHnXNSl5RQnJCULmjutmfut2xKZsrqZaDt9L9');
