@@ -4,7 +4,7 @@
     $contact_email='filter.web.asix@gmail.com';
     $contact_phone='+34 689543670';
     /* %1 title, %2 scripts*/
-;$top_format = '<!DOCTYPE html>
+    ;$top_format = '<!DOCTYPE html>
     <html lang="es">
     <head>
         <link rel="stylesheet" href="/src/css/main.css"/>
@@ -14,6 +14,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>%s</title>
+    %s
     </head>
     <body>
     <header>

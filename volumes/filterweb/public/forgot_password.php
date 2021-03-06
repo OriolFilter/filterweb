@@ -1,6 +1,10 @@
 <?php
 ;
-include "../private/format/headerFile.html";
+;$top_format='';
+;$bot_format='';
+;include "../private/global_vars.php";
+$title='Password Recovery';
+echo sprintf($top_format,$title,'');
 ;
 ;echo"
     <div id='logIn'>
@@ -26,7 +30,7 @@ include "../private/format/headerFile.html";
 ";
 ;
 ;
-include "../private/format/footerFile.html";
+echo $bot_format;
 ;?>
 <!--                <form action='/forms/login_form.php' method='post' id='logInForm'>-->
 <!--        <div id='logInBox'>-->

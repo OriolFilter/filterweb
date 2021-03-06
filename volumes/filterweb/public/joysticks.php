@@ -4,7 +4,7 @@
 ;$bot_format='';
 ;include "../private/global_vars.php";
 $title='Joysticks';
-echo sprintf($top_format,$title);
+echo sprintf($top_format,$title,'');
 
 ;echo "<script src='/src/js/products_script.js'></script>"
 ;echo "<h1>Joysticks</h1><hr>";

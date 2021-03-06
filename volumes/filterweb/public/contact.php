@@ -4,7 +4,7 @@
 ;$bot_format='';
 ;include "../private/global_vars.php";
 $title='Contact';
-echo sprintf($top_format,$title);
+echo sprintf($top_format,$title,'');
 ;echo "<div id='contact'>";
 ;echo "
     <script src='scripts/contact.js'></script>

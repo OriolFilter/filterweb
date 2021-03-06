@@ -1,4 +1,9 @@
 <?php
+;$top_format='';
+;$bot_format='';
+;include "../private/global_vars.php";
+$title='Log In';
+echo sprintf($top_format,$title,'');
 
 ;$prodFolder="../private/products/";
 ;$productName = $_GET['product'];
@@ -13,11 +18,10 @@ $linkProd='#';
 
 $filePath="$prodFolder"."$productName".".php";
 
-;$top_format='';
-;$bot_format='';
-;include "../private/global_vars.php";
-$title='Log In';
-echo sprintf($top_format,$title);
+
+
+
+
 if (file_exists($filePath)){
 //eval (file_get_contents("../products/bt-Sanwa OBSFE-30.php"));
     eval (file_get_contents($filePath));

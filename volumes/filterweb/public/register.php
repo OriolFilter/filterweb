@@ -2,14 +2,15 @@
 ;
 ;$top_format='';
 ;$bot_format='';
+;$scripts='';
 ;include "../private/global_vars.php";
-$title='Sign In';
-echo sprintf($top_format,$title);
+;$title='Sign In';
+;$scripts="<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>";
+echo sprintf($top_format,$title,$scripts);
 ;
 ;echo"
     <div id='signIn'>
         <script src='/src/js/signin.js'></script>
-        <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
        <div id='signInBox'>
             <div class='form - single - column'>
                 <form id='signInForm'>
@@ -28,8 +29,8 @@ echo sprintf($top_format,$title);
                         <td><input aria-label='Email confirmation' type='email2' cols='20'  id='email2' required></input></td></tr>
                     </table>
                     <span id='signInResponse' hidden></span>
-<!--                    <div id='link' onclick='register()'><ins>Sign In</ins></div> -->
-                    <button id='link'><ins>Sign In</ins></button>
+                    <div id='link' onclick='register()'><ins>Sign In</ins></div>
+                    <button type='button' id='link'><ins>Sign In</ins></button>
                 </form>
                 <p id='subform'>Already have an account? <a href='/login.php'>Log in!</a></p>
             </div>

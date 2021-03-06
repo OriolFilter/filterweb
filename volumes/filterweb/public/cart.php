@@ -1,6 +1,11 @@
 <?php
 ;
-include "../private/format/headerFile.html";
+;$top_format='';
+;$bot_format='';
+;include "../private/global_vars.php";
+;$title='Cart';
+;echo sprintf($top_format,$title,'');
+;echo "<script src='/src/js/products_script.js'></script>";
 
 echo "<div id='cart'>";
 ;echo "<script src=\"scripts/cart.js\"></script>";
@@ -73,5 +78,5 @@ echo "<div id='cart'>";
 echo "<script>startupCart()</script>"
 ;echo "</div>";
 
-include "../private/format/footerFile.html";
+echo $bot_format;
 ;?>

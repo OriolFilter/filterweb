@@ -3,8 +3,8 @@
 ;$bot_format='';
 ;include "../private/global_vars.php";
 $title='Buttons';
-echo sprintf($top_format,$title);
-;echo "<script src='/src/js/products_script.js'></script>"
+echo sprintf($top_format,$title,'');
+;echo "<script src='/src/js/products_script.js'></script>";
 ;echo "<h1>Buttons</h1><hr>";
 ;echo "<div id='filters'>
         <p>Show brands: <select id='filterList' onchange='prodFilter(document.getElementById(\"filterList\").value)'></p>

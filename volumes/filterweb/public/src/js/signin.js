@@ -1,4 +1,6 @@
-$("button").click(register());
+$(document).ready(function(){
+    $("button").click(function() {register()});
+});
 
 function register() {
     var error_obj={name:'Error Handler',error_list:[]};
@@ -84,13 +86,13 @@ function check_fields(form,error_obj){
         return false;
     }
     /* Check regex */
-    if (!/d^[a-zA-Z0-9._.-.+.]{6,20}$/g.test(form['uname'].value)){
+    if (!(/^[a-zA-Z0-9_.-.+]{6,20}$/g.test(form['uname'].value))){
         error_obj.error_list.push('3.1');
      }
-    if (!/^[a-zA-Z0-9$%/.,?!+_=-]{6,20}$/g.test(form['pass'].value)){
+    if (!(/^[a-zA-Z0-9$%/.,?!+_=-]{6,20}$/g.test(form['pass'].value))){
         error_obj.error_list.push('3.2');
      }
-    if (!/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z10-9-]+\.+[a-zA-Z0-9-]+$/g.test(form['email'].value)){
+    if (!(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z10-9-]+\.+[a-zA-Z0-9-]+$/g.test(form['email'].value))){
         error_obj.error_list.push('3.3');
      }
 
@@ -116,14 +118,16 @@ function post(form){
     var uname=form['uname'].value;
     var pass=form['pass'].value;
     var email=form['email'].value;
-    $.post("/",
+    alert(1231231);
+    $.post("/register_form/",
         {
             uname: uname,
             pass: pass,
             email: email
         },
         function(data,status){
-            alert("Data: " + data + "\nStatus: " + status);
+            if (status==sucess)
+            // alert("Data: " + data + "\nStatus: " + status);
         });
 };
 
@@ -160,7 +164,7 @@ function response_response(response_code){
 }
 
 
-function post2(form,fields,root_url) {
+function post(form,fields,root_url) {
     var url='https://'+root_url+'/login_form/';
     var query='?';
 

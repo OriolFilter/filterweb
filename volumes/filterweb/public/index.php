@@ -4,7 +4,7 @@
 ;$bot_format='';
 ;include "../private/global_vars.php";
 $title='Home';
-echo sprintf($top_format,$title);
+echo sprintf($top_format,$title,'');
 ;$joystickFolder="../private/productTxt/joysticks/";
 ;$buttonFolder="../private/productTxt/buttons/";
 ;echo "<div id='homePage'>";

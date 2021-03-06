@@ -4,7 +4,7 @@
 ;$bot_format='';
 ;include "../private/global_vars.php";
 $title='Log In';
-echo sprintf($top_format,$title);
+echo sprintf($top_format,$title,'');
 ;
 ;echo"
     <div id='logIn'>

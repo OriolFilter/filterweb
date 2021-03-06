@@ -104,7 +104,7 @@ function send_activation_code_email(string $email,string $activation_code, strin
 ; $obligatory_fields = array('uname', 'pass','email');
 ;
 ;foreach ($obligatory_fields as $key => $value) {
-;    ; if (isset($_GET[$value]) && normalize_str($_GET[$value]) && is_valid(normalize_str($_GET[$value])) ) {
+;    ; if (isset($_REQUEST[$value]) && normalize_str($_REQUEST[$value]) && is_valid(normalize_str($_REQUEST[$value])) ) {
 ;       //pass
 ;    ;} else {
             throw new MissingField('There is a empty field!')
@@ -113,9 +113,9 @@ function send_activation_code_email(string $email,string $activation_code, strin
 ;    ;}
 ;} // Obligatory Variables checked
 ;
-$uname=$_GET['uname'];
-$pass=$_GET['pass'];
-$email=$_GET['email'];
+$uname=$_REQUEST['uname'];
+$pass=$_REQUEST['pass'];
+$email=$_REQUEST['email'];
 
 // Connect sql
 //    https://www.php.net/manual/es/function.pg-prepare.php
