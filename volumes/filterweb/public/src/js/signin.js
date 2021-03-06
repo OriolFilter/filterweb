@@ -1,3 +1,5 @@
+$("button").click(register());
+
 function register() {
     var error_obj={name:'Error Handler',error_list:[]};
     error_obj.code_dict ={
@@ -32,7 +34,7 @@ function register() {
     var form=document.forms["signInForm"];
     if (check_fields(form,error_obj)){
         /* post */
-
+        post(form);
     } else {
         alert_error(error_obj);
     }
@@ -109,6 +111,22 @@ function check_fields(form,error_obj){
 
 
 }
+
+function post(form){
+    var uname=form['uname'].value;
+    var pass=form['pass'].value;
+    var email=form['email'].value;
+    $.post("/",
+        {
+            uname: uname,
+            pass: pass,
+            email: email
+        },
+        function(data,status){
+            alert("Data: " + data + "\nStatus: " + status);
+        });
+};
+
 
 function response_response(response_code){
     // 0 Unknown
