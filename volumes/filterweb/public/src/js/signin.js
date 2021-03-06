@@ -32,6 +32,7 @@ function register() {
     var form=document.forms["signInForm"];
     if (check_fields(form,error_obj)){
         /* post */
+
     } else {
         alert_error(error_obj);
     }
@@ -141,7 +142,7 @@ function response_response(response_code){
 }
 
 
-function post(form,fields,root_url) {
+function post2(form,fields,root_url) {
     var url='https://'+root_url+'/login_form/';
     var query='?';
 
