@@ -1,5 +1,5 @@
 $(document).ready(function(){
-    $("button").click(function() {register()});
+    $("button").click(function() {register();});
 });
 
 function register() {
@@ -23,7 +23,11 @@ function register() {
 
         '4':'Field matching',
         '4.1':'Passwords don\'t match',
-        '4.2':'Emails don\'t match'
+        '4.2':'Emails don\'t match',
+
+        '5':'Client-Server errors',
+        '5.1':'There was a unknown error sending the data, please, try again bit later, if this error is consistent please contact an administrator.',
+        '5.2':'Server under maintenance, please, try again bit later.'
     };
 
     error_obj.code_hint_dict = {
@@ -37,26 +41,8 @@ function register() {
     if (check_fields(form,error_obj)){
         /* post */
         post(form);
-    } else {
-        alert_error(error_obj);
     }
-    // var fields = obligatory_fields;
-    // var form=document.forms["signInForm"];
-    //
-    // //hide_message
-    // // document.getElementById("logInResponse").hidden=1;
-    //
-    // // var check_f=parseInt(!check_form(form,obligatory_fields));
-    // var response=check_form(form,obligatory_fields);
-    //
-    // //0 -> nice!
-    //
-    // if (response==1){
-    //     post(form,fields,window.location.host);
-    // } else {
-    //     response_response(response);
-    // }
-
+    alert_error(error_obj,error_obj);
 }
 
 function alert_error(error_obj){
@@ -69,6 +55,11 @@ function alert_error(error_obj){
     }
     document.getElementById("signInResponse").hidden=0;
     document.getElementById("signInResponse").innerHTML=error_message;
+}
+
+function success(){
+    document.getElementById("signInResponse").hidden=0;
+    document.getElementById("signInResponse").innerHTML='<p id="success_form">Success! A activation link been sent the provided email!</p>';
 }
 
 function check_fields(form,error_obj){
@@ -114,11 +105,10 @@ function check_fields(form,error_obj){
 
 }
 
-function post(form){
+function post(form,error_obj){
     var uname=form['uname'].value;
     var pass=form['pass'].value;
     var email=form['email'].value;
-    alert(1231231);
     $.post("/register_form/",
         {
             uname: uname,
@@ -126,93 +116,12 @@ function post(form){
             email: email
         },
         function(data,status){
-            if (status==sucess)
+            alert(status);
+            if (status=='sucess') {
+                alert(1);
+                /* treballar amb json*/
+                    success();
+            }
             // alert("Data: " + data + "\nStatus: " + status);
         });
 };
-
-
-function response_response(response_code){
-    // 0 Unknown
-    // 1 Success
-    // 2 Error on login, might be wrong username or password
-    // 3 Missing field
-    // Can be done with switch? yes, but if it's faster unless there be a long list, and yet, if just will be faster for the last entries.
-    // Error too much attempts wait a little?
-    var code=parseInt(response_code);
-    if (code == 1){
-        document.getElementById("logInResponse").hidden=0;
-        document.getElementById("logInResponse").innerHTML="Login Success!\n";
-        //redirect to index?
-        //.php can have a redirect page
-    }
-    else if (code == 2)
-    {
-        document.getElementById("logInResponse").hidden=0;
-        document.getElementById("logInResponse").innerHTML="Error: Wrong password or username!\n";
-    }
-    else if (code == 3)
-    {
-        document.getElementById("logInResponse").hidden=0;
-        document.getElementById("logInResponse").innerHTML="Error: Missing field!\n";
-    }
-    else {
-        //    Unknown error
-        document.getElementById("logInResponse").hidden=0;
-        document.getElementById("logInResponse").innerHTML="Unknown error, if this error is persistent contact with the administrator!\n";
-    }
-}
-
-
-function post(form,fields,root_url) {
-    var url='https://'+root_url+'/login_form/';
-    var query='?';
-
-    //start manual concat
-    var l = fields.length;
-    var fieldname;
-    for (i = 0; i < l; i++) {
-        if (query != '?') {
-            query+='&';
-        }
-        fieldname=fields[i];
-        query+=fieldname+'='+document.forms['logInForm'][fieldname].value;
-    }
-
-    //end manual concat
-    var objXMLHttpRequest = new XMLHttpRequest();
-    objXMLHttpRequest.onreadystatechange = function() {
-        if(objXMLHttpRequest.readyState === 4) {
-            if(objXMLHttpRequest.status === 200) {
-                response_response(objXMLHttpRequest.responseText);
-                // response_response(0);
-
-            } else {
-                // alert('Error Code: ' +  objXMLHttpRequest.status);
-                // alert('Error Message: ' + objXMLHttpRequest.statusText);
-                response_response(0);
-            }
-
-        }
-    }
-    objXMLHttpRequest.open('GET', url+query,true);
-    objXMLHttpRequest.send();
-}
-
-function check_form(form,fields_to_check){
-    var l = fields_to_check.length;
-    var fieldname;
-    for (i = 0; i < l; i++) {
-        fieldname = fields_to_check[i];
-        // (fieldname);
-        // if (document.forms["logInForm"][fieldname].value === "") {
-        if (form[fieldname].value === "") {
-            return 3;
-        }
-    } //Check no empty fields
-
-    // Further (manual) checking
-
-    // All gucci
-    return 1;
-}
