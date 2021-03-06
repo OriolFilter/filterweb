@@ -348,19 +348,21 @@ begin
     /* text@text.text */
 end; $$ language plpgsql;
 
-CREATE or replace function validate_mail(p_mail varchar)
-    returns boolean as $$
+CREATE or replace procedure validate_mail(p_mail varchar)
+as $$
 declare
     v_mail bool;
 begin
-    select into v_mail (
-                           case when exists (
-                                   select regexp_matches(p_mail,'^[a-zA-Z0-9.!#$%&''*+/=?^_`{|}~-]+@[a-zA-Z10-9-]+\.+[a-zA-Z0-9-]+$')
-                               )
-                                    then 1
-                                else 0
-                               end );
-    return v_mail; /*return true or false if email matches regex*/
+    case when not exists (
+            select regexp_matches(p_mail,'^[a-zA-Z0-9.!#$%&''*+/=?^_`{|}~-]+@[a-zA-Z10-9-]+\.+[a-zA-Z0-9-]+$')
+        )
+        then
+--         raise exception 'not_valid_email';
+            raise exception
+                using errcode = 'P0003',
+                    message = 'The email given does not meet the requirements.';
+        else null;
+        end case ; /*raises exception if email matches regex*/
     /* text@text.text */
 end; $$ language plpgsql;
 
