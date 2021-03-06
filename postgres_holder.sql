@@ -134,3 +134,12 @@ select func_return_activation_code_from_username('testing4');
 -- call proc_activate_account('VPokLaWTgdQvbEdFs9WcXIofVRvgfM8cMQPonqA7wx1l7yssmaCr7k66rmR0');
 -- call proc_activate_account('b331fHxo5YM86cC9WbdmgIuHOdiSEmCsPPl1P5EoUKNW5b1UuWLe2FtokfqR');
 call proc_activate_account('hDpwsu74fJgFuFr3rXNhgAKg196R37fGnr7qjvgUwBYiJqCWpUpsTMmv0RXc');
+
+-- select username,convert_from(cast(email as bytea),'utf-8') as email_g,email from users;
+-- select username, encode(decode(cast(email::bytea as varchar), 'hex'), 'escape') as email_g,email from users;
+-- select username, decode(email::varchar, 'hex') as email_g,email from users;
+select username, decode(encode(email,'escape'),'hex') as email_g,email from users;
+select * from users;
+call register_user('te2stlong','longanissa','mymai2l@maimailoso.moil');
+select true from users where email='mymail@maimailoso.moil';
+insert into users(username, password, email) values('testlong',crypt('longanissa', gen_salt('bf',8)),'mymail@maimailoso.moil');

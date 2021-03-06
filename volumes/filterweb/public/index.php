@@ -1,6 +1,10 @@
 <?php
-include "../private/format/headerFile.html";
-
+//include "../privatex/format/headerFile.html";
+;$top_format='';
+;$bot_format='';
+;include "../private/global_vars.php";
+$title='Home';
+echo sprintf($top_format,$title);
 ;$joystickFolder="../private/productTxt/joysticks/";
 ;$buttonFolder="../private/productTxt/buttons/";
 ;echo "<div id='homePage'>";
@@ -78,7 +82,7 @@ include "../private/format/headerFile.html";
 ;echo "</div>";
 ;echo "</div>";
 
-include "../private/format/footerFile.html";
+echo $bot_format;
 //https://www.w3schools.com/jsref/tryit.asp?filename=tryjsref_touchmove2 FEATURED
 //https://www.w3schools.com/jsref/tryit.asp?filename=tryjsref_transitionend idk where
 ;?>

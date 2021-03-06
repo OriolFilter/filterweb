@@ -1,6 +1,6 @@
 @font-face {
     font-family: Multicolore;
-    src: url(/css/fonts/Multicolore.otf);
+    src: url(/src/css/fonts/Multicolore.otf);
 }
 /*-------------------------------------------------------------------*/
 
@@ -204,7 +204,7 @@ html {
     flex-wrap: nowrap;
     flex-direction: column;
 }
-#contact,#logIn {
+#contact,#logIn,#signIn {
     margin: 5px;
     /*background-color: #d0d0d0;*/
     /*font-family: arial, Times new roman, monospace;*/ /*Possible versió*/
@@ -218,7 +218,7 @@ html {
     justify-content: center;
     align-items: center;
 }
-#contact a,#logInBox a{
+#contact a,#logInBox a,#signInBox a{
     color: #8e9dbd;
     /*color: #bcd6e6;*/
 }
@@ -256,7 +256,7 @@ html {
 #form{
     order: 3;
 }
-#contactMethods  #email , #contactMethods #phone,#contactMethods #form, #logInBox{
+#contactMethods  #email , #contactMethods #phone,#contactMethods #form, #logInBox, #signInBox{
     border-radius: 4px;
     border-style: solid;
     border-width: 2px;
@@ -303,7 +303,7 @@ html {
     background-color: #363636;
 }
 
-#logIn{
+#logIn,#signIn{
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
@@ -312,7 +312,7 @@ html {
     align-items: center;
 }
 
-#logInBox{
+#logInBox,#signInBox{
     order: 1;
     width: max-content;
     text-align: center;
@@ -321,7 +321,7 @@ html {
 #homePage{color: #d0556c;}
 
 
-#logInForm{
+#logInForm, #signInForm{
     min-width: fit-content;
     width: 30vw;
     display: flex;
@@ -332,10 +332,16 @@ html {
     align-items: center;
 }
 
-#logInResponse{
+/*#logInResponse, #signInResponse{*/
+#error_form{
     margin-top: 15px;
     font-size: 15px;
     color: red;
+}
+#success_form{
+    margin-top: 15px;
+    font-size: 15px;
+    color: #9aff5b;
 }
 
 #link{

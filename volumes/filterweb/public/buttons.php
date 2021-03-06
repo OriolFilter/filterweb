@@ -1,15 +1,16 @@
 <?php
-
-//;echo "<div id='filters'><p>BUTONS PER FILTRAR PER MARCA</p>
-;
-require "../private/format/headerFile.html";
-;echo "<script src=\"scripts/products_script.js\"></script>"
+;$top_format='';
+;$bot_format='';
+;include "../private/global_vars.php";
+$title='Buttons';
+echo sprintf($top_format,$title);
+;echo "<script src='/src/js/products_script.js'></script>"
 ;echo "<h1>Buttons</h1><hr>";
 ;echo "<div id='filters'>
-        <p>Show brands: <select id=\"filterList\" onchange='prodFilter(document.getElementById(\"filterList\").value)'></p>
-            <option value=\"all\">All</option>
-            <option value=\"sanwa\">Sanwa</option>
-            <option value=\"seimitsu\">Seimitsu</option>
+        <p>Show brands: <select id='filterList' onchange='prodFilter(document.getElementById(\"filterList\").value)'></p>
+            <option value='all'>All</option>
+            <option value='sanwa'>Sanwa</option>
+            <option value='seimitsu'>Seimitsu</option>
           </select>
         </div>";
 //;$scanner=glob("productTxt/buttons/bt-*.php");
@@ -48,11 +49,6 @@ require "../private/format/headerFile.html";
 ;echo "<script>onload(prodFilter(window.location.hash.replace('#','')))</script>"
 ;echo "</div>";
 
-
-
-
-;
-include "../format/footerFile.html";
-
+echo $bot_format;
 ;?>
 

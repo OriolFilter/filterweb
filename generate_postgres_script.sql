@@ -7,15 +7,15 @@ CREATE TABLE if not exists users (
       user_id serial,
       username VARCHAR ( 20 ) UNIQUE NOT NULL,
       password VARCHAR ( 60 ) NOT NULL, /* crypted and salted, returns 60 lenght */
---       email VARCHAR ( 255 ) UNIQUE NOT NULL,
-      email bytea UNIQUE NOT NULL, /* al final si es guarda en hexa perque estalvies espais i no importen les majuscules*/
+      email VARCHAR ( 255 ) UNIQUE NOT NULL /* https://stackoverflow.com/questions/386294/what-is-the-maximum-length-of-a-valid-email-address */,
+--       email bytea UNIQUE NOT NULL, /* PD, no al final no */ /* al final si es guarda en hexa perque estalvies espais i no importen les majuscules*/
 --                          role_id serial NOT NULL,
       created_on TIMESTAMP DEFAULT now() NOT NULL,
       updated_on TIMESTAMP DEFAULT now() NOT NULL,
       last_login TIMESTAMP DEFAULT now() NOT NULL,
 --                          last_login TIMESTAMP,
       PRIMARY KEY (user_id)
---                          CONSTRAINT fk_role FOREIGN KEY (role_id) REFERENCES role (role_id)
+--                          CONSTRAINT fk_role FOREIGN KEY (role_id) REFERENCES role (role_id)  ON DELETE CASCADE;
 );
 
 -- Activate account tokens
@@ -28,7 +28,7 @@ CREATE TABLE if not exists activate_account_tokens (
     created_on TIMESTAMP DEFAULT now(),
     expires_on TIMESTAMP DEFAULT now() + '30 minute'::interval,
     PRIMARY KEY (activation_account_token_id),
-    CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id)
+    CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
 );
 
 CREATE table if not exists activated_accounts (
@@ -37,7 +37,7 @@ CREATE table if not exists activated_accounts (
  activated_bool boolean NOT NULL DEFAULT FALSE,
  activation_date TIMESTAMP DEFAULT NULL,
  PRIMARY KEY (activated_users_id),
- CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id)
+ CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
 );
 
 -- Login tokens / session
@@ -48,7 +48,7 @@ CREATE TABLE if not exists login_tokens (
         created_on TIMESTAMP DEFAULT now(),
         expires_on TIMESTAMP DEFAULT now() + '30 minute'::interval,
         PRIMARY KEY (token_id),
-        CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id)
+        CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
 );
 
 -- Password recovery tokens
@@ -60,7 +60,7 @@ CREATE TABLE if not exists password_recovery_tokens (
         created_on TIMESTAMP DEFAULT now(),
         expires_on TIMESTAMP DEFAULT now() + '30 minute'::interval,
         PRIMARY KEY (password_recovery_id),
-        CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id)
+        CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
 );
 
 -- Roles table
@@ -84,7 +84,7 @@ CREATE TABLE if not exists reset_password_tokens (
         created_on TIMESTAMP DEFAULT now() ,
         expires_on TIMESTAMP DEFAULT now() + '30 minute'::interval,
         PRIMARY KEY (reset_token_id),
-        CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id)
+        CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
 );
 
 -- Login tokens
@@ -95,7 +95,7 @@ CREATE TABLE if not exists login_tokens (
         created_on TIMESTAMP NOT NULL,
         expires_on TIMESTAMP DEFAULT now() + '180 minute'::interval,
         PRIMARY KEY (login_token_id),
-        CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id)
+        CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
 );
 
 -- -- Activate account tokens /*OLD*/
@@ -162,8 +162,8 @@ CREATE TABLE if not exists cart (
         quantity integer NOT NULL,
         model_id integer NOT NULL,
         user_id integer NOT NULL,
-        CONSTRAINT model_id FOREIGN KEY (model_id) REFERENCES prod_models (model_id),
-        CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id)
+        CONSTRAINT model_id FOREIGN KEY (model_id) REFERENCES prod_models (model_id) ON DELETE CASCADE,
+        CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
 );
 
 -- model_image table
@@ -172,7 +172,7 @@ CREATE TABLE if not exists model_images (
         model_id integer NOT NULL,
         image_file_name VARCHAR(100), -- 100 Caracters hauria destar sobrat.
         created_on TIMESTAMP DEFAULT now(),
-        CONSTRAINT model_id FOREIGN KEY (model_id) REFERENCES products (product_id),
+        CONSTRAINT model_id FOREIGN KEY (model_id) REFERENCES prod_models (model_id) ON DELETE CASCADE,
         PRIMARY KEY (model_image_id)
 );
 
@@ -183,7 +183,7 @@ CREATE TABLE if not exists supplies (
         model_id integer NOT NULL,
         quantity integer NOT NULL,
         updated_on TIMESTAMP DEFAULT now(),
-        CONSTRAINT model_id FOREIGN KEY (model_id) REFERENCES prod_models (model_id),
+        CONSTRAINT model_id FOREIGN KEY (model_id) REFERENCES prod_models (model_id) ON DELETE CASCADE,
         PRIMARY KEY (supply_id)
 );
 
@@ -209,14 +209,16 @@ CREATE TABLE if not exists orders (
     order_id serial PRIMARY KEY,
     payment_id integer NOT NULL,
     oder_date TIMESTAMP DEFAULT now(),
-    CONSTRAINT payment_id FOREIGN KEY (payment_id) REFERENCES payments (payment_id),
+    CONSTRAINT payment_id FOREIGN KEY (payment_id) REFERENCES payment_methods (payment_id),
     PRIMARY KEY (order_id)
 );
 
 -- Payments table
-CREATE TABLE if not exists payments (
+CREATE TABLE if not exists payment_methods (
     payment_id serial PRIMARY KEY,
-    payment_method_id serial
+    user_id integer NOT NULL,
+    method_name varchar(60) NOT NULL,
+    CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
 );
 
 -- Payments_memthods table
@@ -237,7 +239,7 @@ CREATE TABLE if not exists address (
      province VARCHAR (30) NOT NULL ,
      country VARCHAR (2) NOT NULL, -- Sigles...
      postal_code VARCHAR (16) NOT NULL,
-     CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id)
+     CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
 );
 
 
@@ -248,10 +250,12 @@ CREATE TABLE if not exists address (
 
 /* Errcode table
 -- Data validation
-P0000
-P0001 username
-P0002 password
-P0003 email
+-- P0000
+-- P0001 username
+-- P0001-A Valid characters (not used)
+-- P0001-B Password length characters (not used)
+-- P0002 password
+-- P0003 email
 
 -- Select errors not found
 -- P0010 u_id wasn't found
@@ -300,50 +304,63 @@ declare
     v_mail bool;
 begin
     case when not exists (
-       select regexp_matches(p_mail,'^[a-zA-Z0-9.!#$%&''*+/=?^_`{|}~-]+@[a-zA-Z10-9-]+\.+[a-zA-Z0-9-]+$')
-                               )
-                                    then
---         raise exception 'not_valid_email';
+       select regexp_matches(p_mail,'^[a-zA-Z0-9.!#$%&''*+/=?^_`{|}~-]+@[a-zA-Z10-9-]+\.+[a-zA-Z0-9-]+$')) then
         raise exception
             using errcode = 'P0003',
                 message = 'The email given does not meet the requirements.';
         else null;
-    end case ; /*raises exception if email matches regex*/
+    end case ; /* not raises exception if email matches regex */
     /* text@text.text */
 end; $$ language plpgsql;
 
 CREATE or replace procedure validate_username(p_uname varchar)
 as $$
 declare
-    v_uname bool;
 begin
-    /* Segurament case sigui millor*/
-    case when not exists (
-                                   select regexp_matches(p_uname,'^[a-zA-Z0-9._.-.+]+$')
-                               )
-                                    then
-        raise exception
+    case when not exists (select regexp_matches(p_uname,'^[a-zA-Z0-9._.-.+.]{6,20}$'))
+        then raise exception
             using errcode = 'P0001',
-                message = 'The username given does not meet the requirements.';
+                message = 'The username given does not meet the requirements.',
+                hint = 'The username needs to be from 6 to 20 characters and contain only the following allowed characters:\nLetters from a to z (upper and lower case)\nNumbers from 0 to 9\nSpecial characters "_-+."';
+
         else
-        null;
-    end case; /*raises exception if email not matches regex*/
+            null;
+        end case; /*raises exception if username not matches regex*/
 end; $$ language plpgsql;
 
 CREATE or replace procedure validate_password(p_passwd varchar)
 as $$
 declare
 begin
+    /* Add must contain one of the followings! */
     case when not exists (
-            select regexp_matches(p_passwd,'^[a-zA-Z0-9$%/.,?!+_=-]+$')
+            select regexp_matches(p_passwd,'^[a-zA-Z0-9$%/.,?!+_=-]{6,20}$')
         )
         then
 --         raise exception 'not_valid_email';
             raise exception
                 using errcode = 'P0002',
-                    message = 'The email given does not meet the requirements.';
+                    message = 'The password given does not meet the requirements.',
+                    hint = 'The password needs to be from 6 to 20 characters and contain only the following allowed characters:\nLetters from a to z (upper and lower case)\nNumbers from 0 to 9\nSpecial characters "$%/.,?!+_=-"';
+
         else null;
         end case ; /*raises exception if password not matches regex*/
+    /* text@text.text */
+end; $$ language plpgsql;
+
+CREATE or replace function validate_mail(p_mail varchar)
+    returns boolean as $$
+declare
+    v_mail bool;
+begin
+    select into v_mail (
+                           case when exists (
+                                   select regexp_matches(p_mail,'^[a-zA-Z0-9.!#$%&''*+/=?^_`{|}~-]+@[a-zA-Z10-9-]+\.+[a-zA-Z0-9-]+$')
+                               )
+                                    then 1
+                                else 0
+                               end );
+    return v_mail; /*return true or false if email matches regex*/
     /* text@text.text */
 end; $$ language plpgsql;
 
@@ -360,15 +377,15 @@ end; $$ language plpgsql;
 -- END;
 -- $$ LANGUAGE plpgsql;
 
-CREATE or replace function sanitize_text(p_text varchar)
-returns text as $$
-declare
-    new_text varchar;
-begin
-    /* no se que fer*/
-    return p_text;
-
-end; $$ LANGUAGE plpgsql;
+-- CREATE or replace function sanitize_text(p_text varchar)
+-- returns text as $$
+-- declare
+--     new_text varchar;
+-- begin
+--     /* no se que fer*/
+--     return p_text;
+--
+-- end; $$ LANGUAGE plpgsql;
 
 CREATE or replace function check_login(p_uname users.username%TYPE, p_passwd users.password%TYPE)
     returns boolean as $$
@@ -399,15 +416,17 @@ BEGIN
                 message = 'This username is alredy in use';
         else null;
     end case;
-    case when exists(select true from users where email=cast(encode(cast(p_email as bytea),'hex') as bytea))
+--     case when exists(select true from users where email=cast(encode(cast(p_email as bytea),'hex') as bytea))
+    case when exists(select true from users where email=p_email)
         then raise exception
             using errcode = 'P0023',
                 message = 'This email is alredy in use';
         else null;
         end case;
-    insert into users(username, password, email) values (p_username,crypt(p_passwd, gen_salt('bf',8)),cast(encode(cast(p_email as bytea),'hex') as bytea));
+--     insert into users(username, password, email) values (p_username,crypt(p_passwd, gen_salt('bf',8)),cast(encode(cast(p_email as bytea),'hex') as bytea));
+    insert into users(username, password, email) values (p_username,crypt(p_passwd, gen_salt('bf',8)),p_email);
     select into v_uid user_id from users where username=p_username;
-    insert into activated_accounts(user_id) values (v_uid);
+    insert into activated_accounts(user_id) values (v_uid); /* Canviar a trigger */
 --     raise notice e'>> %',v_uid;
 
 --     commit; /* Postgres manages commit or rollback alone*/
@@ -427,7 +446,7 @@ END;
 
 $$ LANGUAGE plpgsql;
 
-create or replace procedure proc_generate_activation_code_from_id(p_uid integer)
+create or replace procedure proc_generate_activation_code(p_uid integer)
 as $$
 declare
     v_string varchar(60);
@@ -450,7 +469,7 @@ exception
 end;
 $$ LANGUAGE plpgsql;
 
-create or replace procedure proc_generate_activation_code_from_username(p_username varchar)
+create or replace procedure proc_generate_activation_code(p_username varchar)
 as $$
 declare
     v_uid integer;
@@ -468,7 +487,7 @@ begin
 end;
 $$ LANGUAGE plpgsql;
 
-create or replace function func_return_generate_activation_code_from_id(p_uid integer) returns varchar(60)
+create or replace function func_return_generate_activation_code(p_uid integer) returns varchar(60)
 as $$
 declare
     v_string varchar(60);
@@ -492,7 +511,7 @@ exception
 end;
 $$ LANGUAGE plpgsql;
 
-create or replace function func_return_activation_code_from_username(p_username varchar)
+create or replace function func_return_activation_code(p_username varchar)
 returns varchar(60)
 as $$
 declare

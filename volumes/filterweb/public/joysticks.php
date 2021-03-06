@@ -1,8 +1,12 @@
 <?php
 
-;
-include "../private/format/headerFile.html";
-;echo "<script src=\"scripts/products_script.js\"></script>"
+;$top_format='';
+;$bot_format='';
+;include "../private/global_vars.php";
+$title='Joysticks';
+echo sprintf($top_format,$title);
+
+;echo "<script src='/src/js/products_script.js'></script>"
 ;echo "<h1>Joysticks</h1><hr>";
 ;echo "<div id='filters'>
         <p>Show brands: <select id=\"filterList\" onchange='prodFilter(document.getElementById(\"filterList\").value)'></p>
@@ -50,7 +54,7 @@ include "../private/format/headerFile.html";
 
 
 ;
-include "../private/format/footerFile.html";
+echo $bot_format;
 
 ;?>
 

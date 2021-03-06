@@ -1,6 +1,10 @@
 <?php
 ;
-include "../private/format/headerFile.html";
+;$top_format='';
+;$bot_format='';
+;include "../private/global_vars.php";
+$title='Contact';
+echo sprintf($top_format,$title);
 ;echo "<div id='contact'>";
 ;echo "
     <script src='scripts/contact.js'></script>
@@ -73,6 +77,6 @@ echo "</div>";
 
 
 
-include "../private/format/footerFile.html";
+echo $bot_format;
 //https://www.w3schools.com/jsref/tryit.asp?filename=tryjsref_onsubmit
 ;?>

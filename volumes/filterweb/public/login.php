@@ -1,10 +1,15 @@
 <?php
 ;
-include "../private/format/headerFile.html";
+;$top_format='';
+;$bot_format='';
+;include "../private/global_vars.php";
+$title='Log In';
+echo sprintf($top_format,$title);
 ;
 ;echo"
     <div id='logIn'>
-        <script src='/scripts/logIn.js'></script>
+        <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
+        <script src='/src/js/logIn.js'></script>
        <div id='logInBox'>
             <div class=\"form - single - column\">
                 <form id='logInForm'>
@@ -27,7 +32,7 @@ include "../private/format/headerFile.html";
 ";
 ;
 ;
-include "../private/format/footerFile.html";
+echo $bot_format;
 ;?>
 <!--                <form action='/forms/login_form.php' method='post' id='logInForm'>-->
 <!--        <div id='logInBox'>-->
