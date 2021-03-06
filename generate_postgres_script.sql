@@ -298,21 +298,6 @@ begin
     /*raises exception if not alphanumeric*/
 end; $$ language plpgsql;
 
-CREATE or replace procedure validate_mail(p_mail varchar)
-as $$
-declare
-    v_mail bool;
-begin
-    case when not exists (
-       select regexp_matches(p_mail,'^[a-zA-Z0-9.!#$%&''*+/=?^_`{|}~-]+@[a-zA-Z10-9-]+\.+[a-zA-Z0-9-]+$')) then
-        raise exception
-            using errcode = 'P0003',
-                message = 'The email given does not meet the requirements.';
-        else null;
-    end case ; /* not raises exception if email matches regex */
-    /* text@text.text */
-end; $$ language plpgsql;
-
 CREATE or replace procedure validate_username(p_uname varchar)
 as $$
 declare
@@ -348,21 +333,20 @@ begin
     /* text@text.text */
 end; $$ language plpgsql;
 
+
 CREATE or replace procedure validate_mail(p_mail varchar)
 as $$
 declare
     v_mail bool;
 begin
     case when not exists (
-            select regexp_matches(p_mail,'^[a-zA-Z0-9.!#$%&''*+/=?^_`{|}~-]+@[a-zA-Z10-9-]+\.+[a-zA-Z0-9-]+$')
-        )
-        then
---         raise exception 'not_valid_email';
-            raise exception
-                using errcode = 'P0003',
-                    message = 'The email given does not meet the requirements.';
+            select regexp_matches(p_mail,'^[a-zA-Z0-9.!#$%&''*+/=?^_`{|}~-]+@[a-zA-Z10-9-]+\.+[a-zA-Z0-9-]+$')) then
+        raise exception
+            using errcode = 'P0003',
+                message = 'The email given does not meet the requirements.',
+                hint = 'The given email seems to have wrong syntax';;
         else null;
-        end case ; /*raises exception if email matches regex*/
+        end case ; /* not raises exception if email matches regex */
     /* text@text.text */
 end; $$ language plpgsql;
 

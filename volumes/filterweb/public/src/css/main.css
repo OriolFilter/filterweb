@@ -333,6 +333,11 @@ html {
 }
 
 /*#logInResponse, #signInResponse{*/
+#hint_form{
+    margin-top: 15px;
+    font-size: 15px;
+    color: #e1a4f3;
+}
 #error_form{
     margin-top: 15px;
     font-size: 15px;

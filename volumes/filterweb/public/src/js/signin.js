@@ -1,5 +1,5 @@
 function register() {
-    var error_obj={name:'Error Handler',error_list:[],error_hint_list:[]};
+    var error_obj={name:'Error Handler',error_list:[]};
     error_obj.code_dict ={
         '0':'Unknown error',
 
@@ -24,8 +24,8 @@ function register() {
 
     error_obj.code_hint_dict = {
         '3.1': 'The username needs to be from 6 to 20 characters and contain only the following allowed characters:\nLetters from a to z (upper and lower case)\nNumbers from 0 to 9\nSpecial characters "_-+."',
-        '3.2': 'The username needs to be from 6 to 20 characters and contain only the following allowed characters:\nLetters from a to z (upper and lower case)\nNumbers from 0 to 9\nSpecial characters "_-+."',
-        '3.3': 'The username needs to be from 6 to 20 characters and contain only the following allowed characters:\nLetters from a to z (upper and lower case)\nNumbers from 0 to 9\nSpecial characters "_-+."',
+        '3.2': 'The password needs to be from 6 to 20 characters and contain only the following allowed characters:\nLetters from a to z (upper and lower case)\nNumbers from 0 to 9\nSpecial characters "$%/.,?!+_=-"',
+        '3.3': 'The given email seems to have wrong syntax',
 
     };
 
@@ -56,8 +56,11 @@ function register() {
 
 function alert_error(error_obj){
     var error_message='';
-    for (code in error_obj.error_list) {
-        error_message+='<p id="error_form">'+error_obj.code_dict[error_obj.error_list[code]]+'</p>';
+    for (x in error_obj.error_list) {
+        error_message+='<p id="error_form">'+error_obj.code_dict[error_obj.error_list[x]]+'</p>';
+        if (error_obj.error_list[x] in error_obj.code_hint_dict) {
+            error_message+='<p id="hint_form">'+error_obj.code_hint_dict[error_obj.error_list[x]]+'</p>';
+        }
     }
     document.getElementById("signInResponse").hidden=0;
     document.getElementById("signInResponse").innerHTML=error_message;
@@ -78,16 +81,26 @@ function check_fields(form,error_obj){
         return false;
     }
     /* Check regex */
-    if (!/d^[a-zA-Z0-9._.-.+.]{6,20}$/g.test()){
-        error_obj.error_list.push('4.1');
+    if (!/d^[a-zA-Z0-9._.-.+.]{6,20}$/g.test(form['uname'].value)){
+        error_obj.error_list.push('3.1');
      }
+    if (!/^[a-zA-Z0-9$%/.,?!+_=-]{6,20}$/g.test(form['pass'].value)){
+        error_obj.error_list.push('3.2');
+     }
+    if (!/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z10-9-]+\.+[a-zA-Z0-9-]+$/g.test(form['email'].value)){
+        error_obj.error_list.push('3.3');
+     }
+
+    if (error_obj.error_list.length>0){
+        return false;
+    }
 
     /* Check fieldsmatch */
     if (form['pass'].value!=form['pass2'].value){
-        error_obj.error_list.push('3.1');
+        error_obj.error_list.push('4.1');
     };
     if (form['email'].value!=form['email2'].value){
-        error_obj.error_list.push('3.2');
+        error_obj.error_list.push('4.2');
     };
     if (error_obj.error_list.length>0){
         return false;
