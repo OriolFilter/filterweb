@@ -4,7 +4,9 @@ $(document).ready(function(){
 
 async function register() {
     /* Error codes */
+    var form = document.forms["signInForm"];
     var error_obj = {name: 'Error Handler', error_list: []};
+    var data_obj = {json:null, response: null};
     error_obj.code_dict = {
         '0': 'Unknown error',
 
@@ -38,18 +40,25 @@ async function register() {
     };
     error_obj.json_response = null;
 
-    var form = document.forms["signInForm"];
-    if (check_fields(form, error_obj)) {
-        /* post */
-        // var x = await post(form, error_obj);
-        await post(form, error_obj).catch(e => {
-            console.log(e);
-        });
-        server_alert(error_obj.json_response).catch(e => {
-            console.log(e);
-        });;
-    } else {alert_error(error_obj);}
+    // if (check_fields(form, error_obj)) {
+        data_obj.json=return_json_form(form);
+        data_obj.response= await post(data_obj.json);
+        server_alert(data_obj.response);
+    // } else {alert_error(error_obj);}
+}
 
+function return_json_form(form){
+
+    var uname=form['uname'].value;
+    var pass=form['pass'].value;
+    var email=form['email'].value;
+
+    json={
+        uname: uname,
+            pass: pass,
+        email: email
+    }
+    return(json);
 
 }
 
@@ -64,23 +73,21 @@ function alert_error(error_obj){
     document.getElementById("signInResponse").hidden=0;
     document.getElementById("signInResponse").innerHTML=error_message;
 }
-function server_alert(error_obj){
-    if (toString(error_obj['status_code'])!="0") {
+
+function server_alert(json){
+    console.log(json);
+    if (json['status_code']=="1") {
         success();
     } else {
         var error_message='';
-        for (x in error_obj.error_list) {
-            error_message+='<p id="error_form">'+error_obj['error']["message"]+'</p>';
-            if (error_obj['error']['hint']) {
-                error_message+='<p id="hint_form">'+error_obj['error']["hint"]+'</p>';
-            }
-        }
+        error_message+='<p id="error_form">'+json['error']["message"]+'</p>';
+        if (json['error']['hint']) {
+            error_message+='<p id="hint_form">'+json['error']["hint"]+'</p>';}
         document.getElementById("signInResponse").hidden=0;
         document.getElementById("signInResponse").innerHTML=error_message;
     }
 
 }
-
 function success(){
     document.getElementById("signInResponse").hidden=0;
     document.getElementById("signInResponse").innerHTML='<p id="success_form">Success! An activation link been sent the provided email!</p>';
@@ -129,21 +136,18 @@ function check_fields(form,error_obj){
 
 }
 
-// await function post(form,error_obj){
-async function post(form,error_obj){
-    var uname=form['uname'].value;
-    var pass=form['pass'].value;
-    var email=form['email'].value;
-    $.post("/register_form/",
-        {
-            uname: uname,
-            pass: pass,
-            email: email
-        },
-        function(data,status){
-            error_obj.json_response=JSON.parse(data);
-            success();
-        }).fail(function(err, status) {
-            error_obj.error_list.push('5.1');
-    });
-};
+async function post(json) {
+    let result;
+
+    try {
+        result = await $.ajax({
+            url: '/register_form/',
+            type: 'POST',
+            data: json
+        });
+
+        return json_response=JSON.parse(result);
+    } catch (error) {
+        console.error(error);
+    }
+}

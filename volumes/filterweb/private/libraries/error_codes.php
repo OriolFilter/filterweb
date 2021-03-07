@@ -18,6 +18,13 @@ class CustomError extends Exception {
     }
 }
 
+class UnknownError  extends CustomError  implements DefinedErrors {/* Default values match uknown error*/
+    public $status_code = '0';
+    public $error_code = '0';
+    public $message = 'Unknown error';
+    public $status = 'failed';
+    public $hint = null;}
+
 class MailerSendError  extends CustomError  implements DefinedErrors {
     public $error_code = '8.1';
     public $message = 'Email couldn\'t be send';
@@ -97,6 +104,11 @@ class TokenNullOrEmptyError  extends CustomError  implements DefinedErrors {
     public $message = 'Token not valid';
     public $hint = 'Token is null or empty';
 }
+class TokenAlreadyUsedError  extends CustomError  implements DefinedErrors {
+    public $error_code = '6.3.2';
+    public $message = 'Token not valid';
+    public $hint = 'Token already used';
+}
 
 class AccountNotActivatedError  extends CustomError  implements DefinedErrors {
     public $error_code = '7.1';
@@ -141,13 +153,8 @@ class DatabasePermissionsError  extends CustomError  implements DefinedErrors {
     public $hint = 'The user don\'t has permission for the requested action(s)';
 }
 
-class UnknownError  extends CustomError  implements DefinedErrors {/* Default values match uknown error*/
-    public $status_code = '0';
-    public $error_code = '0';
-    public $message = 'Unknown error';
-    public $status = 'failed';
-    public $hint = null;}
-class GenerateTokenError  extends CustomError  implements DefinedErrors {/* Default values match uknown error*/
+
+class GenerateTokenError  extends CustomError  implements DefinedErrors {
     public $error_code = '6.5.1';
     public $message = 'Error generating token';
     public $hint = null;
@@ -156,11 +163,11 @@ class GenerateTokenError  extends CustomError  implements DefinedErrors {/* Defa
 
 
 
-interface Group1 {}
-//
-class AError extends CustomError implements Group1 {}
-//
-class BError extends CustomError implements Group1 {}
+//interface Group1 {}
+////
+//class AError extends CustomError implements Group1 {}
+////
+//class BError extends CustomError implements Group1 {}
 
 
 ?>

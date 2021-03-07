@@ -124,9 +124,9 @@ postgresql:
   - P0000
   - P + first number + second number +  last number
   examples:
-    - 7:P7000
-    - 8.3:P8300
-    - 6.4.4:P6404
+    - 7     :P7000
+    - 8.3   :P8300
+    - 6.4.4 :P6404
 ```
 
 ### ERROR MESSAGES HINTS

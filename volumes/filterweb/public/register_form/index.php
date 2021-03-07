@@ -64,13 +64,14 @@ try {
         $state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
 //        echo $state;
         if (!$state) {
-            $result = pg_prepare($dbconn, "get_activation_token", 'select func_return_activation_code_from_username($1)');;
+            $result = pg_prepare($dbconn, "get_activation_token", 'select func_return_activation_code($1);');;
             $result = pg_execute($dbconn, "get_activation_token", array($uname));
+//            echo $result;
             if (!$result) {
                 throw new GenerateTokenError();
             } else {
                 $activation_token = pg_fetch_result($result, 0, 0);
-                $link = sprintf('https://%s/activate_form/?activation_token=%s', $hostname, $activation_token);
+                $link = sprintf('https://%s/activation_form/?activation_token=%s', $hostname, $activation_token);
                 $mailer_info->email = $email;
                 $mailer_info->subject = 'Welcome to arcadeshop, here is your activation code';
                 $mailer_info->body = sprintf("Thanks for using our services, now that you have registered, it's time to activate your account!\n press the following link in order to activate your account: <a href='%s'>ACTIVATE ACCOUNT<a/>", $link);

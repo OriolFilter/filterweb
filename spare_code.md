@@ -204,3 +204,24 @@ function check_form(form,fields_to_check){
 -- P0043 user already enabled
 */
 ```
+
+### OLD post 2, with async (floppy)
+```js
+async function post(form,error_obj){
+    var uname=form['uname'].value;
+    var pass=form['pass'].value;
+    var email=form['email'].value;
+    $.post("/register_form/",
+        {
+            uname: uname,
+            pass: pass,
+            email: email
+        },
+        function(data,status){
+            error_obj.json_response=JSON.parse(data);
+        }).fail(function(err, status) {
+            error_obj.error_list.push('5.1');
+    });
+    return true;
+};
+```
