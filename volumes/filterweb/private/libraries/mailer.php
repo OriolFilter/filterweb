@@ -2,13 +2,14 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\SMTP;
-require '/var/www/private/libraries/PHPMailer/src/Exception.php';
-require '/var/www/private/libraries/PHPMailer/src/PHPMailer.php';
-require '/var/www/private/libraries/PHPMailer/src/SMTP.php';
-//trait sender {}
+require_once '/var/www/private/libraries/PHPMailer/src/Exception.php';
+require_once '/var/www/private/libraries/PHPMailer/src/PHPMailer.php';
+require_once '/var/www/private/libraries/PHPMailer/src/SMTP.php';
+require_once '/var/www/private/libraries/error_codes.php';
 
 //https://www.php.net/manual/en/language.oop5.autoload.php
-class ErrorSendingMessage extends Exception{}
+//https://www.php.net/manual/en/language.exceptions.extending.php
+
 class mailer{
 //    public function send_body(string  $email,string $subject,string $body, string $altbody){
     public function send_body($info){
