@@ -122,41 +122,6 @@ $email=$_REQUEST['email'];
 
 // Connect sql
 //    https://www.php.net/manual/es/function.pg-prepare.php
-;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=shop_db user=test password=test") or die('connection failed');
-  if (!pg_connection_busy($dbconn)) {
-      ;$result = pg_prepare($dbconn, "register_user_q", 'call register_user($1,$2,$3)');
-      ;$res=pg_get_result($dbconn);
-
-      ;$result = pg_send_execute($dbconn, "register_user_q",array($uname,$pass,$email));
-      ;$err=pg_last_notice($dbconn);
-      ;$res=pg_get_result($dbconn);
-      ;$state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
-      if ($state=='P0021'){
-            echo 'username already in use';
-      } elseif ($state=='P0023') {
-          echo 'email already in use';
-      }
-      else {
-//          ;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=shop_db user=test password=test") or die('connection failed');
-          ;$result = pg_prepare($dbconn, "get_activation_token", 'select func_return_activation_code_from_username($1)');
-          ;$result = pg_execute($dbconn, "get_activation_token",array($uname));
-            if (!$result) {
-                echo 'ERROR GENERATING THE ACTIVATION CODE';
-            } else {
-                $activation_token = pg_fetch_result($result,0,0);
-                $link=sprintf('https://%s/activate_form/?activation_token=%s',$hostname,$activation_token);
-                $subject='Welcome to arcadeshop, here is your activation code';
-                $body=sprintf("Thanks for using our services, now that you have registered, it's time to activate your account!\n press the following link in order to activate your account: <a href='%s'>ACTIVATE ACCOUNT<a/>",$link);
-                $altbody=sprintf("Thanks for using our services, now that you have registered, it's time to activate your account!\n access the following link in order to activate your account: %s",$link);
-                if (!send_body_altbody($email,$subject,$body,$altbody)){
-                    throw new ErrorSendingMessage('There was an error sending the email meessage');
-                }
-//                send_activation_code_email($email,$activation_token,$hostname);
-            }
-//          echo 'other errors or not errors.';
-
-      }
-  } else {throw new ErrorConnectingToDatabase('There was an error communicating with the database, contact an administrator.');}
 
 
 ;code_switch(1);//??

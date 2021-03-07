@@ -71,9 +71,9 @@ class MissingPasswordFieldError  extends CustomError  implements DefinedErrors {
     public $hint = null;
 }
 
-class UserAlreadyExistsError  extends CustomError  implements DefinedErrors {
+class UsernameAlreadyExistsError  extends CustomError  implements DefinedErrors {
     public $error_code = '6.1.1';
-    public $message = 'Password does not meet the requirements';
+    public $message = 'Username is already exists';
     public $hint = null;
 }
 class UserEmailExistsError  extends CustomError  implements DefinedErrors {
@@ -147,6 +147,11 @@ class UnknownError  extends CustomError  implements DefinedErrors {/* Default va
     public $message = 'Unknown error';
     public $status = 'failed';
     public $hint = null;}
+class GenerateTokenError  extends CustomError  implements DefinedErrors {/* Default values match uknown error*/
+    public $error_code = '6.5.1';
+    public $message = 'Error generating token';
+    public $hint = null;
+}
 
 
 

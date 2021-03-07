@@ -255,20 +255,20 @@ CREATE EXTENSION pgcrypto; -- Crypt extension
 -- https://www.postgresql.org/docs/8.3/pgcrypto.html
  /* example select from password given*/
 
-CREATE or replace procedure is_alphanumeric(p_string varchar)
-as $$
-declare
---     not_alphanumeric exception;
-    v_string bool;
-begin
-    case when not exists (
-    select regexp_matches(p_string,'^[a-zA-Z0-9]+$')
-    )
-    then raise exception 'not_alphanumeric';
-    else null;
-    end case;
-    /*raises exception if not alphanumeric*/
-end; $$ language plpgsql;
+-- CREATE or replace procedure is_alphanumeric(p_string varchar)
+-- as $$
+-- declare
+-- --     not_alphanumeric exception;
+--     v_string bool;
+-- begin
+--     case when not exists (
+--     select regexp_matches(p_string,'^[a-zA-Z0-9]+$')
+--     )
+--     then raise exception 'not_alphanumeric';
+--     else null;
+--     end case;
+--     /*raises exception if not alphanumeric*/
+-- end; $$ language plpgsql;
 
 CREATE or replace procedure validate_username(p_uname varchar)
 as $$
@@ -276,7 +276,7 @@ declare
 begin
     case when not exists (select regexp_matches(p_uname,'^[a-zA-Z0-9._.-.+.]{6,20}$'))
         then raise exception
-            using errcode = '3.1',
+            using errcode = 'P3100',
                 message = 'The username given does not meet the requirements.',
                 hint = 'The username needs to be from 6 to 20 characters and contain only the following allowed characters:\nLetters from a to z (upper and lower case)\nNumbers from 0 to 9\nSpecial characters "_-+."';
 
@@ -296,7 +296,7 @@ begin
         then
 --         raise exception 'not_valid_email';
             raise exception
-                using errcode = '3.2',
+                using errcode = 'P3200',
                     message = 'The password given does not meet the requirements.',
                     hint = 'The password needs to be from 6 to 20 characters and contain only the following allowed characters:\nLetters from a to z (upper and lower case)\nNumbers from 0 to 9\nSpecial characters "$%/.,?!+_=-"';
 
@@ -314,7 +314,7 @@ begin
     case when not exists (
             select regexp_matches(p_mail,'^[a-zA-Z0-9.!#$%&''*+=?^_`{|}~-]+@[a-zA-Z10-9-]+\.+[a-zA-Z0-9-]+$')) then
         raise exception
-            using errcode = '3.3',
+            using errcode = 'P3300',
                 message = 'The email given does not meet the requirements.',
                 hint = 'The given email seems to have wrong syntax';
         else null;
@@ -370,14 +370,14 @@ BEGIN
 --     insert into
     case when exists(select true from users where username=p_username)
         then raise exception
-            using errcode = '6.1.1',
+            using errcode = 'P6101',
                 message = 'This username is alredy in use';
         else null;
     end case;
 --     case when exists(select true from users where email=cast(encode(cast(p_email as bytea),'hex') as bytea))
     case when exists(select true from users where email=p_email)
         then raise exception
-            using errcode = '6.1.2',
+            using errcode = 'P6102',
                 message = 'This email is alredy in use';
         else null;
         end case;
@@ -398,7 +398,7 @@ begin
     /*check user not enabled*/
     case when exists(select true from activated_accounts where user_id=p_uid and activated_bool=true)
         then raise exception
-            using errcode = '7.2',
+            using errcode = 'P7200',
                 message = 'This account is already activated';
         else null;
     end case;
@@ -410,7 +410,7 @@ begin
 exception
     when sqlstate '23503' then
         raise exception
-            using errcode = '6.2.1',
+            using errcode = 'P6210',
                 message = 'User_id was not found';
 /*     raise notice e'ERROR: User with u_id [%] wasn''t found',p_uid;*/
 end;
@@ -424,38 +424,40 @@ begin
     /*get uid then call the other command*/
     case when not exists(select user_id from users where username=p_username)
         then raise exception
-            using errcode = '6.2.1',
+            using errcode = 'P6210',
                 message = 'The given username wasn''t found';
         else
             select into v_uid user_id from users where username=p_username;
         end case;
-    call proc_generate_activation_code_from_id(v_uid);
+    call proc_generate_activation_code(v_uid);
 
 end;
 $$ LANGUAGE plpgsql;
 
-create or replace function func_return_generate_activation_code(p_uid integer) returns varchar(60)
+create or replace function func_return_activation_code(p_uid integer) returns varchar(60)
 as $$
 declare
     v_string varchar(60);
 begin
+    /* uses u_id*/
     /*check user not enabled*/
     case when exists(select true from activated_accounts where user_id=p_uid and activated_bool=true)
         then raise exception
-            using errcode = '7.2',
+            using errcode = 'P7200',
                 message = 'This account is already activated';
         else null;
         end case;
+    /* Generates and insert token*/
     select into v_string random_string(60);
     while (select true from activate_account_tokens where activation_account_token=v_string) loop
             select into v_string random_string(60);
         end loop;
     insert into activate_account_tokens(user_id,activation_account_token) values(p_uid,v_string);
     return v_string;
-exception
+    exception
     when sqlstate '23503' then
         raise exception
-            using errcode = '6.2.2',
+            using errcode = 'P62200',
                 message = 'User_id was not found';
 --         raise notice e'ERROR: User with u_id [%] wasn''t found',p_uid;
 end;
@@ -471,12 +473,12 @@ begin
     /*get uid then call the other command*/
     case when not exists(select user_id from users where username=p_username)
         then raise exception
-        using errcode = '6.2.1',
+        using errcode = 'P6201',
             message = 'The given username wasn''t found';
         else
             select into v_uid user_id from users where username=p_username;
     end case;
-    select into v_string func_return_generate_activation_code_from_id(v_uid);
+    select into v_string func_return_activation_code(v_uid);
     return v_string;
 
 
@@ -495,30 +497,30 @@ create or replace procedure proc_activate_account(p_token activate_account_token
         -- P0044 user already enabled
             if p_token='' then
                 raise exception
-                    using errcode = '6.3.4',
+                    using errcode = 'P6304',
                         message = 'Token is null or empty';
             end if;
             case when not exists(select true from activate_account_tokens where activation_account_token=p_token)
                 then raise exception
-                    using errcode = '6.2.4',
+                    using errcode = 'P6204',
                         message = 'Token not found';
                 else null;
             end case;
             case when not exists(select true from activate_account_tokens where activation_account_token=p_token and created_on<now() and expires_on>now())
                 then raise exception
-                    using errcode = '6.3.2',
+                    using errcode = 'P6302',
                         message = 'The token expired';
                 else null;
             end case;
             case when not exists(select true from activate_account_tokens where activation_account_token=p_token and used_bool=false)
                 then raise exception
-                    using errcode = '6.3.2',
+                    using errcode = 'P6302',
                         message = 'The token already used';
                 else null;
                 end case;
             case when not exists(select true from activate_account_tokens aat, activated_accounts aa where aat.activation_account_token=p_token and aa.user_id=aat.user_id)
                 then raise exception
-                    using errcode = '7.1',
+                    using errcode = 'P7100',
                         message = 'The user is already enabled';
                 else null;
                 end case;

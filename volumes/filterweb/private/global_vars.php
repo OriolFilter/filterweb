@@ -1,5 +1,5 @@
 <?php
-error_reporting(0);
+//error_reporting(0);
 //;    $hostname='192.168.1.46';
 //    $hostname='172.30.2.20';
 

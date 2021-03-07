@@ -56,6 +56,7 @@ PHP & JS & POSTGRESQL:
 ## ERROR CODES
 
 ```yaml
+php & js:
         '0':'Unknown error',
 
         '1':'Success',
@@ -82,8 +83,8 @@ PHP & JS & POSTGRESQL:
 
         '6':'Database side error'
         '6.1':'Data Insert errors',
-        '6.1.1':'Username is already in use',
-        '6.1.2':'Email is already in use',
+        '6.1.1':'Username is already exists',
+        '6.1.2':'Email is already exists',
           
         '6.2':'Data Select errors',
         '6.2.1':'Username not found',
@@ -101,6 +102,9 @@ PHP & JS & POSTGRESQL:
         '6.4.1':'Error communicating to database',
         '6.4.2':'Wrong credentials connecting to database',
         '6.4.3':'The user don\'t has permission for the requested action(s)',
+          
+        '6.5':'Functions error',
+        '6.5.1':'Error generating token',
         
 
         '7':'Account related issues',
@@ -115,8 +119,14 @@ PHP & JS & POSTGRESQL:
         '8.4': 'Subject is missing',
 
         '9': 'Invalid Credentials',
-          
-
+postgresql:
+  - Due postgresql not being able to use the same syntax as php and since the error codes seems easy to read using the syntax already done, it's been decided to leave the php and js codes as they, while using a similar (but valid) syntax for postgresql.
+  - P0000
+  - P + first number + second number +  last number
+  examples:
+    - 7:P7000
+    - 8.3:P8300
+    - 6.4.4:P6404
 ```
 
 ### ERROR MESSAGES HINTS
