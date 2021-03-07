@@ -47,9 +47,10 @@
 ## REGEX
 
 ```yaml
-    email:  "/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z10-9-]+\.+[a-zA-Z0-9-]+$/"      
-    username: "/^[a-zA-Z0-9_.-.+]{6,20}$/"
-    password: "/^[a-zA-Z0-9$%/.,?!+_=-]{6,20}$/"
+PHP & JS & POSTGRESQL:
+    username: "^[a-zA-Z0-9_.-.+]{6,20}$"
+    password: "^[a-zA-Z0-9$%.,?!@+_=-]{6,20}$"
+    email:  "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z10-9-]+\.+[a-zA-Z0-9-]+$"
 ```
 
 ## ERROR CODES
@@ -122,6 +123,6 @@
 
 ```yaml
   '3.1': 'The username needs to be from 6 to 20 characters and contain only the following allowed characters:\nLetters from a to z (upper and lower case)\nNumbers from 0 to 9\nSpecial characters "_-+."',
-  '3.2': 'The password needs to be from 6 to 20 characters and contain only the following allowed characters:\nLetters from a to z (upper and lower case)\nNumbers from 0 to 9\nSpecial characters "$%/.,?!+_=-"',
+  '3.2': 'The password needs to be from 6 to 20 characters and contain only the following allowed characters:\nLetters from a to z (upper and lower case)\nNumbers from 0 to 9\nSpecial characters "$%/.,?!@+_=-"',
   '3.3': 'The given email is invalid'
 ```

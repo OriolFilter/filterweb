@@ -1,8 +1,11 @@
 <?php
-//;    $HOSTNAME='192.168.1.46';
+error_reporting(0);
+//;    $hostname='192.168.1.46';
+//    $hostname='172.30.2.20';
+
+    $hostname='localhost';
     $project_dir='/var/www';
     $mailer_folder='/var/www';
-    $hostname='172.30.2.20';
     $contact_email='filter.web.asix@gmail.com';
     $contact_phone='+34 689543670';
     /* %1 title, %2 scripts*/
@@ -77,8 +80,8 @@
         ];
 
     }
-
-    class json_error_codes{
+/* UNUSED */
+    /*class json_error_codes{
         public $codes=[
         '0'=>'Unknown error',
 
@@ -109,6 +112,7 @@
         '6.1.1'=>'Username is already in use',
         '6.1.2'=>'Email is already in use',
 
+
         '6.2'=>'Data Select errors',
         '6.2.1'=>'Username not found',
         '6.2.2'=>'User_id not found',
@@ -121,6 +125,11 @@
         '6.3.3'=>'Token expired',
         '6.3.4'=>'Token is null or empty',
 
+        '6.4'=>'Database connection error',
+        '6.4.1'=>'Error communicating to database',
+        '6.4.2'=>'Wrong credentials connecting to database',
+        '6.4.3'=>'The user don\'t has permission for the requested action(s)',
+
         '7'=>'Account related issues',
         '7.1'=>'The account is not activated',
         '7.2'=>'The account is already activated',
@@ -132,5 +141,6 @@
         '8.3'=> 'Body is missing',
         '8.4'=> 'Subject is missing',
         ];
-    }
+    }*/
+    /* Regex? Ho podria fer... */
 ?>

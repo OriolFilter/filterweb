@@ -49,13 +49,13 @@
 //}
 
 
-;// Exceptions
-;class MissingField extends Exception { };
-;class LoginError extends Exception { };
-;class UnknownError extends Exception { };
-;class ErrorConnectingToDatabase extends Exception { };
-;class ErrorCreatingUser extends Exception { };
-;class ErrorSendingMessage extends Exception { };
+;// Exceptions /* Had to comment exceptions due intellij detecting them*/
+//;class MissingField extends Exception { };
+//;class LoginError extends Exception { };
+//;class UnknownError extends Exception { };
+//;class ErrorConnectingToDatabase extends Exception { };
+//;class ErrorCreatingUser extends Exception { };
+//;class ErrorSendingMessage extends Exception { };
 ;
 ;set_error_handler(function($errno, $errstr, $errfile, $errline ){ //To catch all errors (almost)
 ;    throw new ErrorException($errstr, $errno, 0, $errfile, $errline);

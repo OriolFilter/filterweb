@@ -291,7 +291,7 @@ declare
 begin
     /* Add must contain one of the followings! */
     case when not exists (
-            select regexp_matches(p_passwd,'^[a-zA-Z0-9$%/.,?!+_=-]{6,20}$')
+            select regexp_matches(p_passwd,'^[a-zA-Z0-9$%.,?!+_=-]{6,20}$')
         )
         then
 --         raise exception 'not_valid_email';
@@ -370,14 +370,14 @@ BEGIN
 --     insert into
     case when exists(select true from users where username=p_username)
         then raise exception
-            using errcode = '6.1',
+            using errcode = '6.1.1',
                 message = 'This username is alredy in use';
         else null;
     end case;
 --     case when exists(select true from users where email=cast(encode(cast(p_email as bytea),'hex') as bytea))
     case when exists(select true from users where email=p_email)
         then raise exception
-            using errcode = '6.3',
+            using errcode = '6.1.2',
                 message = 'This email is alredy in use';
         else null;
         end case;
