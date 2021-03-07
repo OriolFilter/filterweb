@@ -15,7 +15,7 @@ require 'PHPMailer/src/SMTP.php';
 $mail = new PHPMailer(true);
 
 $mail_server='filter.web.asix@gmail.com';
-$mail_server_pass='ITB2019015';
+$mail_server_pass='';
 $mail_to='filter.web.asix@gmail.com';
 
 try {

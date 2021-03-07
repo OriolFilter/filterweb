@@ -3,6 +3,7 @@ $(document).ready(function(){
 });
 
 function register() {
+    /* Error codes */
     var error_obj={name:'Error Handler',error_list:[]};
     error_obj.code_dict ={
         '0':'Unknown error',
@@ -83,7 +84,7 @@ function check_fields(form,error_obj){
     if (!(/^[a-zA-Z0-9$%/.,?!+_=-]{6,20}$/g.test(form['pass'].value))){
         error_obj.error_list.push('3.2');
      }
-    if (!(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z10-9-]+\.+[a-zA-Z0-9-]+$/g.test(form['email'].value))){
+    if (!(/^[a-zA-Z0-9.!#$%&'*+=?^_`{|}~-]+@[a-zA-Z10-9-]+\.+[a-zA-Z0-9-]+$/g.test(form['email'].value))){
         error_obj.error_list.push('3.3');
      }
 

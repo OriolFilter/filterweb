@@ -2,7 +2,7 @@
 ```php
 $email= filter_input(INPUT_GET, 'email', FILTER_SANITIZE_EMAIL,FILTER_FLAG_EMAIL_UNICODE);
 $email= filter_input(INPUT_GET, 'email', FILTER_VALIDATE_EMAIL,FILTER_FLAG_EMAIL_UNICODE);
- ($email){
+if ($email){
    echo $email;
 } else
 {echo '!!';}
@@ -171,4 +171,36 @@ function check_form(form,fields_to_check){
     // All gucci
     return 1;
 }
+```
+
+### Old postgresql error codes
+```
+/* Errcode table
+-- Data validation
+-- P0000
+-- P0001 username
+-- P0001-A Valid characters (not used)
+-- P0001-B Password length characters (not used)
+-- P0002 password
+-- P0003 email
+
+-- Select errors not found
+-- P0010 u_id wasn't found
+
+-- Duplicated values
+-- P0021 duplicated username
+-- P0023 duplicated email
+
+
+-- Query not desired result
+-- P0030 user_id not found
+-- P0031 username not found
+-- P0034 account is already enabled
+
+-- Working with activation tokens
+-- P0040 token not found/not valid
+-- P0041 token expired
+-- P0042 token used
+-- P0043 user already enabled
+*/
 ```

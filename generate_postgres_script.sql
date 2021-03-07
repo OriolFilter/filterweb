@@ -248,34 +248,6 @@ CREATE TABLE if not exists address (
 -- Triggers
 -- Functions
 
-/* Errcode table
--- Data validation
--- P0000
--- P0001 username
--- P0001-A Valid characters (not used)
--- P0001-B Password length characters (not used)
--- P0002 password
--- P0003 email
-
--- Select errors not found
--- P0010 u_id wasn't found
-
--- Duplicated values
--- P0021 duplicated username
--- P0023 duplicated email
-
-
--- Query not desired result
--- P0030 user_id not found
--- P0031 username not found
--- P0034 account is already enabled
-
--- Working with activation tokens
--- P0040 token not found/not valid
--- P0041 token expired
--- P0042 token used
--- P0043 user already enabled
-*/
 -- Functions
 
 CREATE EXTENSION pgcrypto; -- Crypt extension
@@ -304,7 +276,7 @@ declare
 begin
     case when not exists (select regexp_matches(p_uname,'^[a-zA-Z0-9._.-.+.]{6,20}$'))
         then raise exception
-            using errcode = 'P0001',
+            using errcode = '3.1',
                 message = 'The username given does not meet the requirements.',
                 hint = 'The username needs to be from 6 to 20 characters and contain only the following allowed characters:\nLetters from a to z (upper and lower case)\nNumbers from 0 to 9\nSpecial characters "_-+."';
 
@@ -324,7 +296,7 @@ begin
         then
 --         raise exception 'not_valid_email';
             raise exception
-                using errcode = 'P0002',
+                using errcode = '3.2',
                     message = 'The password given does not meet the requirements.',
                     hint = 'The password needs to be from 6 to 20 characters and contain only the following allowed characters:\nLetters from a to z (upper and lower case)\nNumbers from 0 to 9\nSpecial characters "$%/.,?!+_=-"';
 
@@ -340,11 +312,11 @@ declare
     v_mail bool;
 begin
     case when not exists (
-            select regexp_matches(p_mail,'^[a-zA-Z0-9.!#$%&''*+/=?^_`{|}~-]+@[a-zA-Z10-9-]+\.+[a-zA-Z0-9-]+$')) then
+            select regexp_matches(p_mail,'^[a-zA-Z0-9.!#$%&''*+=?^_`{|}~-]+@[a-zA-Z10-9-]+\.+[a-zA-Z0-9-]+$')) then
         raise exception
-            using errcode = 'P0003',
+            using errcode = '3.3',
                 message = 'The email given does not meet the requirements.',
-                hint = 'The given email seems to have wrong syntax';;
+                hint = 'The given email seems to have wrong syntax';
         else null;
         end case ; /* not raises exception if email matches regex */
     /* text@text.text */
@@ -398,14 +370,14 @@ BEGIN
 --     insert into
     case when exists(select true from users where username=p_username)
         then raise exception
-            using errcode = 'P0021',
+            using errcode = '6.1',
                 message = 'This username is alredy in use';
         else null;
     end case;
 --     case when exists(select true from users where email=cast(encode(cast(p_email as bytea),'hex') as bytea))
     case when exists(select true from users where email=p_email)
         then raise exception
-            using errcode = 'P0023',
+            using errcode = '6.3',
                 message = 'This email is alredy in use';
         else null;
         end case;
@@ -413,21 +385,7 @@ BEGIN
     insert into users(username, password, email) values (p_username,crypt(p_passwd, gen_salt('bf',8)),p_email);
     select into v_uid user_id from users where username=p_username;
     insert into activated_accounts(user_id) values (v_uid); /* Canviar a trigger */
---     raise notice e'>> %',v_uid;
 
---     commit; /* Postgres manages commit or rollback alone*/
--- EXCEPTION
-
---     when sqlstate 'P0001' then
---         raise notice e'Error in the given username';
---     when sqlstate 'P0002' then
---         raise notice e'Error in the given password';
---     when sqlstate 'P0003' then
---         raise notice e'Error in the given mail';
---     when others then raise notice 'hah';
---     when unique_violation then
---     when sqlstate '23505' then
---         raise notice 'Duplicate username or email, let''s see how we fix it...';
 END;
 
 $$ LANGUAGE plpgsql;
@@ -440,7 +398,7 @@ begin
     /*check user not enabled*/
     case when exists(select true from activated_accounts where user_id=p_uid and activated_bool=true)
         then raise exception
-            using errcode = 'P0034',
+            using errcode = '7.2',
                 message = 'This account is already activated';
         else null;
     end case;
@@ -451,7 +409,10 @@ begin
     insert into activate_account_tokens(user_id,activation_account_token) values(p_uid,v_string);
 exception
     when sqlstate '23503' then
-    raise notice e'ERROR: User with u_id [%] wasn''t found',p_uid;
+        raise exception
+            using errcode = '6.2.1',
+                message = 'User_id was not found';
+/*     raise notice e'ERROR: User with u_id [%] wasn''t found',p_uid;*/
 end;
 $$ LANGUAGE plpgsql;
 
@@ -463,7 +424,7 @@ begin
     /*get uid then call the other command*/
     case when not exists(select user_id from users where username=p_username)
         then raise exception
-            using errcode = 'P0031',
+            using errcode = '6.2.1',
                 message = 'The given username wasn''t found';
         else
             select into v_uid user_id from users where username=p_username;
@@ -481,7 +442,7 @@ begin
     /*check user not enabled*/
     case when exists(select true from activated_accounts where user_id=p_uid and activated_bool=true)
         then raise exception
-            using errcode = 'P0034',
+            using errcode = '7.2',
                 message = 'This account is already activated';
         else null;
         end case;
@@ -493,7 +454,10 @@ begin
     return v_string;
 exception
     when sqlstate '23503' then
-        raise notice e'ERROR: User with u_id [%] wasn''t found',p_uid;
+        raise exception
+            using errcode = '6.2.2',
+                message = 'User_id was not found';
+--         raise notice e'ERROR: User with u_id [%] wasn''t found',p_uid;
 end;
 $$ LANGUAGE plpgsql;
 
@@ -507,7 +471,7 @@ begin
     /*get uid then call the other command*/
     case when not exists(select user_id from users where username=p_username)
         then raise exception
-        using errcode = 'P0031',
+        using errcode = '6.2.1',
             message = 'The given username wasn''t found';
         else
             select into v_uid user_id from users where username=p_username;
@@ -531,30 +495,30 @@ create or replace procedure proc_activate_account(p_token activate_account_token
         -- P0044 user already enabled
             if p_token='' then
                 raise exception
-                    using errcode = 'P0040',
-                        message = 'The token is null or empty';
+                    using errcode = '6.3.4',
+                        message = 'Token is null or empty';
             end if;
             case when not exists(select true from activate_account_tokens where activation_account_token=p_token)
                 then raise exception
-                    using errcode = 'P0041',
-                        message = 'The token was not found in the database/valid';
+                    using errcode = '6.2.4',
+                        message = 'Token not found';
                 else null;
             end case;
             case when not exists(select true from activate_account_tokens where activation_account_token=p_token and created_on<now() and expires_on>now())
                 then raise exception
-                    using errcode = 'P0042',
-                        message = 'The token has expired';
+                    using errcode = '6.3.2',
+                        message = 'The token expired';
                 else null;
             end case;
             case when not exists(select true from activate_account_tokens where activation_account_token=p_token and used_bool=false)
                 then raise exception
-                    using errcode = 'P0043',
-                        message = 'The token is already used';
+                    using errcode = '6.3.2',
+                        message = 'The token already used';
                 else null;
                 end case;
             case when not exists(select true from activate_account_tokens aat, activated_accounts aa where aat.activation_account_token=p_token and aa.user_id=aat.user_id)
                 then raise exception
-                    using errcode = 'P0044',
+                    using errcode = '7.1',
                         message = 'The user is already enabled';
                 else null;
                 end case;

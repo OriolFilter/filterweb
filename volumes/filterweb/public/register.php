@@ -1,5 +1,6 @@
 <?php
 ;
+;
 ;$top_format='';
 ;$bot_format='';
 ;$scripts='';

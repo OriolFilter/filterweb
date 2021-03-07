@@ -1,6 +1,8 @@
 <?php
 //;    $HOSTNAME='192.168.1.46';
-    $HOSTNAME='172.30.2.20';
+    $project_dir='/var/www';
+    $mailer_folder='/var/www';
+    $hostname='172.30.2.20';
     $contact_email='filter.web.asix@gmail.com';
     $contact_phone='+34 689543670';
     /* %1 title, %2 scripts*/
@@ -42,9 +44,9 @@
     </header>
     <main>';
 
-/* %1 phone*/
-/* %2 email*/
-$bot_format=sprintf('</main>
+    /* %1 phone*/
+    /* %2 email*/
+    $bot_format=sprintf('</main>
 <footer>
     <div id="info">
         <h4>Location</h4>
@@ -60,4 +62,18 @@ $bot_format=sprintf('</main>
 </body>
 </html>',$contact_phone,$contact_email);
 
+//    /*functions*/
+    /* Classes */
+    /* Generate JSON */
+    class json_response
+    {
+        public $status=null;
+        public $code=null;
+        public $data=[];
+        public $error=[
+            "code"=>null,
+            "message"=>null
+        ];
+
+    }
 ?>
