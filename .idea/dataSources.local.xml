@@ -34,7 +34,9 @@
             <node kind="database" qname="@">
               <node kind="schema" qname="@" />
             </node>
-            <node kind="database" qname="contact_forms_db">
+            <node kind="database">
+              <name qname="contact_forms_db" />
+              <name qname="shop_db" />
               <node kind="schema" qname="public" />
             </node>
           </node>
@@ -57,6 +59,7 @@
             <node kind="database" qname="contact_forms_db">
               <node kind="schema" qname="public" />
             </node>
+            <node kind="database" qname="shop_db" />
           </node>
         </introspection-scope>
       </schema-mapping>

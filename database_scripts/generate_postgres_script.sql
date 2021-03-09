@@ -1,60 +1,13 @@
-create database shop_db;
-REVOKE ALL ON SCHEMA shop_db FROM PUBLIC;
-REVOKE ALL ON DATABASE shop_db FROM PUBLIC;
+-- create database shop_db;
+-- REVOKE ALL ON SCHEMA shop_db FROM PUBLIC;
+-- REVOKE ALL ON DATABASE shop_db FROM PUBLIC;
 -- Tables
 -- Users Related
 
 -- Customers table
 
 
-CREATE TABLE if not exists users (
-      user_id serial,
-      username VARCHAR ( 20 ) UNIQUE NOT NULL,
-      password VARCHAR ( 60 ) NOT NULL, /* crypted and salted, returns 60 lenght */
-      email VARCHAR ( 255 ) UNIQUE NOT NULL /* https://stackoverflow.com/questions/386294/what-is-the-maximum-length-of-a-valid-email-address */,
---       email bytea UNIQUE NOT NULL, /* PD, no al final no */ /* al final si es guarda en hexa perque estalvies espais i no importen les majuscules*/
---                          role_id serial NOT NULL,
-      created_on TIMESTAMP DEFAULT now() NOT NULL,
-      updated_on TIMESTAMP DEFAULT now() NOT NULL,
-      last_login TIMESTAMP DEFAULT now() NOT NULL,
---                          last_login TIMESTAMP,
-      PRIMARY KEY (user_id)
---                          CONSTRAINT fk_role FOREIGN KEY (role_id) REFERENCES role (role_id)  ON DELETE CASCADE;
-);
-
--- Activate account tokens
-CREATE TABLE if not exists activate_account_tokens (
-    activation_account_token_id serial,
-    activation_account_token VARCHAR (200) NOT NULL UNIQUE,
---     token_code varchar (200) UNIQUE NOT NULL,
-    user_id integer NOT NULL,
-    used_bool bool DEFAULT false NOT NULL,
-    created_on TIMESTAMP DEFAULT now(),
-    expires_on TIMESTAMP DEFAULT now() + '30 minute'::interval,
-    PRIMARY KEY (activation_account_token_id),
-    CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
-);
-
-CREATE table if not exists activated_accounts (
- activated_users_id serial,
- user_id integer NOT NULL,
- activated_bool boolean NOT NULL DEFAULT FALSE,
- activation_date TIMESTAMP DEFAULT NULL,
- PRIMARY KEY (activated_users_id),
- CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
-);
-
--- Login tokens / session
-CREATE TABLE if not exists login_tokens (
-        token_id serial,
-        user_id integer NOT NULL,
-        token_code varchar (200) UNIQUE NOT NULL,
-        created_on TIMESTAMP DEFAULT now(),
-        expires_on TIMESTAMP DEFAULT now() + '30 minute'::interval,
-        PRIMARY KEY (token_id),
-        CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
-);
-
+x
 -- Password recovery tokens
 CREATE TABLE if not exists password_recovery_tokens (
         password_recovery_id serial,

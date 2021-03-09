@@ -146,7 +146,7 @@ class NameNotValidError  extends CustomError  implements DefinedErrors {
 class TextNotValidError  extends CustomError  implements DefinedErrors {
     public $error_code = '3.5';
     public $message = 'Text does not meet the requirements';
-    public $hint = 'Text message must be from 20 to 255 characters';
+    public $hint = 'Text message must be from 20 to 400 characters';
 }
 
 ## Forms Missing fields (unused in php)

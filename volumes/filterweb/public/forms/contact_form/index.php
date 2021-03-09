@@ -25,19 +25,22 @@ try {
     } else {
         $email = $email;
     }
-    if (!(@preg_match("/^[\w\W]{20,255}$/", $_REQUEST['text'], $text))) {
+    if (!(@preg_match("/^[\w\W]{20,400}$/", $_REQUEST['text'], $text))) {
         throw new TextNotValidError();
     } else {
         $text = $text[0];
     }
 
     /* Database connection*/
-    ;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=contact_forms_db user=form_user password=form_pass");
+//    ;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=contact_forms_db user=form_user password=form_pass");
+    ;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=contact_forms_db user=test password=test");
     if ($dbconn && !pg_connection_busy($dbconn)) {
         ;
-        $result = pg_prepare($dbconn, "register_form", 'call insert_form($1,$2,$3)');
+//        $result = pg_prepare($dbconn, "register_form", 'call insert_form($1,$2,$3)');
+        $result = pg_prepare($dbconn, "register_form", "call insert_form('gugugaga','email@email.com','123123123123123123123123123123')");
         $res = pg_get_result($dbconn);
-        $result = pg_send_execute($dbconn, "register_user_q", array($name, $email, $text));
+//        $result = pg_send_execute($dbconn, "register_user_q", array($name, $email, $text));
+        $result = pg_send_execute($dbconn, "register_form", array($name, $email, $text));
         $err = pg_last_notice($dbconn);
         $res = pg_get_result($dbconn);
         $state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);

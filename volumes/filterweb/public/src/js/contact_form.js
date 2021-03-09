@@ -31,7 +31,7 @@ async function send_form() {
     error_obj.code_hint_dict = {
         '3.3': 'The given email is invalid',
         '3.4': 'Name must be from 4 to 40 characters from the english alphabet or numbers, (spaces allowed)',
-        '3.5': 'Text message must be from 20 to 255 characters'
+        '3.5': 'Text message must be from 20 to 400 characters'
     };
     error_obj.json_response = null;
 
