@@ -1,5 +1,5 @@
 <?php
-/* Change a send post & recieve json*/
+
 ;set_error_handler(function($errno, $errstr, $errfile, $errline ){ //To catch all errors (almost)
     ;    throw new ErrorException($errstr, $errno, 0, $errfile, $errline);
 });

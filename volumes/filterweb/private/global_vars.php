@@ -38,9 +38,10 @@
             </nav>
         </div>
         <div id="right-buttons">
-            <ul>
-                <li><a href="/login.php">Log in</a></li>
-                <li hidden><a href="#">Log out</a></li>
+            <ul>'.
+                sprintf((isset($_COOKIE['loged']) && $_COOKIE['loged'])?'<li><a href="/my_account.php">account</a></li>':'<li><a href="/login.php">Log in</a></li>')
+                .
+                '<li hidden><a href="#">Log out</a></li>
                 <li><a href="/cart.php">Shopping Cart</a></li>
             </ul>
         </div>

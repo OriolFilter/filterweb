@@ -72,6 +72,10 @@ php & js:
         '3.1':'Username does not meet the requirements',
         '3.2':'Password does not meet the requirements',
         '3.3':'Email does not meet the requirements',
+          # Possiblement canviar
+        '3.4':'Form requirements',
+        '3.4.1':'Name does not meet the requirements',
+        '3.4.2':'Text does not meet the requirements',
 
         '4':'Field matching',
         '4.1':'Passwords don\'t match',

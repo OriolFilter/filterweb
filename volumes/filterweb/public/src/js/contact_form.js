@@ -1,8 +1,8 @@
 $(document).ready(function(){
-    $("button").click(function() {register();});
+    $("button").click(function() {send_form();});
 });
 
-async function register() {
+async function send_form() {
     /* Error codes */
     var form = document.forms["signInForm"];
     var error_obj = {name: 'Error Handler', error_list: []};
@@ -23,6 +23,9 @@ async function register() {
         '3.1': 'Username does not meet the requirements',
         '3.2': 'Password does not meet the requirements',
         '3.3': 'Email does not meet the requirements',
+        '3.4':'Form requirements',
+        '3.4.1':'Name does not meet the requirements',
+        '3.4.2':'Text does not meet the requirements',
 
         '4': 'Field matching',
         '4.1': 'Passwords don\'t match',
@@ -34,8 +37,8 @@ async function register() {
     };
 
     error_obj.code_hint_dict = {
-        '3.1': 'The username needs to be from 6 to 20 characters and contain only the following allowed characters:\nLetters from a to z (upper and lower case)\nNumbers from 0 to 9\nSpecial characters "_-+."',
-        '3.2': 'The password needs to be from 6 to 20 characters and contain only the following allowed characters:\nLetters from a to z (upper and lower case)\nNumbers from 0 to 9\nSpecial characters "$%.,?!@+_=-"',
+        '3.4.1': 'The name needs to be from 6 to 40 characters and contain only the following allowed characters:\nLetters from a to z (upper and lower case)\nNumbers from 0 to 9\nSpecial characters "_-+."',
+        '3.3.2': 'The text needs to be from 6 to 20 characters and contain only the following allowed characters:\nLetters from a to z (upper and lower case)\nNumbers from 0 to 9\nSpecial characters "$%.,?!@+_=-"',
         '3.3': 'The given email seems to be invalid',
     };
     error_obj.json_response = null;
@@ -114,7 +117,7 @@ function check_fields(form,error_obj){
     if (!(/^[a-zA-Z0-9$%.,?!@+_=-]{6,20}$/g.test(form['pass'].value))){
         error_obj.error_list.push('3.2');
      }
-    if (!(/^[a-zA-Z0-9.!#$%&'*+=?^_`{|}~-]+@[a-zA-Z10-9-]+\.[a-zA-Z0-9-]+$/.test(form['email'].value))){
+    if (!(/^[a-zA-Z0-9.!#$%&'*+=?^_`{|}~-]+@[a-zA-Z10-9-]+\.+[a-zA-Z0-9-]+$/g.test(form['email'].value))){
         error_obj.error_list.push('3.3');
      }
 

@@ -1,8 +1,12 @@
-
+create database shop_db;
+REVOKE ALL ON SCHEMA shop_db FROM PUBLIC;
+REVOKE ALL ON DATABASE shop_db FROM PUBLIC;
 -- Tables
 -- Users Related
 
 -- Customers table
+
+
 CREATE TABLE if not exists users (
       user_id serial,
       username VARCHAR ( 20 ) UNIQUE NOT NULL,
@@ -134,6 +138,7 @@ CREATE TABLE if not exists products (
         --                           price decimal (10,2), -- euros.  si no te preu es que no esta disponible encara (falta sortir el producte), Now models has the price
         description TEXT, -- Description of the product to be inserted in the database., no text, now models has the decription
         --                           limit_per_order integer, -- Limit per command
+        /* Father product*/
         created_on TIMESTAMP DEFAULT now(),
         PRIMARY KEY (product_id),
         CONSTRAINT product_brand_id FOREIGN KEY (product_brand_id) REFERENCES brands (brand_id),
@@ -312,11 +317,11 @@ declare
     v_mail bool;
 begin
     case when not exists (
-            select regexp_matches(p_mail,'^[a-zA-Z0-9.!#$%&''*+=?^_`{|}~-]+@[a-zA-Z10-9-]+\.+[a-zA-Z0-9-]+$')) then
+            select regexp_matches(p_mail,'^[a-zA-Z0-9.!#$%&''*+=?^_`{|}~-]+@[a-zA-Z10-9-]+\.[a-zA-Z0-9-]+$')) then
         raise exception
             using errcode = 'P3300',
                 message = 'The email given does not meet the requirements.',
-                hint = 'The given email seems to have wrong syntax';
+                hint = 'Email seems to be invalid';
         else null;
         end case ; /* not raises exception if email matches regex */
     /* text@text.text */
@@ -587,3 +592,8 @@ $$ language plpgsql;
 -- create trigger trigg_create_activation_code
 --     after insert on users
 --     for each row execute procedure
+
+
+-- Index
+
+-- Display products,   (products,brand,category) grouped by product_father
