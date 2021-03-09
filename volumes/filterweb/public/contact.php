@@ -2,12 +2,13 @@
 ;
 ;$top_format='';
 ;$bot_format='';
-;include "../private/global_vars.php";
-$title='Contact';
-echo sprintf($top_format,$title,'');
+;include_once "../private/global_vars.php";
+;include_once "../private/libraries/error_codes.php";
+;$title='Contact';
+;echo sprintf($top_format,$title,"<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script><script src='src/js/contact_form.js'></script>");
 ;echo "<div id='contact'>";
 ;echo "
-    <script src='scripts/contact.js'></script>
+
     <div id='contactMethodsList'>
         <table>
         <tr>
@@ -50,21 +51,22 @@ echo sprintf($top_format,$title,'');
         </div>
         <div id='form'><h3 >Fill this form and our experts will contact you as soon as possible</h3>
             <div class=\"form-single-column\">
-                <form id='contactForm'>
+                <form id='form'>
                 <table>
                     <tr>
                         <th><label>Your name:</label></th>
-                        <td><textarea cols='20' data-val='true' data-val-required='Please enter your name.' id='contactName' rows='2'></textarea></td>
+                        <td><input aria-label='Name' type='text' cols='20' rows='2' id='contact-name' required></td>
                     </tr>
                     <tr>
                         <th><label>Your e-mail address:</label></th>
-                        <td><textarea cols='20' data-val='true' data-val-required='Please enter your contact information' id='contactEmail'></textarea></td>
+                        <td><input aria-label='email' type='email' cols='20' rows='2' id='contact-email' required></td>
                     </tr>
                     <tr><th colspan='2'><label>Your message:</label></th></tr>
-                    <tr><td colspan='2'><textarea style='width: 40vw;height: 40px' cols='20' data-val='true' data-val-required='Please enter your message' id='contactMsg'></textarea></td></tr>               
+                    <tr><td colspan='2'><textarea id='contact-text' required></textarea></td></tr>               
                     </table>
                     <br>
-                    <a id='link' onclick='formSend()'>Send</a>
+                    <span id='serverResponse' hidden></span>
+                    <button type='button' id='link'><ins>Send</ins></button>
                 </form>
             </div>
         </div>
@@ -72,10 +74,6 @@ echo sprintf($top_format,$title,'');
 ";
 
 echo "</div>";
-
-
-
-
 
 echo $bot_format;
 //https://www.w3schools.com/jsref/tryit.asp?filename=tryjsref_onsubmit

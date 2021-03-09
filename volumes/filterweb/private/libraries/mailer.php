@@ -2,10 +2,16 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\SMTP;
-require_once '/var/www/private/libraries/PHPMailer/src/Exception.php';
-require_once '/var/www/private/libraries/PHPMailer/src/PHPMailer.php';
-require_once '/var/www/private/libraries/PHPMailer/src/SMTP.php';
-require_once '/var/www/private/libraries/error_codes.php';
+
+$src_folder = '/var/www/private/libraries/PHPMailer/src';
+require_once $src_folder.'/Exception.php';
+require_once $src_folder.'/PHPMailer.php';
+require_once $src_folder.'/SMTP.php';
+
+//require_once '/var/www/private/libraries/PHPMailer/src/Exception.php';
+//require_once '/var/www/private/libraries/PHPMailer/src/PHPMailer.php';
+//require_once '/var/www/private/libraries/PHPMailer/src/SMTP.php';
+//require_once '/var/www/private/libraries/error_codes.php';
 
 //https://www.php.net/manual/en/language.oop5.autoload.php
 //https://www.php.net/manual/en/language.exceptions.extending.php
@@ -46,7 +52,6 @@ class mailer{
             if ($info->altbody){
                 $mail->AltBody = $info->altbody;
             }
-
             $mail->send();
             return true;
         } catch (Exception $e) {

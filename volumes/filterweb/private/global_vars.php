@@ -4,10 +4,19 @@
 //    $hostname='172.30.2.20';
 
     $hostname='localhost';
+
     $project_dir='/var/www';
-    $mailer_folder='/var/www';
-    $contact_email='filter.web.asix@gmail.com';
+
+    require_once $project_dir.'/private/libraries/error_codes.php';
+
+    $mailer_file=$project_dir.'/private/libraries/mailer.php';
+    $mailer_folder=$project_dir.'/private/libraries/PHPMailer';
+
+
+
     $contact_phone='+34 689543670';
+    $contact_email='filter.web.asix@gmail.com';
+
     /* %1 title, %2 scripts*/
     ;$top_format = '<!DOCTYPE html>
     <html lang="es">

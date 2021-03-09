@@ -4,7 +4,8 @@ $(document).ready(function(){
 
 async function register() {
     /* Error codes */
-    var form = document.forms["signInForm"];
+    var form = document.forms["form"];
+    var server_response_obj = document.getElementById('serverResponse');
     var error_obj = {name: 'Error Handler', error_list: []};
     var data_obj = {json:null, response: null};
     error_obj.code_dict = {
@@ -43,8 +44,8 @@ async function register() {
     if (check_fields(form, error_obj)) {
         data_obj.json=return_json_form(form);
         data_obj.response= await post(data_obj.json,error_obj);
-        server_alert(data_obj.response);
-    } else {alert_error(error_obj);}
+        server_alert(data_obj.response,server_response_obj);
+    } else {alert_error(error_obj,server_response_obj);}
 }
 
 function return_json_form(form){
@@ -62,7 +63,7 @@ function return_json_form(form){
 
 }
 
-function alert_error(error_obj){
+function alert_error(error_obj,server_response_obj){
     var error_message='';
     for (x in error_obj.error_list) {
         error_message+='<p id="error_form">'+error_obj.code_dict[error_obj.error_list[x]]+'</p>';
@@ -70,27 +71,27 @@ function alert_error(error_obj){
             error_message+='<p id="hint_form">'+error_obj.code_hint_dict[error_obj.error_list[x]]+'</p>';
         }
     }
-    document.getElementById("signInResponse").hidden=0;
-    document.getElementById("signInResponse").innerHTML=error_message;
+    server_response_obj.hidden=0;
+    server_response_obj.innerHTML=error_message;
 }
 
-function server_alert(json){
+function server_alert(json,server_response_obj){
     console.log(json);
     if (json['status_code']=="1") {
-        success();
+        success(server_response_obj);
     } else {
         var error_message='';
         error_message+='<p id="error_form">'+json['error']["message"]+'</p>';
         if (json['error']['hint']) {
             error_message+='<p id="hint_form">'+json['error']["hint"]+'</p>';}
-        document.getElementById("signInResponse").hidden=0;
-        document.getElementById("signInResponse").innerHTML=error_message;
+        server_response_obj.hidden=0;
+        server_response_obj.innerHTML=error_message;
     }
 
 }
-function success(){
-    document.getElementById("signInResponse").hidden=0;
-    document.getElementById("signInResponse").innerHTML='<p id="success_form">Success! An activation link been sent the provided email!</p>';
+function success(server_response_obj){
+    server_response_obj.hidden=0;
+    server_response_obj.innerHTML='<p id="success_form">Success! An activation link been sent the provided email!</p>';
 }
 
 function check_fields(form,error_obj){
@@ -136,12 +137,12 @@ function check_fields(form,error_obj){
 
 }
 
-async function post(json,error_obj) {
+async function post(json,error_obj,server_response_obj) {
     let result;
 
     try {
         result = await $.ajax({
-            url: '/forms/registration.php',
+            url: '/forms/registration/',
             type: 'POST',
             data: json
         });
@@ -150,7 +151,7 @@ async function post(json,error_obj) {
     } catch (error) {
         console.error(error);
         error_obj.error_list.push('5.1');
-        alert_error(error_obj);
+        alert_error(error_obj,server_response_obj);
 
     }
 }

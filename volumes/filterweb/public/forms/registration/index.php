@@ -17,9 +17,11 @@
 /* Global try catch */
 try {
     $hostname = null;
+    $mailer_file = null;
+//    $error_codes_file = null;
     require_once '/var/www/private/global_vars.php';
-    require_once '/var/www/private/libraries/mailer.php';
-    require_once '/var/www/private/libraries/error_codes.php';
+    require_once $mailer_file;
+//    require_once $error_codes_file;
 
     $json_obj = new json_response();
 
@@ -52,9 +54,9 @@ try {
 //    echo '<p>'.$email.'</p>';
 
     /* Database connection*/
-    ;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=shop_db user=test password=test");
+    ;$dbconn = @pg_connect("host=10.24.1.2 port=5432 dbname=shop_db user=test password=test");
 
-    if (!pg_connection_busy($dbconn)) {
+    if ($dbconn && !pg_connection_busy($dbconn)) {
         ;
         $result = pg_prepare($dbconn, "register_user_q", 'call register_user($1,$2,$3)');;
         $res = pg_get_result($dbconn);;
@@ -101,7 +103,6 @@ catch (DefinedErrors $e ) {
     $e->formatJson($json_obj);
 }
 catch (Exception $e) {
-    echo $e;
     $json_obj->status = 'failed';
     $json_obj->error['code'] = 0;
     $json_obj->error['message'] = 'Unknown error';

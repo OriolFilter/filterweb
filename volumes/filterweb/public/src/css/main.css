@@ -292,6 +292,14 @@ html {
 }
 #form textarea {
     margin: 17px 10px 5px 10px;
+    padding: 14px 15px 14px 15px;
+    background-color: #ccf5f5;
+    border-color: aliceblue;
+    outline: none;
+    font-size: 18px;
+    resize: none;
+    width: 40vw;
+    height: 8vw;
 }
 #contactMethods table tr:nth-child(even) {
     /*background-color: #fff0de;*/

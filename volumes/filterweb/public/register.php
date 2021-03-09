@@ -6,15 +6,14 @@
 ;$scripts='';
 ;include "../private/global_vars.php";
 ;$title='Sign In';
-;$scripts="<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>";
+;$scripts="<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script><script src='/src/js/signin.js'></script>";
 echo sprintf($top_format,$title,$scripts);
 ;
 ;echo"
     <div id='signIn'>
-        <script src='/src/js/signin.js'></script>
        <div id='signInBox'>
             <div class='form - single - column'>
-                <form id='signInForm'>
+                <form id='form'>
                     <h3>Sign in</h3>
                     <table>
                         <tr>
@@ -29,7 +28,7 @@ echo sprintf($top_format,$title,$scripts);
                         <tr><th>Confirm email:</th>
                         <td><input aria-label='Email confirmation' type='email2' cols='20'  id='email2' required></input></td></tr>
                     </table>
-                    <span id='signInResponse' hidden></span>
+                    <span id='serverResponse' hidden></span>
                     <button type='button' id='link'><ins>Sign In</ins></button>
                 </form>
                 <p id='subform'>Already have an account? <a href='/login.php'>Log in!</a></p>
