@@ -510,6 +510,65 @@ begin
 end;
 $$ LANGUAGE plpgsql;
 
+create or replace function func_return_change_password_code(p_uid integer) returns varchar(60)
+as $$
+declare
+    v_string varchar(60);
+begin
+    /* uses u_id*/
+    /*check user not enabled*/
+    case when exists(select true from activated_accounts where user_id=p_uid and activated_bool=true)
+        then raise exception
+            using errcode = 'P7200',
+                message = 'This account is already activated';
+        else null;
+        end case;
+    /* Generates and insert token*/
+    select into v_string random_string(60);
+    while (select true from activate_account_tokens where activation_account_token=v_string) loop
+            select into v_string random_string(60);
+        end loop;
+    insert into activate_account_tokens(user_id,activation_account_token) values(p_uid,v_string);
+    return v_string;
+exception
+    when sqlstate '23503' then
+        raise exception
+            using errcode = 'P62200',
+                message = 'User_id was not found';
+--         raise notice e'ERROR: User with u_id [%] wasn''t found',p_uid;
+end;
+$$ LANGUAGE plpgsql;
+
+create or replace function func_return_change_password_code(p_username varchar)
+    returns varchar(60)
+as $$
+declare
+    v_uid integer;
+    v_string varchar(60);
+begin
+    /*get uid then call the other command*/
+    case when not exists(select user_id from users where username=p_username)
+        then raise exception
+            using errcode = 'P6201',
+                message = 'The given username wasn''t found';
+        else
+            select into v_uid user_id from users where username=p_username;
+        end case;
+    select into v_string func_return_activation_code(v_uid);
+    return v_string;
+
+
+end;
+$$ LANGUAGE plpgsql;
+
+create or replace function func_return_change_password_code(p_email varchar) returns varchar as
+    $$
+    begin
+      raise notice e'%',p_email;
+    end;
+
+$$ language plpgsql;
+
 create or replace procedure proc_activate_account(p_token activate_account_tokens.activation_account_token%type) as $$
     declare
         u_id integer;
