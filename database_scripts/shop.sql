@@ -293,6 +293,7 @@ CREATE EXTENSION pgcrypto; -- Crypt extension
 --     /*raises exception if not alphanumeric*/
 -- end; $$ language plpgsql;
 */
+/* Regex */
 
 CREATE or replace procedure validate_username(p_uname varchar)
 as $$
@@ -369,7 +370,7 @@ end; $$ language plpgsql;
 --
 -- end; $$ LANGUAGE plpgsql;
 */
-
+/* Check tables */
 CREATE or replace function check_login(p_uname users.username%TYPE, p_passwd users.password%TYPE)
     returns boolean as $$
 declare
@@ -383,38 +384,37 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE or replace procedure register_user(p_username users.username%TYPE, p_passwd varchar,p_email varchar)
+
+
+
+/* Already existing values */
+
+CREATE OR REPLACE procedure user_exists(p_uname varchar)
 as $$
-declare
---     not_valid_email exception;
-    v_uid integer;
-BEGIN
-    call validate_username(p_username);
-    call validate_password(p_passwd);
-    call validate_mail(p_email);
---     insert into
-    case when exists(select true from users where username=p_username)
+begin
+    case when exists(select lower(username) from users where lower(username)=lower(p_uname))
         then raise exception
             using errcode = 'P6101',
-                message = 'This username is alredy in use';
+                message = 'This username is already in use';
         else null;
     end case;
---     case when exists(select true from users where email=cast(encode(cast(p_email as bytea),'hex') as bytea))
-    case when exists(select true from users where email=p_email)
+end;
+$$ language plpgsql;
+
+CREATE OR REPLACE procedure email_exists(p_email varchar)
+as $$
+begin
+    case when exists(select lower(email) from users where lower(email)=lower(p_email))
         then raise exception
             using errcode = 'P6102',
-                message = 'This email is alredy in use';
+                message = 'This email is already in use';
         else null;
-        end case;
---     insert into users(username, password, email) values (p_username,crypt(p_passwd, gen_salt('bf',8)),cast(encode(cast(p_email as bytea),'hex') as bytea));
-    insert into users(username, password, email) values (p_username,crypt(p_passwd, gen_salt('bf',8)),p_email);
-    select into v_uid user_id from users where username=p_username;
-    insert into activated_accounts(user_id) values (v_uid); /* Canviar a trigger */
+    end case;
+end;
+$$ language plpgsql;
 
-END;
 
-$$ LANGUAGE plpgsql;
-
+/* Activation */
 create or replace procedure proc_generate_activation_code(p_uid integer)
 as $$
 declare
@@ -510,6 +510,8 @@ begin
 end;
 $$ LANGUAGE plpgsql;
 
+/* Password updating */
+
 create or replace function func_return_change_password_code(p_uid integer) returns varchar(60)
 as $$
 declare
@@ -561,8 +563,10 @@ begin
 end;
 $$ LANGUAGE plpgsql;
 
-create or replace function func_return_change_password_code(p_email varchar) returns varchar as
-    $$
+create or replace function func_return_change_password_code_from_email(p_email varchar) returns varchar(60)
+as $$
+    declare
+        v_string varchar(60);
     begin
       raise notice e'%',p_email;
     end;
@@ -656,6 +660,43 @@ begin
 end;
 $$ language plpgsql;
 
+
+CREATE or replace procedure register_user(p_username varchar, p_passwd varchar,p_email varchar)
+as $$
+declare
+--     not_valid_email exception;
+    v_uid integer;
+BEGIN
+    call validate_username(p_username);
+    call validate_password(p_passwd);
+    call validate_mail(p_email);
+--  Check if entries already exists
+    call user_exists(p_username);
+    call email_exists(p_email);
+    /*
+/*    case when exists(select true from users where username=p_username)
+        then raise exception
+            using errcode = 'P6101',
+                message = 'This username is already in use';
+        else null;
+        end case;*/
+--     case when exists(select true from users where email=cast(encode(cast(p_email as bytea),'hex') as bytea))
+    /*
+    case when exists(select true from users where email=p_email)
+        then raise exception
+            using errcode = 'P6102',
+                message = 'This email is already in use';
+        else null;
+        end case;
+    */*/
+--     insert into users(username, password, email) values (p_username,crypt(p_passwd, gen_salt('bf',8)),cast(encode(cast(p_email as bytea),'hex') as bytea));
+    insert into users(username, password, email) values (p_username,crypt(p_passwd, gen_salt('bf',8)),p_email);
+    select into v_uid user_id from users where username=p_username;
+    insert into activated_accounts(user_id) values (v_uid); /* Canviar a trigger */
+
+END;
+
+$$ LANGUAGE plpgsql;
 
 -- Triggers
 
