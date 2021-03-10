@@ -84,7 +84,7 @@ function server_alert(json,server_response_obj){
 }
 function success(server_response_obj){
     server_response_obj.hidden=0;
-    server_response_obj.innerHTML='<p id="success_form">Success! The form been send correctly!</p>';
+    server_response_obj.innerHTML='<p id="success_form">Success! The form been send correctly! Check your email to ensure -you recieved a confirmation email</p>';
 }
 
 function check_fields(form,error_obj){
@@ -109,7 +109,7 @@ function check_fields(form,error_obj){
     if (!(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z10-9-]+\.+[a-zA-Z0-9-]+$/.test(form['contact-email'].value))){
         error_obj.error_list.push('3.3');
      }
-    if (!(/^[\w\W]{20,255}$/.test(form['contact-text'].value))){
+    if (!(/^[\w\W]{20,400}$/.test(form['contact-text'].value))){
         error_obj.error_list.push('3.5');
      }
 

@@ -5,7 +5,8 @@
 ;include_once "../private/global_vars.php";
 ;include_once "../private/libraries/error_codes.php";
 ;$title='Contact';
-;echo sprintf($top_format,$title,"<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script><script src='src/js/contact_form.js'></script>");
+;echo sprintf($top_format,$title,"<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'>
+                                          </script><script src='src/js/forms/contact_form.js'></script>");
 ;echo "<div id='contact'>";
 ;echo "
 

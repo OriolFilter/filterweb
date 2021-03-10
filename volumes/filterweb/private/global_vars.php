@@ -12,8 +12,6 @@
     $mailer_file=$project_dir.'/private/libraries/mailer.php';
     $mailer_folder=$project_dir.'/private/libraries/PHPMailer';
 
-
-
     $contact_phone='+34 689543670';
     $contact_email='filter.web.asix@gmail.com';
 

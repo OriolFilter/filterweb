@@ -175,6 +175,12 @@ class MissingTextFieldError  extends CustomError  implements DefinedErrors {
     public $message = 'Text field is missing';
 }
 
+## Select
+class EmailNotFoundError extends CustomError  implements DefinedErrors {
+    public $error_code = '6.2.3';
+    public $message = 'Email not found';
+    public $hint = null;
+}
 
 
 ?>

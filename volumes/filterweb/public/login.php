@@ -24,7 +24,7 @@ echo sprintf($top_format,$title,'');
                     <span id='logInResponse' hidden></span>
                     <div id='link' onclick='login()'><ins>Log in</ins></div>
                 </form>
-                <p id='subform'><a href='/forgot_password.php'>Did you forgot your password?</a></p>
+                <p id='subform'><a href='/account_recovery.php'>Did you forgot your password?</a></p>
                 <p id='subform'>Don't have an account? <a href='/register.php'>Register!</a></p>
             </div>
         </div>
