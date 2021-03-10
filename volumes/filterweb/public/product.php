@@ -1,9 +1,8 @@
 <?php
-;$top_format='';
-;$bot_format='';
 ;include "../private/global_vars.php";
-$title='Log In';
-echo sprintf($top_format,$title,'');
+;$page_vars = new page_vars();
+;$page_vars->title='Sign In';
+;echo $page_vars->return_header();
 
 ;$prodFolder="../private/products/";
 ;$productName = $_GET['product'];
@@ -82,7 +81,7 @@ if (file_exists($filePath)){
     echo "<div id='error'>Couldn't find what you are looking for!</div>";
 }
 
-echo $bot_format;
+;echo $page_vars->return_footer();
 
 
 //https://www.w3schools.com/php/php_forms.asp

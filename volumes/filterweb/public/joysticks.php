@@ -1,10 +1,10 @@
 <?php
 
-;$top_format='';
-;$bot_format='';
+
 ;include "../private/global_vars.php";
-$title='Joysticks';
-echo sprintf($top_format,$title,'');
+$vars = new page_vars();
+$vars->title='Joysticks';
+echo $vars->return_header();
 
 ;echo "<script src='/src/js/products_script.js'></script>"
 ;echo "<h1>Joysticks</h1><hr>";
@@ -54,7 +54,7 @@ echo sprintf($top_format,$title,'');
 
 
 ;
-echo $bot_format;
+echo $vars->return_footer();
 
 ;?>
 

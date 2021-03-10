@@ -1,10 +1,9 @@
 <?php
 ;
-;$top_format='';
-;$bot_format='';
 ;include "../private/global_vars.php";
-$title='Log In';
-echo sprintf($top_format,$title,'');
+$vars = new page_vars();
+$vars->title='Log In';
+echo $vars->return_header();
 ;
 ;echo"
     <div id='logIn'>
@@ -32,9 +31,5 @@ echo sprintf($top_format,$title,'');
 ";
 ;
 ;
-echo $bot_format;
+echo $vars->return_footer();
 ;?>
-<!--                <form action='/forms/login_form.php' method='post' id='logInForm'>-->
-<!--        <div id='logInBox'>-->
-<!--            <p>Create account</p>-->
-<!--        </div>-->

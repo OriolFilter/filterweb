@@ -3,75 +3,77 @@
 //;    $hostname='192.168.1.46';
 //    $hostname='172.30.2.20';
 
+    $project_dir='/var/www';
+    require_once $project_dir.'/private/libraries/error_codes.php';
+    $mailer_file=$project_dir.'/private/libraries/mailer.php';
+//    $mailer_folder=$project_dir.'/private/libraries/PHPMailer';
+//    require_once '/var/www/private/libraries/error_codes.php';
+
     $hostname='localhost';
 
-    $project_dir='/var/www';
 
-    require_once $project_dir.'/private/libraries/error_codes.php';
 
-    $mailer_file=$project_dir.'/private/libraries/mailer.php';
-    $mailer_folder=$project_dir.'/private/libraries/PHPMailer';
 
     $contact_phone='+34 689543670';
     $contact_email='filter.web.asix@gmail.com';
 
     /* %1 title, %2 scripts*/
     ;$top_format = '<!DOCTYPE html>
-    <html lang="es">
-    <head>
-        <link rel="stylesheet" href="/src/css/main.css"/>
-    <!--    <link rel="stylesheet" href="css/main_old.css"/>-->
-        <link rel="stylesheet" media="screen and (max-width: 750px)" href="/src/css/small.css" type="text/css">
-        <link rel="stylesheet" media="screen and (min-width: 750px) and (max-width: 1200px)" href="/src/css/medium.css" type="text/css">
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>%s</title>
-    %s
-    </head>
-    <body>
-    <header>
-        <div id="logo">
-            <a href="/index.php">
-            <img src="/src/logo.png" alt="LOGO">
-            </a>
-        </div>
-        <div id="nav-buttons">
-            <nav>
-                <ul>
-                    <li><a href="/joysticks.php">Joysticks</a></li>
-                    <li><a href="/buttons.php">Buttons</a></li>
-                    <li><a href="/contact.php">Contact us</a></li>
+        <html lang="es">
+        <head>
+            <link rel="stylesheet" href="/src/css/main.css"/>
+        <!--    <link rel="stylesheet" href="css/main_old.css"/>-->
+            <link rel="stylesheet" media="screen and (max-width: 750px)" href="/src/css/small.css" type="text/css">
+            <link rel="stylesheet" media="screen and (min-width: 750px) and (max-width: 1200px)" href="/src/css/medium.css" type="text/css">
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>%s</title>
+        %s
+        </head>
+        <body>
+        <header>
+            <div id="logo">
+                <a href="/index.php">
+                <img src="/src/logo.png" alt="LOGO">
+                </a>
+            </div>
+            <div id="nav-buttons">
+                <nav>
+                    <ul>
+                        <li><a href="/joysticks.php">Joysticks</a></li>
+                        <li><a href="/buttons.php">Buttons</a></li>
+                        <li><a href="/contact.php">Contact us</a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div id="right-buttons">
+                <ul>'.
+                    sprintf((isset($_COOKIE['loged']) && $_COOKIE['loged'])?'<li><a href="/my_account.php">account</a></li>':'<li><a href="/login.php">Log in</a></li>')
+                    .
+                    '<li hidden><a href="#">Log out</a></li>
+                    <li><a href="/cart.php">Shopping Cart</a></li>
                 </ul>
-            </nav>
-        </div>
-        <div id="right-buttons">
-            <ul>'.
-                sprintf((isset($_COOKIE['loged']) && $_COOKIE['loged'])?'<li><a href="/my_account.php">account</a></li>':'<li><a href="/login.php">Log in</a></li>')
-                .
-                '<li hidden><a href="#">Log out</a></li>
-                <li><a href="/cart.php">Shopping Cart</a></li>
-            </ul>
-        </div>
-    </header>
-    <main>';
+            </div>
+        </header>
+        <main>';
 
     /* %1 phone*/
     /* %2 email*/
     $bot_format=sprintf('</main>
-<footer>
-    <div id="info">
-        <h4>Location</h4>
-        <p>Barcelona barcelona c\Barcelona nº barcelona 087Ba</p>
-        <p>Tel. %s</p>
-    <!--<p>E-mail: <a href="mailto:%s">arcadeshop_bcn@gmail.com</a></p>-->
-
-    </div>
-    <hr>
-    <p id="copyright">Copyright © 2020 ArcadeShop. All rights reserved.</p>
-<!--    <p style="color: whitesmoke">*nota, els colors no seran aquests, ara mateix estan per poder veure les coses més facilment</p>-->
-</footer>
-</body>
-</html>',$contact_phone,$contact_email);
+        <footer>
+            <div id="info">
+                <h4>Location</h4>
+                <p>Barcelona barcelona c\Barcelona nº barcelona 087Ba</p>
+                <p>Tel. %s</p>
+            <!--<p>E-mail: <a href="mailto:%s">arcadeshop_bcn@gmail.com</a></p>-->
+        
+            </div>
+            <hr>
+            <p id="copyright">Copyright © 2020 ArcadeShop. All rights reserved.</p>
+            <!--    <p style="color: whitesmoke">*nota, els colors no seran aquests, ara mateix estan per poder veure les coses més facilment</p>-->
+            </footer>
+        </body>
+        </html>',$contact_phone,$contact_email);
 
 //    /*functions*/
     /* Classes */
@@ -88,7 +90,84 @@
         ];
 
     }
-/* UNUSED */
+    class page_vars
+    {
+        /* page content*/
+        public $hostname='localhost';
+        public $title='tittle';
+        public $scripts='';
+        public $contact_phone='+34 689543670';
+        public $contact_email='filter.web.asix@gmail.com';
+
+
+        public function return_header(){
+            return ('<!DOCTYPE html>
+                        <html lang="es">
+                        <head>
+                            <link rel="stylesheet" href="/src/css/main.css"/>
+                        <!--    <link rel="stylesheet" href="css/main_old.css"/>-->
+                            <link rel="stylesheet" media="screen and (max-width: 750px)" href="/src/css/small.css" type="text/css">
+                            <link rel="stylesheet" media="screen and (min-width: 750px) and (max-width: 1200px)" href="/src/css/medium.css" type="text/css">
+                            <meta charset="UTF-8">
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0">'
+                .($this->   title?sprintf('<title>%s</title>',$this->title):'<title>ArcadeShop</title>')
+                .($this->scripts??null)
+                        .'</head>
+                        <body>
+                        <header>
+                            <div id="logo">
+                                <a href="/index.php">
+                                <img src="/src/logo.png" alt="LOGO">
+                                </a>
+                            </div>
+                            <div id="nav-buttons">
+                                <nav>
+                                    <ul>
+                                        <li><a href="/joysticks.php">Joysticks</a></li>
+                                        <li><a href="/buttons.php">Buttons</a></li>
+                                        <li><a href="/contact.php">Contact us</a></li>
+                                    </ul>
+                                </nav>
+                            </div>
+                            <div id="right-buttons">
+                                <ul>'.
+                                ((isset($_COOKIE['loged']))?'<li><a href="/my_account.php">account</a></li>':'<li><a href="/login.php">Log in</a></li>')
+                                .'<li hidden><a href="#">Log out</a></li>
+                                    <li><a href="/cart.php">Shopping Cart</a></li>
+                                </ul>
+                            </div>
+                        </header>
+                        <main>');
+        }
+        public function return_footer(){
+            return '</main>
+                                    <footer>
+                                        <div id="info">
+                                            <h4>Location</h4>
+                                            <p>Barcelona barcelona c\Barcelona nº barcelona 087Ba</p>'
+                                            .($this->contact_email? (sprintf('<p>E-mail: <a href="mailto:%1$s">%1$s</a></p>', $this->contact_email)):null)
+                                            .($this->contact_phone? (sprintf('<p>Tel. %s</p>', $this->contact_phone)):null)
+//                                            <!--<p>E-mail: <a href="mailto:%s">arcadeshop_bcn@gmail.com</a></p>-->
+                                        .'</div>
+                                        <hr>
+                                        <p id="copyright">Copyright © 2020 ArcadeShop. All rights reserved.</p>
+                                    <!--    <p style="color: whitesmoke">*nota, els colors no seran aquests, ara mateix estan per poder veure les coses més facilment</p>-->
+                                    </footer>
+                                    </body>
+                                    </html>';
+        }
+        /* libraries */
+
+        public $project_dir='/var/www';
+        public function import_errors() {
+            require_once $this->project_dir.'/private/libraries/error_codes.php';
+        }
+        public function import_mailer() {
+            $mailer_file=$this->project_dir.'/private/libraries/mailer.php';
+            require_once $mailer_file;
+        }
+    }
+/* UNUSED  i desfassed*/
     /*class json_error_codes{
         public $codes=[
         '0'=>'Unknown error',

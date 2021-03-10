@@ -1,12 +1,15 @@
 <?php
 ;
-;$top_format='';
-;$bot_format='';
-;include_once "../private/global_vars.php";
-;include_once "../private/libraries/error_codes.php";
-;$title='Contact';
-;echo sprintf($top_format,$title,"<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'>
-                                          </script><script src='src/js/forms/contact_form.js'></script>");
+;include "../private/global_vars.php";
+;$scripts="<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'>
+           </script><script src='src/js/forms/contact_form.js'></script>";
+$vars = new page_vars();
+$vars->scripts=$scripts;
+$vars->title='Contact';
+$vars->import_errors();
+echo $vars->return_header();
+
+
 ;echo "<div id='contact'>";
 ;echo "
 
@@ -76,6 +79,6 @@
 
 echo "</div>";
 
-echo $bot_format;
+echo $vars->return_footer();
 //https://www.w3schools.com/jsref/tryit.asp?filename=tryjsref_onsubmit
 ;?>

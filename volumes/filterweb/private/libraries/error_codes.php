@@ -9,7 +9,7 @@ class CustomError extends Exception {
     public $message = 'Unknown error';
     public $status = 'failed';
     public $hint = null;
-    public  function formatJson(&$json_obj){
+    public function formatJson(&$json_obj){
 
         $json_obj->status = $this->status?htmlspecialchars($this->status):null; /* ta b */
         $json_obj->status_code = $this->status_code?htmlspecialchars($this->status_code):null; /* ta b */
@@ -180,6 +180,12 @@ class EmailNotFoundError extends CustomError  implements DefinedErrors {
     public $error_code = '6.2.3';
     public $message = 'Email not found';
     public $hint = null;
+}
+
+
+function pg_to_php_errors (string $c){
+    /* c = code/$status*/
+
 }
 
 

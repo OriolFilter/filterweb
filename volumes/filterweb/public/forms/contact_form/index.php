@@ -1,11 +1,9 @@
 <?php
 /* */
 try {
-    $hostname = null;
-    $mailer_file = null;
     require_once '/var/www/private/global_vars.php';
-    require_once $mailer_file;
-//    require_once $error_codes_file;
+    $vars = new page_vars();
+    $vars->import_mailer();
 
     $json_obj = new json_response();
 

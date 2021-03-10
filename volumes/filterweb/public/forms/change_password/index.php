@@ -16,8 +16,6 @@
 
 /* Global try catch */
 try {
-    $hostname = null;
-    $mailer_file = null;
 //    $error_codes_file = null;
     require_once '/var/www/private/global_vars.php';
     $page_vars=page_vars;
@@ -73,7 +71,7 @@ try {
                 throw new GenerateTokenError();
             } else {
                 $activation_token = pg_fetch_result($result, 0, 0);
-                $link = sprintf('https://%s/activation_form/?activation_token=%s', $hostname, $activation_token);
+                $link = sprintf('https://%s/activation_form/?activation_token=%s', $page_vars->hostname, $activation_token);
                 $mailer_info->email = $email;
                 $mailer_info->subject = 'Welcome to arcadeshop, here is your activation code';
                 $mailer_info->body = sprintf("Thanks for using our services, now that you have registered, it's time to activate your account!\n press the following link in order to activate your account: <a href='%s'>ACTIVATE ACCOUNT<a/>", $link);

@@ -1,13 +1,12 @@
 <?php
 ;
 ;
-;$top_format='';
-;$bot_format='';
-;$scripts='';
 ;include "../private/global_vars.php";
-;$title='Sign In';
 ;$scripts="<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script><script src='/src/js/forms/signin.js'></script>";
-echo sprintf($top_format,$title,$scripts);
+;$page_vars = new page_vars();
+;$page_vars->scripts=$scripts;
+;$page_vars->title='Sign In';
+;echo $page_vars->return_header();
 ;
 ;echo"
     <div id='signIn'>
@@ -38,7 +37,7 @@ echo sprintf($top_format,$title,$scripts);
 ";
 ;
 ;
-echo $bot_format;
+echo $page_vars->return_footer();
 ;?>
 <!--                <form action='/forms/login_form.php' method='post' id='logInForm'>-->
 <!--        <div id='logInBox'>-->

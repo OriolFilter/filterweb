@@ -1,10 +1,9 @@
 <?php
-//include "../privatex/format/headerFile.html";
-;$top_format='';
-;$bot_format='';
-;include "../private/global_vars.php";
-$title='Home';
-echo sprintf($top_format,$title,'');
+include "../private/global_vars.php";
+$vars = new page_vars();
+$vars->title='Home';
+echo $vars->return_header();
+
 ;$joystickFolder="../private/productTxt/joysticks/";
 ;$buttonFolder="../private/productTxt/buttons/";
 ;echo "<div id='homePage'>";
@@ -82,7 +81,7 @@ echo sprintf($top_format,$title,'');
 ;echo "</div>";
 ;echo "</div>";
 
-echo $bot_format;
+echo $vars->return_footer();
 //https://www.w3schools.com/jsref/tryit.asp?filename=tryjsref_touchmove2 FEATURED
 //https://www.w3schools.com/jsref/tryit.asp?filename=tryjsref_transitionend idk where
 ;?>

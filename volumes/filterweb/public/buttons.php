@@ -1,10 +1,14 @@
 <?php
-;$top_format='';
-;$bot_format='';
 ;include "../private/global_vars.php";
-$title='Buttons';
-echo sprintf($top_format,$title,'');
-;echo "<script src='/src/js/products_script.js'></script>";
+;$scripts="<script src='/src/js/products_script.js'></script>";
+$vars = new page_vars();
+$vars->scripts=$scripts;
+$vars->title='Buttons';
+echo $vars->return_header();
+
+
+
+
 ;echo "<h1>Buttons</h1><hr>";
 ;echo "<div id='filters'>
         <p>Show brands: <select id='filterList' onchange='prodFilter(document.getElementById(\"filterList\").value)'></p>
@@ -49,6 +53,6 @@ echo sprintf($top_format,$title,'');
 ;echo "<script>onload(prodFilter(window.location.hash.replace('#','')))</script>"
 ;echo "</div>";
 
-echo $bot_format;
+echo $vars->return_footer();
 ;?>
 

@@ -1,14 +1,14 @@
 <?php
 ;
 ;
-;$top_format='';
-;$bot_format='';
-;$scripts='';
+
 ;include "../private/global_vars.php";
-;$title='New passwords';
 ;$scripts="<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'>
            </script><script src='/src/js/forms/account_recovery.js'></script>";
-echo sprintf($top_format,$title,$scripts);
+$vars = new page_vars();
+$vars->scripts=$scripts;
+$vars->title='New passwords';
+echo $vars->return_header();
 ;
 ;$token=$_GET['token']??null;
 ;
@@ -38,9 +38,5 @@ echo sprintf($top_format,$title,$scripts);
             sprintf("<h3>Token null or invalid</h3>"));
 ;
 ;
-echo $bot_format;
+echo $vars->return_header();
 ;?>
-<!--                <form action='/forms/login_form.php' method='post' id='logInForm'>-->
-<!--        <div id='logInBox'>-->
-<!--            <p>Create account</p>-->
-<!--        </div>-->
