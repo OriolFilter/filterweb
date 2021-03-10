@@ -31,7 +31,6 @@ async function send_form() {
         '3.3': 'The given email is invalid',
     };
     error_obj.json_response = null;
-
     if (check_fields(form, error_obj)) {
         data_obj.json=return_json_form(form);
         data_obj.response= await post(data_obj.json,error_obj,server_response_obj);
@@ -81,7 +80,7 @@ function success(server_response_obj){
 }
 
 function check_fields(form,error_obj){
-    var obligatory_fields = {'email':'2.3', 'eail2':"2.5"}; /* check specified*/
+    var obligatory_fields = {'email':'2.3', 'email2':"2.5"}; /* check specified*/
     var keys=Object.keys(obligatory_fields);
     var l = keys.length;
     var fieldname;

@@ -26,18 +26,29 @@
         ;$err=pg_last_notice($dbconn);
         ;$res=pg_get_result($dbconn);
         ;$state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
-        if ($state=='P6301'){
+        /* fer function que aixeca els errors depenent del de la bdd? deberia -> dema ho faig?*/
+        if (!$state) {;}
+        elseif ($state=='P6304'){
             throw new TokenNullOrEmptyError();
-        } elseif ($state=='P6304') {
+        } elseif ($state=='P6301') {
+            throw new TokenNotValidError();
+        } elseif ($state=='P6204') {
             throw new TokenNotValidError();
         } elseif ($state=='P6302') {
             throw new TokenExpiredError();
         } elseif ($state=='P7100') {
             throw new AccountAlreadyActivatedError();
-        } elseif ($state=='P6302') {
+        } elseif ($state=='P6303') {
             throw new TokenAlreadyUsedError();
+        } else {
+            throw new UnknownError();
         }
     } else {throw new DatabaseConnectionError();}
+
+    $json_obj->status='success';
+    $json_obj->status_code=1;
+    $json_obj->message = 'The user been activated correctly';
+
     $json_obj->status='success';
     $json_obj->status_code=1;
     $json_obj->message = 'The user been activated correctly';

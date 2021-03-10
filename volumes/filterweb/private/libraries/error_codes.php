@@ -71,7 +71,7 @@ class TokenNullOrEmptyError  extends CustomError  implements DefinedErrors {
     public $hint = 'Token is null or empty';
 }
 class TokenAlreadyUsedError  extends CustomError  implements DefinedErrors {
-    public $error_code = '6.3.2';
+    public $error_code = '6.3.3';
     public $message = 'Token not valid';
     public $hint = 'Token already used';
 }

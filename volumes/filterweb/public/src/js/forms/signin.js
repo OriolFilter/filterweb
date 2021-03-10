@@ -43,7 +43,7 @@ async function register() {
 
     if (check_fields(form, error_obj)) {
         data_obj.json=return_json_form(form);
-        data_obj.response= await post(data_obj.json,error_obj);
+        data_obj.response= await post(data_obj.json,error_obj,server_response_obj);
         server_alert(data_obj.response,server_response_obj);
     } else {alert_error(error_obj,server_response_obj);}
 }

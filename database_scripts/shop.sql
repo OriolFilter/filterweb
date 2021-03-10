@@ -1,4 +1,3 @@
--- create database shop_db;
 -- REVOKE ALL ON SCHEMA shop_db FROM PUBLIC;
 -- REVOKE ALL ON DATABASE shop_db FROM PUBLIC;
 -- Tables
@@ -54,7 +53,7 @@ CREATE TABLE if not exists change_password_tokens (
     PRIMARY KEY (change_password_token_id),
     CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
 );
-
+/*
 /*
 CREATE TABLE if not exists reset_password_tokens (
      reset_token_id serial,
@@ -66,6 +65,7 @@ CREATE TABLE if not exists reset_password_tokens (
      CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
 );
 */
+/*
 -- Login tokens / session
 -- CREATE TABLE if not exists login_tokens (
 --     token_id serial,
@@ -76,11 +76,7 @@ CREATE TABLE if not exists reset_password_tokens (
 --     PRIMARY KEY (token_id),
 --     CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
 -- );
-
-
-
-
-
+*/
 -- Password recovery tokens
 /*-- CREATE TABLE if not exists password_recovery_tokens (
 --         password_recovery_id serial,
@@ -272,8 +268,8 @@ CREATE TABLE if not exists address (
 
 -- Functions
 
+*/
 CREATE EXTENSION pgcrypto; -- Crypt extension
-
 /*
 -- https://www.postgresql.org/docs/8.3/pgcrypto.html
  /* example select from password given*/
@@ -376,7 +372,7 @@ CREATE or replace function check_login(p_uname users.username%TYPE, p_passwd use
 declare
     user_found boolean;
 BEGIN
-    select into user_found (case when exists (select from users where username=p_uname and password=crypt(p_passwd,password))
+    select into user_found (case when exists (select from users where lower(username)=lower(p_uname) and password=crypt(p_passwd,password))
                      then 1
                  else 0
         end) as found;
@@ -384,12 +380,29 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-
-
-
 /* Already existing values */
 
-CREATE OR REPLACE procedure user_exists(p_uname varchar)
+CREATE OR REPLACE function func_user_exists(p_uname varchar) returns boolean
+as $$
+begin
+    case when exists(select lower(username) from users where lower(username)=lower(p_uname))
+        then return true;
+        else return false;
+    end case;
+end;
+$$ language plpgsql;
+
+CREATE OR REPLACE function func_email_exists(p_email varchar) returns bool
+as $$
+begin
+    case when exists(select lower(email) from users where lower(email)=lower(p_email))
+        then return true;
+        else return false;
+    end case;
+end;
+$$ language plpgsql;
+
+CREATE OR REPLACE procedure proc_user_exists(p_uname varchar)
 as $$
 begin
     case when exists(select lower(username) from users where lower(username)=lower(p_uname))
@@ -401,7 +414,7 @@ begin
 end;
 $$ language plpgsql;
 
-CREATE OR REPLACE procedure email_exists(p_email varchar)
+CREATE OR REPLACE procedure proc_email_exists(p_email varchar)
 as $$
 begin
     case when exists(select lower(email) from users where lower(email)=lower(p_email))
@@ -412,7 +425,6 @@ begin
     end case;
 end;
 $$ language plpgsql;
-
 
 /* Activation */
 create or replace procedure proc_generate_activation_code(p_uid integer)
@@ -447,12 +459,12 @@ declare
     v_uid integer;
 begin
     /*get uid then call the other command*/
-    case when not exists(select user_id from users where username=p_username)
+    case when not exists(select user_id from users where lower(username)=lower(p_username))
         then raise exception
             using errcode = 'P6210',
                 message = 'The given username wasn''t found';
         else
-            select into v_uid user_id from users where username=p_username;
+            select into v_uid user_id from users where lower(username)=lower(p_username);
         end case;
     call proc_generate_activation_code(v_uid);
 
@@ -496,12 +508,12 @@ declare
     v_string varchar(60);
 begin
     /*get uid then call the other command*/
-    case when not exists(select user_id from users where username=p_username)
+    case when not exists(select user_id from users where lower(username)=lower(p_username))
         then raise exception
         using errcode = 'P6201',
             message = 'The given username wasn''t found';
         else
-            select into v_uid user_id from users where username=p_username;
+            select into v_uid user_id from users where lower(username)=lower(p_username);
     end case;
     select into v_string func_return_activation_code(v_uid);
     return v_string;
@@ -510,27 +522,66 @@ begin
 end;
 $$ LANGUAGE plpgsql;
 
-/* Password updating */
+create or replace procedure proc_activate_account(p_token activate_account_tokens.activation_account_token%type) as $$
+declare
+    u_id integer;
+begin
+    -- Working with activation tokens
+    -- P0040 token null
+    -- P0041 not found in the database/valid
+    -- P0042 token expired
+    -- P0043 token used
+    -- P0044 user already enabled
+    if p_token='' then
+        raise exception
+            using errcode = 'P6304',
+                message = 'Token is null or empty';
+    end if;
+    case when not exists(select true from activate_account_tokens where activation_account_token=p_token)
+        then raise exception
+            using errcode = 'P6204',
+                message = 'Token not found';
+        else null;
+        end case;
+    case when not exists(select true from activate_account_tokens where activation_account_token=p_token and created_on<now() and expires_on>now())
+        then raise exception
+            using errcode = 'P6302',
+                message = 'The token expired';
+        else null;
+        end case;
+    case when not exists(select true from activate_account_tokens where activation_account_token=p_token and used_bool=false)
+        then raise exception
+            using errcode = 'P6303',
+                message = 'The token already used';
+        else null;
+        end case;
+    case when not exists(select true from activate_account_tokens aat, activated_accounts aa where aat.activation_account_token=p_token and aa.user_id=aat.user_id)
+        then raise exception
+            using errcode = 'P7100',
+                message = 'The user is already enabled';
+        else null;
+        end case;
 
+    select into u_id user_id from activate_account_tokens where activation_account_token=p_token;
+    update activate_account_tokens set used_bool=true where activation_account_token=p_token;
+    update activated_accounts aa set activated_bool=true,activation_date=now() where u_id=aa.user_id;
+end;
+$$  language plpgsql;
+
+/* Password updating */
 create or replace function func_return_change_password_code(p_uid integer) returns varchar(60)
 as $$
 declare
     v_string varchar(60);
 begin
     /* uses u_id*/
-    /*check user not enabled*/
-    case when exists(select true from activated_accounts where user_id=p_uid and activated_bool=true)
-        then raise exception
-            using errcode = 'P7200',
-                message = 'This account is already activated';
-        else null;
-        end case;
+
     /* Generates and insert token*/
     select into v_string random_string(60);
-    while (select true from activate_account_tokens where activation_account_token=v_string) loop
+    while (select true from change_password_tokens where change_password_token=v_string) loop
             select into v_string random_string(60);
         end loop;
-    insert into activate_account_tokens(user_id,activation_account_token) values(p_uid,v_string);
+    insert into change_password_tokens(user_id,change_password_token) values(p_uid,v_string);
     return v_string;
 exception
     when sqlstate '23503' then
@@ -545,18 +596,13 @@ create or replace function func_return_change_password_code(p_username varchar)
     returns varchar(60)
 as $$
 declare
-    v_uid integer;
+    declare
     v_string varchar(60);
+    v_uid varchar;
 begin
-    /*get uid then call the other command*/
-    case when not exists(select user_id from users where username=p_username)
-        then raise exception
-            using errcode = 'P6201',
-                message = 'The given username wasn''t found';
-        else
-            select into v_uid user_id from users where username=p_username;
-        end case;
-    select into v_string func_return_activation_code(v_uid);
+    call user_exists(p_username);
+    select into v_uid username from users where lower(username)=lower(p_username);
+    select into v_string func_return_change_password_code(v_uid);
     return v_string;
 
 
@@ -567,57 +613,17 @@ create or replace function func_return_change_password_code_from_email(p_email v
 as $$
     declare
         v_string varchar(60);
+        v_user varchar;
     begin
-      raise notice e'%',p_email;
+        call email_exists(p_email);
+        select into v_user username from users where lower(email)=lower(p_email);
+        select into v_string func_return_change_password_code(v_user);
+        return v_string;
     end;
 
 $$ language plpgsql;
 
-create or replace procedure proc_activate_account(p_token activate_account_tokens.activation_account_token%type) as $$
-    declare
-        u_id integer;
-    begin
-        -- Working with activation tokens
-        -- P0040 token null
-        -- P0041 not found in the database/valid
-        -- P0042 token expired
-        -- P0043 token used
-        -- P0044 user already enabled
-            if p_token='' then
-                raise exception
-                    using errcode = 'P6304',
-                        message = 'Token is null or empty';
-            end if;
-            case when not exists(select true from activate_account_tokens where activation_account_token=p_token)
-                then raise exception
-                    using errcode = 'P6204',
-                        message = 'Token not found';
-                else null;
-            end case;
-            case when not exists(select true from activate_account_tokens where activation_account_token=p_token and created_on<now() and expires_on>now())
-                then raise exception
-                    using errcode = 'P6302',
-                        message = 'The token expired';
-                else null;
-            end case;
-            case when not exists(select true from activate_account_tokens where activation_account_token=p_token and used_bool=false)
-                then raise exception
-                    using errcode = 'P6302',
-                        message = 'The token already used';
-                else null;
-                end case;
-            case when not exists(select true from activate_account_tokens aat, activated_accounts aa where aat.activation_account_token=p_token and aa.user_id=aat.user_id)
-                then raise exception
-                    using errcode = 'P7100',
-                        message = 'The user is already enabled';
-                else null;
-                end case;
 
-            select into u_id user_id from activate_account_tokens where activation_account_token=p_token;
-            update activate_account_tokens set used_bool=true where activation_account_token=p_token;
-            update activated_accounts aa set activated_bool=true,activation_date=now() where u_id=aa.user_id;
-    end;
-$$  language plpgsql;
 
 /*
 -- create or replace function func_generate_activation_code(p_uid integer) returns varchar
@@ -671,8 +677,8 @@ BEGIN
     call validate_password(p_passwd);
     call validate_mail(p_email);
 --  Check if entries already exists
-    call user_exists(p_username);
-    call email_exists(p_email);
+    call proc_user_exists(p_username);
+    call proc_email_exists(p_email);
     /*
 /*    case when exists(select true from users where username=p_username)
         then raise exception
@@ -691,7 +697,7 @@ BEGIN
     */*/
 --     insert into users(username, password, email) values (p_username,crypt(p_passwd, gen_salt('bf',8)),cast(encode(cast(p_email as bytea),'hex') as bytea));
     insert into users(username, password, email) values (p_username,crypt(p_passwd, gen_salt('bf',8)),p_email);
-    select into v_uid user_id from users where username=p_username;
+    select into v_uid user_id from users where lower(username)=lower(p_username);
     insert into activated_accounts(user_id) values (v_uid); /* Canviar a trigger */
 
 END;
