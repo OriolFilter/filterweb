@@ -25,7 +25,7 @@ try {
     $json_obj = new json_response();
 
     $mailer = new mailer();
-    $mailer_info = new mailer_info();
+    $mailer_info = new mailer_info($page_vars->hostname);
 
     /* Main */
     /* Get and validate vars  */
@@ -72,11 +72,9 @@ try {
                 throw new GenerateTokenError();
             } else {
                 $activation_token = pg_fetch_result($result, 0, 0);
-                $link = sprintf('https://%s/tools/activate_account/?activation_token=%s', $page_vars->hostname, $activation_token);
+                $mailer_info->token = $activation_token;
                 $mailer_info->email = $email;
-                $mailer_info->subject = 'Welcome to arcadeshop, here is your activation code';
-                $mailer_info->body = sprintf("Thanks for using our services, now that you have registered, it's time to activate your account!\n press the following link in order to activate your account: <a href='%s'>ACTIVATE ACCOUNT<a/>", $link);
-                $mailer_info->altbody = sprintf("Thanks for using our services, now that you have registered, it's time to activate your account!\n access the following link in order to activate your account: %s", $link);
+                $mailer_info->registration_email();
                 $mailer->send_body($mailer_info);
 //            else {echo 'ERROR GENERATING THE ACTIVATION CODE';}
 //            else {throw new DatabaseConnectionError()}    ;

@@ -31,7 +31,7 @@ echo $vars->return_header();
 ";
 ;
 ;
-$vars->return_footer();
+echo $vars->return_footer();
 ;?>
 <!--                <form action='/forms/login_form.php' method='post' id='logInForm'>-->
 <!--        <div id='logInBox'>-->

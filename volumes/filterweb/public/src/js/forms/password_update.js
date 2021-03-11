@@ -14,16 +14,11 @@ async function register() {
         '1': 'Success',
 
         '2': 'Missing field(s)',
-        '2.1': 'Username field is missing',
         '2.2': 'Password field is missing',
-        '2.3': 'Email field is missing',
         '2.4': 'Repeat password field is missing',
-        '2.5': 'Repeat email field is missing',
 
         '3': 'Requirements not achieved',
-        '3.1': 'Username does not meet the requirements',
         '3.2': 'Password does not meet the requirements',
-        '3.3': 'Email does not meet the requirements',
 
         '4': 'Field matching',
         '4.1': 'Passwords don\'t match',
@@ -50,14 +45,12 @@ async function register() {
 
 function return_json_form(form){
 
-    var uname=form['uname'].value;
+    var token=t.k;
     var pass=form['pass'].value;
-    var email=form['email'].value;
 
     json={
-        uname: uname,
-            pass: pass,
-        email: email
+        token: token,
+        pass: pass,
     }
     return(json);
 
@@ -91,11 +84,11 @@ function server_alert(json,server_response_obj){
 }
 function success(server_response_obj){
     server_response_obj.hidden=0;
-    server_response_obj.innerHTML='<p id="success_form">Success! An activation link been sent the provided email!</p>';
+    server_response_obj.innerHTML='<p id="success_form">Success! Password updated correctly!</p>';
 }
 
 function check_fields(form,error_obj){
-    var obligatory_fields = {"uname":'2.1', "pass":'2.2',"email":"2.3","pass2":"2.4","email2":"2.5"}; /* check specified*/
+    var obligatory_fields = {"pass":'2.2',"pass2":"2.4"}; /* check specified*/
     var keys=Object.keys(obligatory_fields);
     var l = keys.length;
     var fieldname;
@@ -109,14 +102,8 @@ function check_fields(form,error_obj){
         return false;
     }
     /* Check regex */
-    if (!(/^[a-zA-Z0-9_.-.+]{6,20}$/g.test(form['uname'].value))){
-        error_obj.error_list.push('3.1');
-     }
     if (!(/^[a-zA-Z0-9$%.,?!@+_=-]{6,20}$/g.test(form['pass'].value))){
         error_obj.error_list.push('3.2');
-     }
-    if (!(/^[a-zA-Z0-9.!#$%&'*+=?^_`{|}~-]+@[a-zA-Z10-9-]+\.[a-zA-Z0-9-]+$/.test(form['email'].value))){
-        error_obj.error_list.push('3.3');
      }
 
     if (error_obj.error_list.length>0){
@@ -127,9 +114,7 @@ function check_fields(form,error_obj){
     if (form['pass'].value!=form['pass2'].value){
         error_obj.error_list.push('4.1');
     };
-    if (form['email'].value!=form['email2'].value){
-        error_obj.error_list.push('4.2');
-    };
+
     if (error_obj.error_list.length>0){
         return false;
     }
@@ -143,7 +128,7 @@ async function post(json,error_obj,server_response_obj) {
 
     try {
         result = await $.ajax({
-            url: '/forms/registration/',
+            url: '/forms/change_password/',
             type: 'POST',
             data: json
         });

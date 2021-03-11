@@ -2,17 +2,16 @@
 /* */
 try {
     require_once '/var/www/private/global_vars.php';
-    $vars = new page_vars();
-    $vars->import_mailer();
+    $page_vars = new page_vars();
+    $page_vars->import_mailer();
 
     $json_obj = new json_response();
 
     $mailer = new mailer();
-    $mailer_info = new mailer_info();
+    $mailer_info = new mailer_info($page_vars->hostname);
 
     /* Main */
     /* Get and validate vars */
-//    echo $_REQUEST["name"];
     if (!(@preg_match("/^[\w0-9 ]{4,40}$/", $_REQUEST['name'], $name))) {
         throw new NameNotValidError();
     } else {
@@ -31,23 +30,17 @@ try {
     }
 
     /* Database connection*/
-//    ;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=contact_forms_db user=form_user password=form_pass");
     ;$dbconn = @pg_connect("host=10.24.1.2 port=5432 dbname=contact_forms_db user=form_user password=form_pass");
     if ($dbconn && !pg_connection_busy($dbconn)) {
-        ;
         $result = pg_prepare($dbconn, "register_form", 'call insert_form($1,$2,$3)');
-//        $result = pg_prepare($dbconn, "register_form", "call insert_form('$1','email@email.com','123123123123123123123123123123')");
         $res = pg_get_result($dbconn);
-//        $result = pg_send_execute($dbconn, "register_form", array($name, $email, $text));
         $result = pg_send_execute($dbconn, "register_form", array($name, $email, $text));
         $err = pg_last_notice($dbconn);
         $res = pg_get_result($dbconn);
         $state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
         if (!$state) {
             $mailer_info->email = $email;
-            $mailer_info->subject = 'Thanks for contacting ArcadeShop!';
-            $mailer_info->body = sprintf("<html><body><h2>Thanks for making contact with our company!</h2><p><span style='color: mediumpurple'>Soon we will send a reply from your message if there is any other issue please don't hesitate and send another message.</span></p><p style='color: #5f5f5f'>Content from the contact:</p><p><span style='color: darkred'>Name: </span>%s</p><p><span style='color: darkred'>Message left: </span>%s</p><p><small>This message is fully automated, please do not reply to this message</small></p></body></html>", htmlspecialchars($name),htmlspecialchars($text));
-            $mailer_info->altbody = sprintf("Thanks for making contact with our company!\nSoon we will send a reply from your message if there is any other issue please don't hesitate and send another message.\n\nContent from the contact:\n\nName:%s\n\nMessage left:%s\n\n(This message is fully automated, please do not reply to this message)", htmlspecialchars($name),htmlspecialchars($text));
+            $mailer_info->contact_form_email($name,$text);
             $mailer->send_body($mailer_info);
         }
         else {

@@ -48,7 +48,7 @@
 Recordar que fa falta guardar el correu en minuscules, i que fa falta comprobar que no estigui en la base de dades (select en minuscules i entrada en minuscules)
 ```yaml
 PHP & JS:
-  USERS:
+  Registration:
     username: "^[a-zA-Z0-9_.-.+]{6,20}$"
     password: "^[a-zA-Z0-9$%.,?!@+_=-]{6,20}$"
     email:    "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z10-9-]+\.+[a-zA-Z0-9-]+$"
@@ -57,6 +57,10 @@ PHP & JS:
     name:  "^[\w0-9 ]{4,40}$"
     email: "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z10-9-]+\.+[a-zA-Z0-9-]+$"
     text:  "^[\w\W]{20,255}$"
+    
+  Change password form:
+    token: "^[a-zA-Z0-9]{60}$"
+    
 POSTGRESQL:
   Contact form:
     name:  "^[\w0-9 ]{4,40}$"

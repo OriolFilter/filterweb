@@ -6,24 +6,21 @@
 });
 
 ;try {
-    ;$top_format='';
-    ;$bot_format='';
-    $title='Activate Account';
 
-    $hostname = null;
     require_once '/var/www/private/global_vars.php';
-    require_once '/var/www/private/libraries/error_codes.php';
-
+    $page_vars= new page_vars;
+    $page_vars->import_errors();
+    $page_vars->title='Activate Account';
     $json_obj = new json_response();
 
 
-    $activation_token=$_GET['activation_token'];
+    $token=$_GET['token'];
 // Connect sql
     ;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=shop_db user=test password=test") or die('connection failed');
     if (!pg_connection_busy($dbconn)) {
         ;$result = pg_prepare($dbconn, "register_user_q", 'call proc_activate_account($1)');
         ;$res=pg_get_result($dbconn);
-        ;$result = pg_send_execute($dbconn, "register_user_q",array($activation_token));
+        ;$result = pg_send_execute($dbconn, "register_user_q",array($token));
         ;$err=pg_last_notice($dbconn);
         ;$res=pg_get_result($dbconn);
         ;$state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
@@ -46,12 +43,9 @@
         }
     } else {throw new DatabaseConnectionError();}
 
-    $json_obj->status='success';
-    $json_obj->status_code=1;
-    $json_obj->message = 'The user been activated correctly';
 
     $json_obj->status='success';
-    $json_obj->status_code=1;
+    $json_obj->status_code='1';
     $json_obj->message = 'The user been activated correctly';
 
 }catch (DefinedErrors $e ) {
@@ -62,9 +56,10 @@ catch(ErrorException $e) {
 } catch(Exception $e) {
     $json_obj->errors['message']= 'Error, contact an administrator!';
 } finally {
-    $content=sprintf("<h3>%s</h3>",$json_obj->error['code']);
-    if ($json_obj->error['code']==1) {
-        $content = '<p id="success_form">Success! An activation link been sent the provided email!</p>';
+//    $content=sprintf("<h3>%s</h3>",$json_obj->error['code']);
+    if ($json_obj->status_code=='1') {
+        $content = '<p id="success_form">Success!</p>';
+        $content = $content.'<p id="success_form">Your account been activated correctly!</p>';
     }else {
         $content=sprintf("<h3 id='error_form'>%s</h3>",$json_obj->error['message']);
         if ($json_obj->error['hint']){
@@ -75,21 +70,21 @@ catch(ErrorException $e) {
 
 
 //HTML
-echo sprintf($top_format,$title,'');
 
 
 
+echo $page_vars->return_header();
 //echo $content;
-;echo sprintf("
+;echo "
     <div id='logIn'>
         <script src='/scripts/logIn.js'></script>
        <div id='logInBox'>
-            <div class=\"form - single - column\">
-               %s
-            </div>
+            <div class=\"form - single - column\">".
+                $content
+            ."</div>
         </div>
     </div>
-",$content);
+";
 //",$json_obj->error['message']);
-echo $bot_format;
+echo $page_vars->return_footer();
 ?>

@@ -16,72 +16,49 @@
 
 /* Global try catch */
 try {
-//    $error_codes_file = null;
     require_once '/var/www/private/global_vars.php';
-    $page_vars=page_vars;
+    $page_vars= new page_vars;
+    $page_vars->import_mailer();
+    $page_vars->import_errors();
 //    require_once $error_codes_file;
 
     $json_obj = new json_response();
 
     $mailer = new mailer();
-    $mailer_info = new mailer_info();
+    $mailer_info = new mailer_info($page_vars->hostname);
 
     /* Main */
     /* Get and validate vars  */
 
     /* No fa falta comprovar si estan definits o no, amb el regex ja serveix, i fer-ho dos vegades es una tonteria */
 
-    if (!(@preg_match("/^[a-zA-Z0-9_.-.+]{6,20}+$/", $_REQUEST['uname'], $uname))) {
-        throw new UsernameNotValidError();
+    if (isset($_REQUEST['token'])){
+        $token=$_REQUEST['token'];
     } else {
-        $uname = $uname[0];
+        throw new TokenNullOrEmptyError;
     }
-//    echo '<p>'.$uname.'</p>';
+
     if (!(@preg_match("/^[a-zA-Z0-9$%.,?!@+_=-]{6,20}+$/", $_REQUEST['pass'], $pass))) {
         throw new PasswordNotValidError();
     } else {
         $pass = $pass[0];
     }
-//    echo '<p>'.$pass.'</p>';
-    $email = @filter_var($_REQUEST['email'], FILTER_VALIDATE_EMAIL);
-    if (!$email && !preg_match("/^[a-zA-Z0-9.!#$%&'*+=?^_`{|}~-]+@[a-zA-Z10-9-]+\.+[a-zA-Z0-9-]+$/", $email, $email)) {
-        throw new EmailNotValidError();
-    } else {
-        $email = $email;
-    }
-//    echo '<p>'.$email.'</p>';
 
     /* Database connection*/
     ;$dbconn = @pg_connect("host=10.24.1.2 port=5432 dbname=shop_db user=test password=test");
 
     if ($dbconn && !pg_connection_busy($dbconn)) {
         ;
-        $result = pg_prepare($dbconn, "register_user_q", 'call register_user($1,$2,$3)');;
-        $res = pg_get_result($dbconn);;
-        $result = pg_send_execute($dbconn, "register_user_q", array($uname, $pass, $email));;
-        $err = pg_last_notice($dbconn);;
-        $res = pg_get_result($dbconn);;
+        $result = pg_prepare($dbconn, "register_user_q", 'call proc_change_password_user($1,$2)');;
+        $result = pg_send_execute($dbconn, "register_user_q", array($token,$pass));;
+        $res = pg_get_result($dbconn);
         $state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
-//        echo $state;
         if (!$state) {
-            $result = pg_prepare($dbconn, "get_activation_token", 'select func_return_activation_code($1);');;
-            $result = pg_execute($dbconn, "get_activation_token", array($uname));
-//            echo $result;
-            if (!$result) {
-                throw new GenerateTokenError();
-            } else {
-                $activation_token = pg_fetch_result($result, 0, 0);
-                $link = sprintf('https://%s/activation_form/?activation_token=%s', $page_vars->hostname, $activation_token);
-                $mailer_info->email = $email;
-                $mailer_info->subject = 'Welcome to arcadeshop, here is your activation code';
-                $mailer_info->body = sprintf("Thanks for using our services, now that you have registered, it's time to activate your account!\n press the following link in order to activate your account: <a href='%s'>ACTIVATE ACCOUNT<a/>", $link);
-                $mailer_info->altbody = sprintf("Thanks for using our services, now that you have registered, it's time to activate your account!\n access the following link in order to activate your account: %s", $link);
-                $mailer->send_body($mailer_info);
-//            else {echo 'ERROR GENERATING THE ACTIVATION CODE';}
-//            else {throw new DatabaseConnectionError()}    ;
-
-            }
+            /* Mailer per avisar que tot tira b?
+            */
+            ;
         }
+        /* Fer servir el error picker */
         elseif ($state == 'P6101') {
             throw new UsernameAlreadyExistsError();
         }

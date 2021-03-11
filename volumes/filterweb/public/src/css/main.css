@@ -310,6 +310,10 @@ html {
     /*background-color: #eee;*/
     background-color: #363636;
 }
+#footer_mail_link, #footer_phone_number {
+    color: aquamarine;
+
+}
 
 #logIn,#signIn, #passwordUpdate{
     display: flex;

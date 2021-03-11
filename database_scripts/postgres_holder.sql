@@ -145,6 +145,7 @@ select true from users where email='mymail@maimailoso.moil';
 insert into users(username, password, email) values('testlong',crypt('longanissa', gen_salt('bf',8)),'mymail@maimailoso.moil');
 select * from activate_account_tokens;
 select * from activated_accounts;
+select * from change_password_tokens order by expires_on desc ;
 select count(*) from change_password_tokens;
 select * from users;
 
@@ -157,4 +158,11 @@ select func_return_activation_code(1);
 -- update activate_account_tokens  set used_bool=false  where user_id=1;
 update activated_accounts  set activated_bool=false  where user_id=1;
 
-call proc_check_password_token_is_valid('LjF8cVPr8ZIClgcxTNVZfYs3dkbLq7L3bPN34VJ4lsb5IfyfdmdUv2yKx2sT')
+call proc_check_password_token_is_valid('LjF8cVPr8ZIClgcxTNVZfYs3dkbLq7L3bPN34VJ4lsb5IfyfdmdUv2yKx2sT');
+
+select check_login('test1234','test1234');
+call proc_change_password_user('9xqvdKGVJdFbtspxZf97aIbsoFfxiOwZyF6JQnu0TQm3287jEEpu6q1IDERc','test1235');
+select check_login('test1234','test1235');
+delete from users where user_id=9;
+call proc_check_password_token_is_valid('nmlYnjkOa7GHizsiCURR9nj3iHKUFiEJ1ghiFLRdiDsukHJQiVyB');
+call proc_check_login('test1234','test12345');

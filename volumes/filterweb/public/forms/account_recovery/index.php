@@ -20,11 +20,10 @@ try {
     $page_vars= new page_vars;
     $page_vars->import_mailer();
     $page_vars->import_errors();
-
     $json_obj = new json_response();
 
     $mailer = new mailer();
-    $mailer_info = new mailer_info();
+    $mailer_info = new mailer_info($page_vars->hostname);
 
     /* Main */
     /* Get and validate vars  */
@@ -45,11 +44,10 @@ try {
             if ($result and !$state) {
 
                 $token = pg_fetch_result($result,0,0);
-                $link = sprintf('https://%s/password_update/?token=%s', $page_vars->hostname, $token);
+
+                $mailer_info->token = $token;
                 $mailer_info->email = $email;
-                $mailer_info->subject = 'Welcome to arcadeshop, here is your password updating link';
-                $mailer_info->body = sprintf("Thanks for using our services, you received your password updating link as requested\n: <a href='%s'>Change password<a/>", $link);
-                $mailer_info->altbody = sprintf("Thanks for using our services, you received your password updating link as requested\n: %s", $link);
+                $mailer_info->password_updating_email();
                 $mailer->send_body($mailer_info);
                 /* Generar el switch */
             }

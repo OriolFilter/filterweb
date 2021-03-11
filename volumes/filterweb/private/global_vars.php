@@ -94,7 +94,7 @@
     {
         /* page content*/
         public $hostname='localhost';
-        public $title='tittle';
+        public $title='Arcade Shop';
         public $scripts='';
         public $contact_phone='+34 689543670';
         public $contact_email='filter.web.asix@gmail.com';
@@ -145,8 +145,8 @@
                                         <div id="info">
                                             <h4>Location</h4>
                                             <p>Barcelona barcelona c\Barcelona nº barcelona 087Ba</p>'
-                                            .($this->contact_email? (sprintf('<p>E-mail: <a href="mailto:%1$s">%1$s</a></p>', $this->contact_email)):null)
-                                            .($this->contact_phone? (sprintf('<p>Tel. %s</p>', $this->contact_phone)):null)
+                                            .($this->contact_email? (sprintf('<p id="footer_mail">E-mail: <a id="footer_mail_link" href="mailto:%1$s">%1$s</a></p>', $this->contact_email)):null)
+                                            .($this->contact_phone? (sprintf('<p id="footer_phone">Tel. <span id="footer_phone_number">%s</span></p>', $this->contact_phone)):null)
 //                                            <!--<p>E-mail: <a href="mailto:%s">arcadeshop_bcn@gmail.com</a></p>-->
                                         .'</div>
                                         <hr>

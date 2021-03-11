@@ -342,32 +342,8 @@ begin
     /* text@text.text */
 end; $$ language plpgsql;
 
-/*
--- CREATE or replace function create_user(p_user users.username%TYPE, p_passwd users.password%TYPE,p_email users.password%TYPE)
---     returns boolean as $$
--- declare
---     user_found boolean;
--- BEGIN
---     select into user_found (case when exists (select from users where username=p_uname and password=crypt(p_passwd,password))
---                                      then 1
---                                  else 0
---         end) as found;
---     RETURN user_found;
--- END;
--- $$ LANGUAGE plpgsql;
-
--- CREATE or replace function sanitize_text(p_text varchar)
--- returns text as $$
--- declare
---     new_text varchar;
--- begin
---     /* no se que fer*/
---     return p_text;
---
--- end; $$ LANGUAGE plpgsql;
-*/
 /* Check tables */
-CREATE or replace function check_login(p_uname users.username%TYPE, p_passwd users.password%TYPE)
+CREATE or replace function func_check_login(p_uname users.username%TYPE, p_passwd users.password%TYPE)
     returns boolean as $$
 declare
     user_found boolean;
@@ -377,6 +353,21 @@ BEGIN
                  else 0
         end) as found;
     RETURN user_found;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE or replace procedure proc_check_login(p_uname users.username%TYPE, p_passwd users.password%TYPE)
+as $$
+declare
+BEGIN
+    case when not exists (select from users where lower(username)=lower(p_uname) and password=crypt(p_passwd,password))
+        then raise exception
+                      using errcode = 'P9000',
+                      message = 'Invalid Credentials';
+        else null;
+    end case;
+
+
 END;
 $$ LANGUAGE plpgsql;
 
@@ -568,6 +559,13 @@ begin
 end;
 $$  language plpgsql;
 
+create or replace function return_crypted_pass(v_txt varchar) returns varchar
+as $$
+    begin
+        return crypt(v_txt, gen_salt('bf',8));
+    end;
+$$ language plpgsql;
+
 /* Password updating */
 create or replace function func_return_change_password_code(p_uid integer) returns varchar(60)
 as $$
@@ -730,13 +728,27 @@ BEGIN
         end case;
     */*/
 --     insert into users(username, password, email) values (p_username,crypt(p_passwd, gen_salt('bf',8)),cast(encode(cast(p_email as bytea),'hex') as bytea));
-    insert into users(username, password, email) values (p_username,crypt(p_passwd, gen_salt('bf',8)),p_email);
+    insert into users(username, password, email) values (p_username,return_crypted_pass(p_passwd),p_email);
     select into v_uid user_id from users where lower(username)=lower(p_username);
     insert into activated_accounts(user_id) values (v_uid); /* Canviar a trigger */
 
 END;
 
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE procedure proc_change_password_user(p_token varchar,p_pass varchar)
+as $$
+    declare
+        v_uid integer;
+    begin
+        call proc_check_password_token_is_valid(p_token);
+        select into v_uid user_id from change_password_tokens where change_password_token=p_token;
+        update users set password=return_crypted_pass(p_pass) where user_id=v_uid;
+        update change_password_tokens set used_bool=true where change_password_token=p_token;
+
+end;
+$$ language plpgsql;
+
 
 -- Triggers
 
