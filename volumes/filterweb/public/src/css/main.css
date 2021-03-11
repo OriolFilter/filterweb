@@ -311,7 +311,7 @@ html {
     background-color: #363636;
 }
 
-#logIn,#signIn{
+#logIn,#signIn, #passwordUpdate{
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
@@ -320,7 +320,7 @@ html {
     align-items: center;
 }
 
-#logInBox,#signInBox{
+#logInBox,#signInBox, #passwordUpdate{
     order: 1;
     width: max-content;
     text-align: center;
@@ -329,7 +329,7 @@ html {
 #homePage{color: #d0556c;}
 
 
-#logInForm, #signInForm{
+#logInForm, #signInForm, #passwordUpdateForm{
     min-width: fit-content;
     width: 30vw;
     display: flex;

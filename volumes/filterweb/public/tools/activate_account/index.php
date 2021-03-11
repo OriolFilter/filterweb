@@ -1,4 +1,5 @@
 <?php
+/* UNUSED */
 /* Change a send post & recieve json*/
 ;set_error_handler(function($errno, $errstr, $errfile, $errline ){ //To catch all errors (almost)
     ;    throw new ErrorException($errstr, $errno, 0, $errfile, $errline);
@@ -84,7 +85,7 @@ echo sprintf($top_format,$title,'');
         <script src='/scripts/logIn.js'></script>
        <div id='logInBox'>
             <div class=\"form - single - column\">
-               %s                
+               %s
             </div>
         </div>
     </div>

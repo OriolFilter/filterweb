@@ -17,9 +17,6 @@ async function send_form() {
         '2.3': 'Email field is missing',
         '2.5': 'Repeat email field is missing',
 
-        '3': 'Requirements not achieved',
-        '3.3': 'Email does not meet the requirements',
-
         '4.2': 'Emails don\'t match',
 
         '5': 'Client-Server errors',
@@ -94,15 +91,6 @@ function check_fields(form,error_obj){
     if (error_obj.error_list.length>0){
         return false;
     }
-    /* Check regex */
-    if (!(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z10-9-]+\.+[a-zA-Z0-9-]+$/.test(form['contact-email'].value))){
-        error_obj.error_list.push('3.3');
-     }
-
-    if (error_obj.error_list.length>0){
-        return false;
-    }
-
     return true;
 
 

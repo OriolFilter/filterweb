@@ -16,11 +16,10 @@
 
 /* Global try catch */
 try {
-    $hostname = null;
-    $mailer_file = null;
-//    $error_codes_file = null;
     require_once '/var/www/private/global_vars.php';
-    $page_vars=page_vars;
+    $page_vars= new page_vars;
+    $page_vars->import_mailer();
+    $page_vars->import_errors();
 //    require_once $error_codes_file;
 
     $json_obj = new json_response();
@@ -59,9 +58,9 @@ try {
     if ($dbconn && !pg_connection_busy($dbconn)) {
         ;
         $result = pg_prepare($dbconn, "register_user_q", 'call register_user($1,$2,$3)');;
-        $res = pg_get_result($dbconn);;
+//        $res = pg_get_result($dbconn);;
         $result = pg_send_execute($dbconn, "register_user_q", array($uname, $pass, $email));;
-        $err = pg_last_notice($dbconn);;
+//        $err = pg_last_notice($dbconn);;
         $res = pg_get_result($dbconn);;
         $state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
 //        echo $state;
@@ -73,7 +72,7 @@ try {
                 throw new GenerateTokenError();
             } else {
                 $activation_token = pg_fetch_result($result, 0, 0);
-                $link = sprintf('https://%s/activation_form/?activation_token=%s', $hostname, $activation_token);
+                $link = sprintf('https://%s/tools/activate_account/?activation_token=%s', $page_vars->hostname, $activation_token);
                 $mailer_info->email = $email;
                 $mailer_info->subject = 'Welcome to arcadeshop, here is your activation code';
                 $mailer_info->body = sprintf("Thanks for using our services, now that you have registered, it's time to activate your account!\n press the following link in order to activate your account: <a href='%s'>ACTIVATE ACCOUNT<a/>", $link);

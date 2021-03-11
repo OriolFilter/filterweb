@@ -269,7 +269,7 @@ CREATE TABLE if not exists address (
 -- Functions
 
 */
-CREATE EXTENSION pgcrypto; -- Crypt extension
+CREATE EXTENSION if not exists pgcrypto; -- Crypt extension
 /*
 -- https://www.postgresql.org/docs/8.3/pgcrypto.html
  /* example select from password given*/
@@ -382,7 +382,7 @@ $$ LANGUAGE plpgsql;
 
 /* Already existing values */
 
-CREATE OR REPLACE function func_user_exists(p_uname varchar) returns boolean
+CREATE OR REPLACE function func_check_user_exists(p_uname varchar) returns boolean
 as $$
 begin
     case when exists(select lower(username) from users where lower(username)=lower(p_uname))
@@ -392,7 +392,7 @@ begin
 end;
 $$ language plpgsql;
 
-CREATE OR REPLACE function func_email_exists(p_email varchar) returns bool
+CREATE OR REPLACE function func_check_email_exists(p_email varchar) returns bool
 as $$
 begin
     case when exists(select lower(email) from users where lower(email)=lower(p_email))
@@ -402,7 +402,7 @@ begin
 end;
 $$ language plpgsql;
 
-CREATE OR REPLACE procedure proc_user_exists(p_uname varchar)
+CREATE OR REPLACE procedure proc_check_user_exists(p_uname varchar)
 as $$
 begin
     case when exists(select lower(username) from users where lower(username)=lower(p_uname))
@@ -414,7 +414,7 @@ begin
 end;
 $$ language plpgsql;
 
-CREATE OR REPLACE procedure proc_email_exists(p_email varchar)
+CREATE OR REPLACE procedure proc_check_email_exists(p_email varchar)
 as $$
 begin
     case when exists(select lower(email) from users where lower(email)=lower(p_email))
@@ -598,12 +598,17 @@ as $$
 declare
     declare
     v_string varchar(60);
-    v_uid varchar;
+    v_uid integer;
 begin
-    call user_exists(p_username);
-    select into v_uid username from users where lower(username)=lower(p_username);
-    select into v_string func_return_change_password_code(v_uid);
-    return v_string;
+    if (func_check_user_exists(p_username)) then
+        select into v_uid user_id from users where lower(username)=lower(p_username);
+        select into v_string func_return_change_password_code(v_uid);
+        return v_string;
+    else
+        raise exception
+            using errcode = 'P6201',
+                message = 'Username not found';
+    end if;
 
 
 end;
@@ -615,16 +620,45 @@ as $$
         v_string varchar(60);
         v_user varchar;
     begin
-        call email_exists(p_email);
-        select into v_user username from users where lower(email)=lower(p_email);
-        select into v_string func_return_change_password_code(v_user);
-        return v_string;
+        if (func_check_email_exists(p_email)) then
+            select into v_user username from users where lower(email)=lower(p_email);
+            select into v_string func_return_change_password_code(v_user);
+            return v_string;
+        else
+            raise exception
+                using errcode = 'P6203',
+                    message = 'Email not found';
+        end if;
     end;
 
 $$ language plpgsql;
 
-
-
+create or replace procedure proc_check_password_token_is_valid(p_token varchar)
+as $$
+    begin
+        case when exists(select true from change_password_tokens where change_password_token=p_token)
+            then null;
+            else
+                raise exception
+                using errcode = 'P6301',
+                    message = 'Token not valid';
+        end case; /* Podria fer-ho tot seguit pero llavors no tendria ni la meitat de respostes */
+        case when exists(select true from change_password_tokens where change_password_token=p_token and created_on<now() and expires_on>now())
+            then null;
+            else
+                raise exception
+                using errcode = 'P6303',
+                    message = 'Token expired';
+            end case;
+        case when exists(select true from change_password_tokens where change_password_token=p_token and created_on<now() and expires_on>now() and used_bool=false)
+            then null;
+            else
+                raise exception
+                using errcode = 'P6302',
+                    message = 'Token already used';
+            end case;
+    end;
+$$ language plpgsql;
 /*
 -- create or replace function func_generate_activation_code(p_uid integer) returns varchar
 -- as
@@ -677,8 +711,8 @@ BEGIN
     call validate_password(p_passwd);
     call validate_mail(p_email);
 --  Check if entries already exists
-    call proc_user_exists(p_username);
-    call proc_email_exists(p_email);
+    call proc_check_user_exists(p_username);
+    call proc_check_email_exists(p_email);
     /*
 /*    case when exists(select true from users where username=p_username)
         then raise exception
