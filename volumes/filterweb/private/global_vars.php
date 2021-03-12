@@ -118,7 +118,7 @@
                         <header>
                             <div id="logo">
                                 <a href="/index.php">
-                                <img src="/src/logo.png" alt="LOGO">
+                                <img src="/src/images/logo.png" alt="LOGO">
                                 </a>
                             </div>
                             <div id="nav-buttons">

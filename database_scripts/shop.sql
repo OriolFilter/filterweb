@@ -8,39 +8,39 @@
 
 
 CREATE TABLE if not exists users (
-                                     user_id serial,
-                                     username VARCHAR ( 20 ) UNIQUE NOT NULL,
-                                     password VARCHAR ( 60 ) NOT NULL, /* crypted and salted, returns 60 lenght */
-                                     email VARCHAR ( 255 ) UNIQUE NOT NULL /* https://stackoverflow.com/questions/386294/what-is-the-maximum-length-of-a-valid-email-address */,
---       email bytea UNIQUE NOT NULL, /* PD, no al final no */ /* al final si es guarda en hexa perque estalvies espais i no importen les majuscules*/
---                          role_id serial NOT NULL,
-                                     created_on TIMESTAMP DEFAULT now() NOT NULL,
-                                     updated_on TIMESTAMP DEFAULT now() NOT NULL,
-                                     last_login TIMESTAMP DEFAULT now() NOT NULL,
---                          last_login TIMESTAMP,
-                                     PRIMARY KEY (user_id)
---                          CONSTRAINT fk_role FOREIGN KEY (role_id) REFERENCES role (role_id)  ON DELETE CASCADE;
+    user_id serial,
+    username VARCHAR ( 20 ) UNIQUE NOT NULL,
+    password VARCHAR ( 60 ) NOT NULL, /* crypted and salted, returns 60 lenght */
+    email VARCHAR ( 255 ) UNIQUE NOT NULL /* https://stackoverflow.com/questions/386294/what-is-the-maximum-length-of-a-valid-email-address */,
+    --       email bytea UNIQUE NOT NULL, /* PD, no al final no */ /* al final si es guarda en hexa perque estalvies espais i no importen les majuscules*/
+    --                          role_id serial NOT NULL,
+    created_on TIMESTAMP DEFAULT now() NOT NULL,
+    updated_on TIMESTAMP DEFAULT now() NOT NULL,
+    last_login TIMESTAMP DEFAULT now() NOT NULL,
+    --                          last_login TIMESTAMP,
+    PRIMARY KEY (user_id)
+    --                          CONSTRAINT fk_role FOREIGN KEY (role_id) REFERENCES role (role_id)  ON DELETE CASCADE;
 );
 
 -- Activate account tokens
 CREATE TABLE if not exists activate_account_tokens (
-   activation_account_token_id serial,
-   activation_account_token VARCHAR (200) NOT NULL UNIQUE,
-   user_id integer NOT NULL,
-   used_bool bool DEFAULT false NOT NULL,
-   created_on TIMESTAMP DEFAULT now(),
-   expires_on TIMESTAMP DEFAULT now() + '30 minute'::interval,
-   PRIMARY KEY (activation_account_token_id),
-   CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
+    activation_account_token_id serial,
+    activation_account_token VARCHAR (200) NOT NULL UNIQUE,
+    user_id integer NOT NULL,
+    used_bool bool DEFAULT false NOT NULL,
+    created_on TIMESTAMP DEFAULT now(),
+    expires_on TIMESTAMP DEFAULT now() + '30 minute'::interval,
+    PRIMARY KEY (activation_account_token_id),
+    CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
 );
 
 CREATE table if not exists activated_accounts (
-                                                  activated_users_id serial,
-                                                  user_id integer NOT NULL,
-                                                  activated_bool boolean NOT NULL DEFAULT FALSE,
-                                                  activation_date TIMESTAMP DEFAULT NULL,
-                                                  PRIMARY KEY (activated_users_id),
-                                                  CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
+    activated_users_id serial,
+    user_id integer NOT NULL,
+    activated_bool boolean NOT NULL DEFAULT FALSE,
+    activation_date TIMESTAMP DEFAULT NULL,
+    PRIMARY KEY (activated_users_id),
+    CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
 );
 -- reset_password table
 CREATE TABLE if not exists change_password_tokens (
@@ -53,80 +53,17 @@ CREATE TABLE if not exists change_password_tokens (
     PRIMARY KEY (change_password_token_id),
     CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
 );
-/*
-/*
-CREATE TABLE if not exists reset_password_tokens (
-     reset_token_id serial,
-     token_code varchar (200) UNIQUE NOT NULL,
-     user_id integer NOT NULL,
-     created_on TIMESTAMP DEFAULT now() ,
-     expires_on TIMESTAMP DEFAULT now() + '30 minute'::interval,
-     PRIMARY KEY (reset_token_id),
-     CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
+CREATE TABLE if not exists session_tokens (
+    session_token_id serial,
+    session_token VARCHAR (200) NOT NULL UNIQUE,
+    user_id integer NOT NULL,
+    created_on TIMESTAMP DEFAULT now(),
+    expires_on TIMESTAMP DEFAULT now() + '30 minute'::interval,
+    PRIMARY KEY (session_token_id),
+    CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
 );
-*/
-/*
--- Login tokens / session
--- CREATE TABLE if not exists login_tokens (
---     token_id serial,
---     user_id integer NOT NULL,
---     token_code varchar (200) UNIQUE NOT NULL,
---     created_on TIMESTAMP DEFAULT now(),
---     expires_on TIMESTAMP DEFAULT now() + '30 minute'::interval,
---     PRIMARY KEY (token_id),
---     CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
--- );
-*/
--- Password recovery tokens
-/*-- CREATE TABLE if not exists password_recovery_tokens (
---         password_recovery_id serial,
---         password_recovery_token VARCHAR (200) NOT NULL UNIQUE,
---         token_code varchar (200) UNIQUE NOT NULL,
---         user_id integer NOT NULL,
---         created_on TIMESTAMP DEFAULT now(),
---         expires_on TIMESTAMP DEFAULT now() + '30 minute'::interval,
---         PRIMARY KEY (password_recovery_id),
---         CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
--- );
-/*
--- Roles table
---CREATE TABLE if not exists user (
---                        role_id serial PRIMARY KEY,
---                        role_name VARCHAR (20) UNIQUE NOT NULL
---);
---
---CREATE TABLE if not exists roles (
---                        role_id serial PRIMARY KEY,
---                        role_name VARCHAR (20) UNIQUE NOT NULL
---);
-
-
-*/*/
 
 /*
--- Login tokens
-CREATE TABLE if not exists login_tokens (
-        login_token_id serial,
-        user_id integer NOT NULL,
-        token_code varchar (200) UNIQUE NOT NULL,
-        created_on TIMESTAMP NOT NULL,
-        expires_on TIMESTAMP DEFAULT now() + '180 minute'::interval,
-        PRIMARY KEY (login_token_id),
-        CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
-);
-/*
--- -- Activate account tokens /*OLD*/
--- CREATE TABLE if not exists activate_account_tokens (
---         activate_token_id serial,
---         user_id integer NOT NULL ,
---         token_code varchar (200) UNIQUE NOT NULL,
---         created_on TIMESTAMP NOT NULL,
---         expires_on TIMESTAMP DEFAULT now() + '2880 minute'::interval,
---         PRIMARY KEY (activate_token_id),
---         CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id)
--- );
-
-*/
 -- Products Related
 
 -- Categories table
@@ -259,7 +196,7 @@ CREATE TABLE if not exists address (
      postal_code VARCHAR (16) NOT NULL,
      CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
 );
-*/
+
 
 -- Falta:
 
@@ -289,7 +226,37 @@ CREATE EXTENSION if not exists pgcrypto; -- Crypt extension
 --     /*raises exception if not alphanumeric*/
 -- end; $$ language plpgsql;
 */
-/* Regex */
+
+    /* General Functions */
+
+create or replace function return_crypted_pass(v_txt varchar) returns varchar
+as $$
+begin
+    return crypt(v_txt, gen_salt('bf',8));
+end;
+$$ language plpgsql;
+
+-- Generate random string (will be used to generate random tokens)
+-- stolen from here:
+-- https://stackoverflow.com/questions/3970795/how-do-you-create-a-random-string-thats-suitable-for-a-session-id-in-postgresql
+Create or replace function random_string(length integer) returns text as
+$$
+declare
+    chars text[] := '{0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}';
+    result text := '';
+    i integer := 0;
+begin
+    if length < 0 then
+        raise exception 'Given length cannot be less than 0';
+    end if;
+    for i in 1..length loop
+            result := result || chars[1+random()*(array_length(chars, 1)-1)];
+        end loop;
+    return result;
+end;
+$$ language plpgsql;
+
+    /* Regex */
 
 CREATE or replace procedure validate_username(p_uname varchar)
 as $$
@@ -342,36 +309,7 @@ begin
     /* text@text.text */
 end; $$ language plpgsql;
 
-/* Check tables */
-CREATE or replace function func_check_login(p_uname users.username%TYPE, p_passwd users.password%TYPE)
-    returns boolean as $$
-declare
-    user_found boolean;
-BEGIN
-    select into user_found (case when exists (select from users where lower(username)=lower(p_uname) and password=crypt(p_passwd,password))
-                     then 1
-                 else 0
-        end) as found;
-    RETURN user_found;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE or replace procedure proc_check_login(p_uname users.username%TYPE, p_passwd users.password%TYPE)
-as $$
-declare
-BEGIN
-    case when not exists (select from users where lower(username)=lower(p_uname) and password=crypt(p_passwd,password))
-        then raise exception
-                      using errcode = 'P9000',
-                      message = 'Invalid Credentials';
-        else null;
-    end case;
-
-
-END;
-$$ LANGUAGE plpgsql;
-
-/* Already existing values */
+    /* Check for already existing values */
 
 CREATE OR REPLACE function func_check_user_exists(p_uname varchar) returns boolean
 as $$
@@ -416,6 +354,8 @@ begin
     end case;
 end;
 $$ language plpgsql;
+
+    /* Activate account */
 
 /* Activation */
 create or replace procedure proc_generate_activation_code(p_uid integer)
@@ -559,12 +499,7 @@ begin
 end;
 $$  language plpgsql;
 
-create or replace function return_crypted_pass(v_txt varchar) returns varchar
-as $$
-    begin
-        return crypt(v_txt, gen_salt('bf',8));
-    end;
-$$ language plpgsql;
+    /* Change Password */
 
 /* Password updating */
 create or replace function func_return_change_password_code(p_uid integer) returns varchar(60)
@@ -640,7 +575,7 @@ as $$
                 raise exception
                 using errcode = 'P6301',
                     message = 'Token not valid';
-        end case; /* Podria fer-ho tot seguit pero llavors no tendria ni la meitat de respostes */
+        end case; /* Podria fer-ho tot junt pero llavors no tendria ni la meitat de respostes */
         case when exists(select true from change_password_tokens where change_password_token=p_token and created_on<now() and expires_on>now())
             then null;
             else
@@ -657,47 +592,126 @@ as $$
             end case;
     end;
 $$ language plpgsql;
-/*
--- create or replace function func_generate_activation_code(p_uid integer) returns varchar
--- as
--- declare
---     v_string varchar(60);
--- begin
---     select into v_string random_string(60);
---     while (select true from activate_account_tokens where token_code=v_string) loop
---             raise notice e'loop';
---             select into v_string random_string(60);
---         end loop;
---     insert into activate_account_tokens(user_id,activation_account_token) values(p_uid,v_string);
---     raise notice e'inserted';
---     return v_string;
--- exception
---     when sqlstate '23503' then
---         raise notice e'ERROR: User with u_id [%] wasn''t found',p_uid;
--- end;
--- $$ LANGUAGE plpgsql;
-*/
 
--- Generate random string (will be used to generate random tokens)
--- stolen from here:
--- https://stackoverflow.com/questions/3970795/how-do-you-create-a-random-string-thats-suitable-for-a-session-id-in-postgresql
-Create or replace function random_string(length integer) returns text as
-$$
-declare
-    chars text[] := '{0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}';
-    result text := '';
-    i integer := 0;
+    /* Session */
+
+create or replace procedure proc_check_session_token_is_valid(p_token varchar)
+as $$
 begin
-    if length < 0 then
-        raise exception 'Given length cannot be less than 0';
-    end if;
-    for i in 1..length loop
-            result := result || chars[1+random()*(array_length(chars, 1)-1)];
-        end loop;
-    return result;
+    case when exists(select true from session_tokens where session_token=p_token)
+        then null;
+        else
+            raise exception
+                using errcode = 'P6301',
+                    message = 'Token not valid';
+        end case; /* Podria fer-ho tot junt pero llavors no tendria ni la meitat de respostes */
+    case when exists(select true from session_tokens where session_token=p_token and created_on<now() and expires_on>now())
+        then null;
+        else
+            raise exception
+                using errcode = 'P6303',
+                    message = 'Token expired';
+        end case;
 end;
 $$ language plpgsql;
 
+/* Password updating */
+create or replace function func_return_session_code(p_uid integer) returns varchar(60)
+as $$
+declare
+    v_string varchar(60);
+begin
+    /* uses u_id*/
+
+    /* Generates and insert token*/
+    select into v_string random_string(60);
+    while (select true from session_tokens where session_token=v_string) loop
+            select into v_string random_string(60);
+        end loop;
+    insert into session_tokens(user_id,session_token) values(p_uid,v_string);
+    return v_string;
+exception
+    when sqlstate '23503' then
+        raise exception
+            using errcode = 'P62200',
+                message = 'User_id was not found';
+end;
+$$ LANGUAGE plpgsql;
+
+create or replace function func_return_session_code(p_username varchar)
+    returns varchar(60)
+as $$
+declare
+    declare
+    v_string varchar(60);
+    v_uid integer;
+begin
+    if (func_check_user_exists(p_username)) then
+        select into v_uid user_id from users where lower(username)=lower(p_username);
+        select into v_string func_return_session_code(v_uid);
+        return v_string;
+    else
+        raise exception
+            using errcode = 'P6201',
+                message = 'Username not found';
+    end if;
+
+
+end;
+$$ LANGUAGE plpgsql;
+
+create or replace function func_return_session_code_from_email(p_email varchar) returns varchar(60)
+as $$
+declare
+    v_string varchar(60);
+    v_user varchar;
+begin
+    if (func_check_email_exists(p_email)) then
+        select into v_user username from users where lower(email)=lower(p_email);
+        select into v_string func_return_session_code(v_user);
+        return v_string;
+    else
+        raise exception
+            using errcode = 'P6203',
+                message = 'Email not found';
+    end if;
+end;
+
+$$ language plpgsql;
+
+    /* Login */
+    /* Check tables */
+
+CREATE or replace function func_check_login(p_uname users.username%TYPE, p_passwd users.password%TYPE)
+    returns boolean as $$
+declare
+    user_found boolean;
+BEGIN
+    select into user_found (case when exists (select from users where lower(username)=lower(p_uname) and password=crypt(p_passwd,password))
+                                     then 1
+                                 else 0
+        end) as found;
+    RETURN user_found;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE or replace procedure proc_check_login(p_uname users.username%TYPE, p_passwd users.password%TYPE)
+as $$
+declare
+BEGIN
+    case when not exists (select from users where lower(username)=lower(p_uname) and password=crypt(p_passwd,password))
+        then raise exception
+            using errcode = 'P9000',
+                message = 'Invalid Credentials';
+        else null;
+        end case;
+
+
+END;
+$$ LANGUAGE plpgsql;
+
+
+/* User management*/
 
 CREATE or replace procedure register_user(p_username varchar, p_passwd varchar,p_email varchar)
 as $$
@@ -705,28 +719,14 @@ declare
 --     not_valid_email exception;
     v_uid integer;
 BEGIN
+    --     Validates entries
     call validate_username(p_username);
     call validate_password(p_passwd);
     call validate_mail(p_email);
---  Check if entries already exists
+--     Check if entries already exists
     call proc_check_user_exists(p_username);
     call proc_check_email_exists(p_email);
-    /*
-/*    case when exists(select true from users where username=p_username)
-        then raise exception
-            using errcode = 'P6101',
-                message = 'This username is already in use';
-        else null;
-        end case;*/
---     case when exists(select true from users where email=cast(encode(cast(p_email as bytea),'hex') as bytea))
-    /*
-    case when exists(select true from users where email=p_email)
-        then raise exception
-            using errcode = 'P6102',
-                message = 'This email is already in use';
-        else null;
-        end case;
-    */*/
+
 --     insert into users(username, password, email) values (p_username,crypt(p_passwd, gen_salt('bf',8)),cast(encode(cast(p_email as bytea),'hex') as bytea));
     insert into users(username, password, email) values (p_username,return_crypted_pass(p_passwd),p_email);
     select into v_uid user_id from users where lower(username)=lower(p_username);
@@ -748,6 +748,7 @@ as $$
 
 end;
 $$ language plpgsql;
+
 
 
 -- Triggers

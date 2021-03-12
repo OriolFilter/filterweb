@@ -3,43 +3,52 @@ $(document).ready(function(){
 });
 
 async function send_form() {
-    /* Error codes */
-    var form = document.forms["form"];
-    var server_response_obj = document.getElementById("serverResponse");
-    var error_obj = {name: 'Error Handler', error_list: []};
-    var data_obj = {json:null, response: null};
-    error_obj.code_dict = {
-        '0': 'Unknown error',
+    try {
+        document.getElementById("send_form").disabled = true;
+        var server_response_obj = document.getElementById("serverResponse");
+        loading(server_response_obj);
+        /* Error codes */
+        var form = document.forms["form"];
+        var error_obj = {name: 'Error Handler', error_list: []};
+        var data_obj = {json:null, response: null};
+        error_obj.code_dict = {
+            '0': 'Unknown error',
 
-        '1': 'Success',
+            '1': 'Success',
 
-        '2': 'Missing field(s)',
-        '2.3': 'Email field is missing',
-        '2.6': 'Name field is missing',
-        '2.7': 'Text field is missing',
+            '2': 'Missing field(s)',
+            '2.3': 'Email field is missing',
+            '2.6': 'Name field is missing',
+            '2.7': 'Text field is missing',
 
-        '3': 'Requirements not achieved',
-        '3.3': 'Email does not meet the requirements',
-        '3.4': 'Name does not meet the requirements',
-        '3.5': 'Text does not meet the requirements',
+            '3': 'Requirements not achieved',
+            '3.3': 'Email does not meet the requirements',
+            '3.4': 'Name does not meet the requirements',
+            '3.5': 'Text does not meet the requirements',
 
-        '5': 'Client-Server errors',
-        '5.1': 'There was a unknown error sending the data, please, try again later, if this error is consistent please contact an administrator.',
-        '5.2': 'Server under maintenance, please, try again bit later.'
-    };
+            '5': 'Client-Server errors',
+            '5.1': 'There was a unknown error sending the data, please, try again later, if this error is consistent please contact an administrator.',
+            '5.2': 'Server under maintenance, please, try again bit later.'
+        };
 
-    error_obj.code_hint_dict = {
-        '3.3': 'The given email is invalid',
-        '3.4': 'Name must be from 4 to 40 characters from the english alphabet or numbers, (spaces allowed)',
-        '3.5': 'Text message must be from 20 to 400 characters'
-    };
-    error_obj.json_response = null;
+        error_obj.code_hint_dict = {
+            '3.3': 'The given email is invalid',
+            '3.4': 'Name must be from 4 to 40 characters from the english alphabet or numbers, (spaces allowed)',
+            '3.5': 'Text message must be from 20 to 400 characters'
+        };
+        error_obj.json_response = null;
 
-    if (check_fields(form, error_obj)) {
-        data_obj.json=return_json_form(form);
-        data_obj.response= await post(data_obj.json,error_obj,server_response_obj);
-        server_alert(data_obj.response,server_response_obj);
-    } else {alert_error(error_obj,server_response_obj);}
+        if (check_fields(form, error_obj)) {
+            data_obj.json=return_json_form(form);
+            data_obj.response= await post(data_obj.json,error_obj,server_response_obj);
+            server_alert(data_obj.response,server_response_obj);
+        } else {alert_error(error_obj,server_response_obj);}
+    }
+    catch (e){
+            console.log(e);
+        } finally {
+            document.getElementById("send_form").disabled = false;
+    }
 }
 
 function return_json_form(form){
@@ -138,3 +147,7 @@ async function post(json,error_obj,server_response_obj) {
 
     }
 }
+    function loading (server_response_obj) {
+        server_response_obj.hidden=0;
+        server_response_obj.innerHTML='<p id="loading"></p>';
+    }

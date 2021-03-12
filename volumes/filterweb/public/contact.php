@@ -70,7 +70,7 @@ echo $vars->return_header();
                     </table>
                     <br>
                     <span id='serverResponse' hidden></span>
-                    <button type='button' id='link'><ins>Send</ins></button>
+                    <button type='button' id='send_form'><ins>Send</ins></button>
                 </form>
             </div>
         </div>

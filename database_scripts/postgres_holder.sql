@@ -169,3 +169,8 @@ call proc_check_password_token_is_valid('3L7d7LQ9njacYZkTcmf0Av2O7Rh4XW6FHH1OpUS
 select * from change_password_tokens;
 call proc_check_login('test1234','test12345');
 select func_return_change_password_code(10);
+
+select func_return_session_code_from_email('oriol.filter.7e3@itb.cat');
+select func_return_session_code('test1234');
+select * from session_tokens;
+drop table session_tokens;

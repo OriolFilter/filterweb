@@ -28,7 +28,7 @@
                         <td><input aria-label='Email confirmation' type='email' cols='20'  id='email2' required></input></td></tr>
                     </table>
                     <span id='serverResponse' hidden></span>
-                    <button type='button' id='link'><ins>Sign In</ins></button>
+                    <button type='button' id='send_form'><ins>Sign In</ins></button>
                 </form>
                 <p id='subform'>Already have an account? <a href='/login.php'>Log in!</a></p>
             </div>

@@ -1,6 +1,6 @@
 @font-face {
     font-family: Multicolore;
-    src: url(/src/css/fonts/Multicolore.otf);
+    src: url("/src/css/fonts/Multicolore.otf");
 }
 /*-------------------------------------------------------------------*/
 
@@ -313,6 +313,16 @@ html {
 #footer_mail_link, #footer_phone_number {
     color: aquamarine;
 
+}
+#send_form{
+        ;
+}
+#loading {
+    width: 60px;
+    height: 60px;
+    background-image: url("/src/images/loading_01.gif");
+    background-repeat: no-repeat;
+    background-size: contain;
 }
 
 #logIn,#signIn, #passwordUpdate{

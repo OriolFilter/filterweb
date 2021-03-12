@@ -3,44 +3,53 @@ $(document).ready(function(){
 });
 
 async function register() {
-    /* Error codes */
-    var form = document.forms["form"];
-    var server_response_obj = document.getElementById('serverResponse');
-    var error_obj = {name: 'Error Handler', error_list: []};
-    var data_obj = {json:null, response: null};
-    error_obj.code_dict = {
-        '0': 'Unknown error',
+    try {
+        document.getElementById("send_form").disabled = true;
+        var server_response_obj = document.getElementById('serverResponse');
+        loading(server_response_obj);
+        /* Error codes */
+        var form = document.forms["form"];
+        var error_obj = {name: 'Error Handler', error_list: []};
+        var data_obj = {json:null, response: null};
+        error_obj.code_dict = {
+            '0': 'Unknown error',
 
-        '1': 'Success',
+            '1': 'Success',
 
-        '2': 'Missing field(s)',
-        '2.2': 'Password field is missing',
-        '2.4': 'Repeat password field is missing',
+            '2': 'Missing field(s)',
+            '2.2': 'Password field is missing',
+            '2.4': 'Repeat password field is missing',
 
-        '3': 'Requirements not achieved',
-        '3.2': 'Password does not meet the requirements',
+            '3': 'Requirements not achieved',
+            '3.2': 'Password does not meet the requirements',
 
-        '4': 'Field matching',
-        '4.1': 'Passwords don\'t match',
-        '4.2': 'Emails don\'t match',
+            '4': 'Field matching',
+            '4.1': 'Passwords don\'t match',
+            '4.2': 'Emails don\'t match',
 
-        '5': 'Client-Server errors',
-        '5.1': 'There was a unknown error sending the data, please, try again later, if this error is consistent please contact an administrator.',
-        '5.2': 'Server under maintenance, please, try again bit later.'
-    };
+            '5': 'Client-Server errors',
+            '5.1': 'There was a unknown error sending the data, please, try again later, if this error is consistent please contact an administrator.',
+            '5.2': 'Server under maintenance, please, try again bit later.'
+        };
 
-    error_obj.code_hint_dict = {
-        '3.1': 'The username needs to be from 6 to 20 characters and contain only the following allowed characters:\nLetters from a to z (upper and lower case)\nNumbers from 0 to 9\nSpecial characters "_-+."',
-        '3.2': 'The password needs to be from 6 to 20 characters and contain only the following allowed characters:\nLetters from a to z (upper and lower case)\nNumbers from 0 to 9\nSpecial characters "$%.,?!@+_=-"',
-        '3.3': 'The given email is invalid',
-    };
-    error_obj.json_response = null;
+        error_obj.code_hint_dict = {
+            '3.1': 'The username needs to be from 6 to 20 characters and contain only the following allowed characters:\nLetters from a to z (upper and lower case)\nNumbers from 0 to 9\nSpecial characters "_-+."',
+            '3.2': 'The password needs to be from 6 to 20 characters and contain only the following allowed characters:\nLetters from a to z (upper and lower case)\nNumbers from 0 to 9\nSpecial characters "$%.,?!@+_=-"',
+            '3.3': 'The given email is invalid',
+        };
+        error_obj.json_response = null;
 
-    if (check_fields(form, error_obj)) {
-        data_obj.json=return_json_form(form);
-        data_obj.response= await post(data_obj.json,error_obj,server_response_obj);
-        server_alert(data_obj.response,server_response_obj);
-    } else {alert_error(error_obj,server_response_obj);}
+        if (check_fields(form, error_obj)) {
+            data_obj.json=return_json_form(form);
+            data_obj.response= await post(data_obj.json,error_obj,server_response_obj);
+            server_alert(data_obj.response,server_response_obj);
+        } else {alert_error(error_obj,server_response_obj);}
+    }
+    catch (e){
+        console.log(e);
+    } finally {
+        document.getElementById("send_form").disabled = false;
+    }
 }
 
 function return_json_form(form){
@@ -140,4 +149,8 @@ async function post(json,error_obj,server_response_obj) {
         alert_error(error_obj,server_response_obj);
 
     }
+}
+function loading (server_response_obj) {
+    server_response_obj.hidden=0;
+    server_response_obj.innerHTML='<p id="loading"></p>';
 }

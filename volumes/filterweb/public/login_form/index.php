@@ -34,17 +34,6 @@
 ;
 ; }
 ;
-//echo  filter_input(INPUT_GET, 'uname', FILTER_SANITIZE_ENCODED);
-//echo  filter_input(INPUT_GET, 'uname', FILTER_SANITIZE_EMAIL);
-//echo  filter_input(INPUT_GET, 'email', FILTER_SANITIZE_EMAIL);
-//echo  filter_input(INPUT_GET, 'email', FILTER_VALIDATE_EMAIL);
-//$email= filter_input(INPUT_GET, 'email', FILTER_VALIDATE_EMAIL);
-//$email= filter_input(INPUT_GET, 'email', FILTER_SANITIZE_EMAIL,FILTER_FLAG_EMAIL_UNICODE);
-//$email= filter_input(INPUT_GET, 'email', FILTER_VALIDATE_EMAIL,FILTER_FLAG_EMAIL_UNICODE);
-//if ($email){
-//    echo $email;
-//} else
-//{echo '!!';}
 
 ; function normalize_str(string $str){
 ;    $string = strval($str);

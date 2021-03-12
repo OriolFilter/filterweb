@@ -49,7 +49,7 @@ try {
                     <td><input aria-label='Password confirmation' type='password' cols='20'  id='pass2' required></input></td></tr>
                 </table>
                 <span id='serverResponse' hidden></span>
-                <button type='button' id='link'><ins>Confirm In</ins></button>"
+                <button type='button' id='send_form'><ins>Confirm In</ins></button>"
             :
             "<h3>".$json_obj->error['message']."</h3>"
             .($json_obj->error['hint']?("<h5>".$json_obj->error['hint']."</h3>"):null)
