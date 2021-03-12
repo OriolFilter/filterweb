@@ -21,48 +21,28 @@ try {
     $page_vars->import_mailer();
     $page_vars->import_errors();
     $json_obj = new json_response();
+    $db_manager = new db_manager();
 
     $mailer = new mailer();
     $mailer_info = new mailer_info($page_vars->hostname);
 
+    $hotashi = new hotashi();
+    $json_obj = new json_response();
+
     /* Main */
-    /* Get and validate vars  */
 
-    $email = @filter_var($_REQUEST['email'], FILTER_VALIDATE_EMAIL);
-    if (!isset($email) or $email=='') {
-        throw new MissingEmailFieldError();
-    }
+        /* Get Vars */
+        $hotashi->get_account_recovery_vars();
 
-    /* Database connection*/
-    ;$dbconn = @pg_connect("host=10.24.1.2 port=5432 dbname=shop_db user=test password=test");
-    if ($dbconn && !pg_connection_busy($dbconn)) {
+        /* Database connection*/
+        $db_manager->account_recovery_from_email($hotashi);
 
-        $result = pg_prepare($dbconn, "get_token_q", 'select func_return_change_password_code_from_email($1)');
-        $result = pg_send_execute($dbconn, "get_token_q", array($email));;
-        $result = pg_get_result($dbconn);
-            $state=pg_result_error_field($result, PGSQL_DIAG_SQLSTATE);
-            if ($result and !$state) {
+        /* Mailer */
+        $mailer_info->prepare_password_updating_email($hotashi);
+        $mailer->send_body($mailer_info);
 
-                $token = pg_fetch_result($result,0,0);
+        $json_obj->success();
 
-                $mailer_info->token = $token;
-                $mailer_info->email = $email;
-                $mailer_info->password_updating_email();
-                $mailer->send_body($mailer_info);
-                /* Generar el switch */
-            }
-            elseif ($state == 'P6101') {
-                throw new UsernameAlreadyExistsError();
-            }
-            elseif ($state == 'P6102') {
-                throw new UserEmailExistsError();
-            } else {throw new UnknownError();}
-    }
-    else {throw new DatabaseConnectionError();}
-
-
-    $json_obj->status='success';
-    $json_obj->status_code=1;
 }
 catch (DefinedErrors $e ) {
     $e->formatJson($json_obj);

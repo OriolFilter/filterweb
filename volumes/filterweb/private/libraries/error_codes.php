@@ -176,17 +176,81 @@ class MissingTextFieldError  extends CustomError  implements DefinedErrors {
 }
 
 ## Select
+class UsernameNotFoundError extends CustomError  implements DefinedErrors {
+    public $error_code = '6.2.1';
+    public $message = 'Username not found';
+    public $hint = null;
+}
+class UserIdNotFoundError extends CustomError  implements DefinedErrors {
+    public $error_code = '6.2.2';
+    public $message = 'UserId not found';
+    public $hint = null;
+}
 class EmailNotFoundError extends CustomError  implements DefinedErrors {
     public $error_code = '6.2.3';
     public $message = 'Email not found';
     public $hint = null;
 }
 
+class error_manager {
+    function pg_error_handler ($c=''){
+            if ($c == null or '') {
+                return null;
+            }
+//        echo '>>>>>>>',$c;
+//        if (isset($c)) {
+            switch (strval($c)) {
+                /* c = code/$status*/
+                case (!isset($c)): ;break; /* good */
+                case '': ;break; /* good */
+                case null: ;break; /* good */
+                case 'P0000':throw new UnknownError();break;
+                case 'P2000':throw new MissingField();break;
+                case 'P2200':throw new MissingPasswordFieldError();break;
+                case 'P2300':throw new MissingEmailFieldError();break;
+        //            case 'P2400':throw new Missing();break;
+        //            case 'P2500':throw new ;break;
+                case 'P2600':throw new MissingNameFieldError();break;
+                case 'P2700':throw new MissingTextFieldError();break;
+                case 'P3100':throw new UsernameNotValidError();break;
+                case 'P3200':throw new PasswordNotValidError();break;
+                case 'P3300':throw new EmailNotValidError();break;
+                case 'P3400':throw new NameNotValidError();break;
+                case 'P3500':throw new TextNotValidError();break;
+                case 'P6101':throw new UsernameAlreadyExistsError();break;
+                case 'P6102':throw new UserEmailExistsError();break;
+                case 'P6201':throw new UsernameNotFoundError();break;
+                case 'P6202':throw new UserIdNotFoundError();break;
+                case 'P6203':throw new EmailNotFoundError();break;
+                case 'P6204':throw new TokenNotValidError();break; /* Not valid -> not found */
+                case 'P6301':throw new TokenNotValidError();break;
+                case 'P6302':throw new TokenAlreadyUsedError();break;
+                case 'P6303':throw new TokenExpiredError();break;
+                case 'P6304':throw new TokenNullOrEmptyError();break;
+                case 'P6401':throw new DatabaseCommunicationError();break;
+                case 'P6402':throw new DatabaseCredentialsError();break;
+                case 'P6403':throw new DatabasePermissionsError();break;
+                case 'P6501':throw new GenerateTokenError();break;
+                case 'P7100':throw new AccountNotActivatedError();break;
+                case 'P7200':throw new AccountAlreadyActivatedError();break;
+                case 'P7300':throw new AccountIsBannedError();break;
+                case 'P8100':throw new MailerSendError();break;
+                case 'P8200':throw new MailerMissingAddressError();break;
+                case 'P8300':throw new MailerMissingBodyError();break;
+                case 'P8400':throw new MailerMissingSubjectError();break;
+                case 'P9000':throw new InvalidCredentialsError();break;
+                default:error_log('ERROR CODE FROM DATABASE >>>>'.$c);throw new UnknownError();break;
+            }
+//        }else{return true;};
+        /* polymorphism?? */
+        /* https://www.w3schools.com/java/java_polymorphism.asp */
+    }
 
-function pg_to_php_errors (string $c){
-    /* c = code/$status*/
 
-}
+
+
+    }
+
 
 
 ?>

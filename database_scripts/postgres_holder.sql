@@ -152,17 +152,20 @@ select * from users;
 select func_return_change_password_code_from_email('oriol.filter.7e3@itb.cat');
 select func_return_change_password_code_from_email('oriol.filter.7e3@itb.cat');
 select func_return_change_password_code(1);
+select func_check_email_exists('oriol.filter.7e3@itb.cat');
 select func_return_change_password_code('test1234');
 select * from change_password_tokens order by created_on desc ;
-select func_return_activation_code(1);
+select func_return_activation_code(10);
 -- update activate_account_tokens  set used_bool=false  where user_id=1;
 update activated_accounts  set activated_bool=false  where user_id=1;
 
 call proc_check_password_token_is_valid('LjF8cVPr8ZIClgcxTNVZfYs3dkbLq7L3bPN34VJ4lsb5IfyfdmdUv2yKx2sT');
 
 select check_login('test1234','test1234');
-call proc_change_password_user('9xqvdKGVJdFbtspxZf97aIbsoFfxiOwZyF6JQnu0TQm3287jEEpu6q1IDERc','test1235');
+call proc_change_password_user('WrnWGp3HLJEBjx7P7pw4bhZx6OuD2UUXAB2Lc7Tqh7dhpWqj5vv4EqYcl6xT','test1235');
 select check_login('test1234','test1235');
 delete from users where user_id=9;
-call proc_check_password_token_is_valid('nmlYnjkOa7GHizsiCURR9nj3iHKUFiEJ1ghiFLRdiDsukHJQiVyB');
+call proc_check_password_token_is_valid('3L7d7LQ9njacYZkTcmf0Av2O7Rh4XW6FHH1OpUSwr1iUBYpTl9K4RsDMtvx1');
+select * from change_password_tokens;
 call proc_check_login('test1234','test12345');
+select func_return_change_password_code(10);

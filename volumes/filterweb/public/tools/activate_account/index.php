@@ -1,51 +1,28 @@
 <?php
-/* UNUSED */
 /* Change a send post & recieve json*/
-;set_error_handler(function($errno, $errstr, $errfile, $errline ){ //To catch all errors (almost)
-    ;    throw new ErrorException($errstr, $errno, 0, $errfile, $errline);
-});
-
 ;try {
 
     require_once '/var/www/private/global_vars.php';
+    $json_obj = new json_response();
     $page_vars= new page_vars;
     $page_vars->import_errors();
+    $db_manager = new db_manager();
+
     $page_vars->title='Activate Account';
+
+    $hotashi = new hotashi();
     $json_obj = new json_response();
 
+    /* Main */
 
-    $token=$_GET['token'];
-// Connect sql
-    ;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=shop_db user=test password=test") or die('connection failed');
-    if (!pg_connection_busy($dbconn)) {
-        ;$result = pg_prepare($dbconn, "register_user_q", 'call proc_activate_account($1)');
-        ;$res=pg_get_result($dbconn);
-        ;$result = pg_send_execute($dbconn, "register_user_q",array($token));
-        ;$err=pg_last_notice($dbconn);
-        ;$res=pg_get_result($dbconn);
-        ;$state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
-        /* fer function que aixeca els errors depenent del de la bdd? deberia -> dema ho faig?*/
-        if (!$state) {;}
-        elseif ($state=='P6304'){
-            throw new TokenNullOrEmptyError();
-        } elseif ($state=='P6301') {
-            throw new TokenNotValidError();
-        } elseif ($state=='P6204') {
-            throw new TokenNotValidError();
-        } elseif ($state=='P6302') {
-            throw new TokenExpiredError();
-        } elseif ($state=='P7100') {
-            throw new AccountAlreadyActivatedError();
-        } elseif ($state=='P6303') {
-            throw new TokenAlreadyUsedError();
-        } else {
-            throw new UnknownError();
-        }
-    } else {throw new DatabaseConnectionError();}
+        /* Get Vars */
+        $hotashi->get_activate_account_token();
 
+        $db_manager->activate_account($hotashi);
 
-    $json_obj->status='success';
-    $json_obj->status_code='1';
+        $json_obj->success();
+
+    $json_obj->success();
     $json_obj->message = 'The user been activated correctly';
 
 }catch (DefinedErrors $e ) {

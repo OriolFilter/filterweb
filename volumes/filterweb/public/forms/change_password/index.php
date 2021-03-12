@@ -17,62 +17,30 @@
 /* Global try catch */
 try {
     require_once '/var/www/private/global_vars.php';
+    /* vars */
     $page_vars= new page_vars;
-    $page_vars->import_mailer();
     $page_vars->import_errors();
-//    require_once $error_codes_file;
-
-    $json_obj = new json_response();
-
+    /* Mailer */
+    $page_vars->import_mailer();
     $mailer = new mailer();
     $mailer_info = new mailer_info($page_vars->hostname);
+    /* DB*/
+    $db_manager = new db_manager();
+    /* Json */
+    $hotashi = new hotashi();
+    $json_obj = new json_response();
 
     /* Main */
-    /* Get and validate vars  */
 
-    /* No fa falta comprovar si estan definits o no, amb el regex ja serveix, i fer-ho dos vegades es una tonteria */
+        /* Get Vars */
+        $hotashi->get_change_password_vars();
 
-    if (isset($_REQUEST['token'])){
-        $token=$_REQUEST['token'];
-    } else {
-        throw new TokenNullOrEmptyError;
-    }
+        /* Database connection*/
+        $db_manager->change_account_password($hotashi);
 
-    if (!(@preg_match("/^[a-zA-Z0-9$%.,?!@+_=-]{6,20}+$/", $_REQUEST['pass'], $pass))) {
-        throw new PasswordNotValidError();
-    } else {
-        $pass = $pass[0];
-    }
-
-    /* Database connection*/
-    ;$dbconn = @pg_connect("host=10.24.1.2 port=5432 dbname=shop_db user=test password=test");
-
-    if ($dbconn && !pg_connection_busy($dbconn)) {
-        ;
-        $result = pg_prepare($dbconn, "register_user_q", 'call proc_change_password_user($1,$2)');;
-        $result = pg_send_execute($dbconn, "register_user_q", array($token,$pass));;
-        $res = pg_get_result($dbconn);
-        $state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
-        if (!$state) {
-            /* Mailer per avisar que tot tira b?
-            */
-            ;
-        }
-        /* Fer servir el error picker */
-        elseif ($state == 'P6101') {
-            throw new UsernameAlreadyExistsError();
-        }
-        elseif ($state == 'P6102') {
-            throw new UserEmailExistsError();
-        } else {throw new UnknownError();}
-
-//    }
-    }
-    else {throw new DatabaseConnectionError();}
-
-
-    $json_obj->status='success';
-    $json_obj->status_code=1;
+        /* success */
+        $json_obj->status='success';
+        $json_obj->status_code=1;
 }
 catch (DefinedErrors $e ) {
     $e->formatJson($json_obj);

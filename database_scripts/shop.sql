@@ -502,7 +502,7 @@ begin
     case when not exists(select user_id from users where lower(username)=lower(p_username))
         then raise exception
         using errcode = 'P6201',
-            message = 'The given username wasn''t found';
+            message = 'Username not found';
         else
             select into v_uid user_id from users where lower(username)=lower(p_username);
     end case;

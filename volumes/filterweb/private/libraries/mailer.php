@@ -71,23 +71,27 @@ class mailer_info{
     function __construct($h=null){
         $this->hostname=$h;
     }
-    public function registration_email() {
+    public function prepare_registration_email($hotashi) {
+        $this->token = $hotashi->atoken;
+        $this->email = $hotashi->umail;
+
         $link = sprintf('https://%s/tools/activate_account/?token=%s', $this->hostname, $this->token);
         $this->subject = 'Welcome to arcadeshop, here is your activation code';
         $this->body = sprintf("Thanks for using our services, now that you have registered, it's time to activate your account!\n press the following link in order to activate your account: <a href='%s'>ACTIVATE ACCOUNT<a/>", $link);
         $this->altbody = sprintf("Thanks for using our services, now that you have registered, it's time to activate your account!\n access the following link in order to activate your account: %s", $link);
     }
-    public function password_updating_email() {
+    public function prepare_password_updating_email($hotashi) {
+        $this->token = $hotashi->cptoken;
+        $this->email = $hotashi->umail;
         $link = sprintf('https://%s/tools/password_update/?token=%s', $this->hostname, $this->token);
         $this->subject = 'Welcome to arcadeshop, here is your password updating link';
         $this->body = sprintf("Thanks for using our services, you received your password updating link as requested\n: <a href='%s'>Change password<a/>", $link);
         $this->altbody = sprintf("Thanks for using our services, you received your password updating link as requested\n: %s", $link);
     }
-
-    public function contact_form_email($name,$text,) {
+    public function prepare_contact_form_email($hotashi) {
         $this->subject = 'Thanks for contacting ArcadeShop!';
-        $this->body = sprintf("<html><body><h2>Thanks for making contact with our company!</h2><p><span style='color: mediumpurple'>Soon we will send a reply from your message if there is any other issue please don't hesitate and send another message.</span></p><p style='color: #5f5f5f'>Content from the contact:</p><p><span style='color: darkred'>Name: </span>%s</p><p><span style='color: darkred'>Message left: </span>%s</p><p><small>This message is fully automated, please do not reply to this message</small></p></body></html>", htmlspecialchars($name),htmlspecialchars($text));
-        $this->altbody = sprintf("Thanks for making contact with our company!\nSoon we will send a reply from your message if there is any other issue please don't hesitate and send another message.\n\nContent from the contact:\n\nName:%s\n\nMessage left:%s\n\n(This message is fully automated, please do not reply to this message)", htmlspecialchars($name),htmlspecialchars($text));
+        $this->body = sprintf("<html><body><h2>Thanks for making contact with our company!</h2><p><span style='color: mediumpurple'>Soon we will send a reply from your message if there is any other issue please don't hesitate and send another message.</span></p><p style='color: #5f5f5f'>Content from the contact:</p><p><span style='color: darkred'>Name: </span>%s</p><p><span style='color: darkred'>Message left: </span>%s</p><p><small>This message is fully automated, please do not reply to this message</small></p></body></html>", htmlspecialchars($hotashi->fname),htmlspecialchars($hotashi->ftext));
+        $this->altbody = sprintf("Thanks for making contact with our company!\nSoon we will send a reply from your message if there is any other issue please don't hesitate and send another message.\n\nContent from the contact:\n\nName:%s\n\nMessage left:%s\n\n(This message is fully automated, please do not reply to this message)", htmlspecialchars($hotashi->fname),htmlspecialchars($hotashi->ftext));
     }
 
    /*
