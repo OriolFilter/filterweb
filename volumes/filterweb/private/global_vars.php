@@ -1,4 +1,5 @@
 <?php
+
 //error_reporting(0);
 //;    $hostname='192.168.1.46';
 //    $hostname='172.30.2.20';
@@ -133,8 +134,13 @@
                             <div id="right-buttons">
                                 <ul>'.
                                 ((isset($_COOKIE['loged']))?'<li><a href="/my_account.php">account</a></li>':'<li><a href="/login.php">Log in</a></li>')
-                                .'<li hidden><a href="#">Log out</a></li>
-                                    <li><a href="/cart.php">Shopping Cart</a></li>
+                                .'<li hidden><a href="#">Log out</a></li>'.
+                                    '<li><a href="/cart.php">Shopping Cart'.
+                                            ((isset($_COOKIE['number_cart_items']) && isset($_COOKIE['loged'])) ?
+                                                    '('.$_COOKIE['number_cart_items'].')'
+                                                :
+                                                    null)
+                                                    .'</a></li>
                                 </ul>
                             </div>
                         </header>
@@ -238,7 +244,7 @@ class hotashi {
       /* nice accpr streams */
 
       /* tokens */
-      public $ltoken; //login token
+      public $stoken; //session token
       public $atoken; //activation token
       public $cptoken; //change password token
       public $cppass; //change password Password
@@ -250,7 +256,6 @@ class hotashi {
       public $fname; // form name
       public $fmail; // form mail
       public $ftext; // form text
-
 
       public function get_registration_vars() {
           /* Get and validate vars  */
@@ -311,6 +316,9 @@ class hotashi {
               throw new TokenNullOrEmptyError();
           }
       }
+      public function get_login_cookies(){
+          $this->stoken=$_COOKIE['session_token'];
+    }
        /* contact */
       public function get_contact_form_vars(){
           if (!(@preg_match("/^[\w0-9 ]{4,40}$/", $_REQUEST['name'], $name))) {
@@ -330,6 +338,10 @@ class hotashi {
               $this->ftext = $text[0];
           }
       }
+
+//      public function check_login(){
+//          setcookie(session_token, $cookie_value, time() + (86400 * 30), "/"); // 86400 = 1 day
+//      }
 
   }
 
@@ -412,5 +424,20 @@ class db_manager {
             $this->error_manager->pg_error_handler($state);
         } else {throw new DatabaseConnectionError();}
     }
-}
+    public function login(&$hotashi)
+    {
+        $dbconn = @pg_connect("host=10.24.1.2 port=5432 dbname=contact_forms_db user=form_user password=form_pass");
+        if ($dbconn && !pg_connection_busy($dbconn)) {
+            $result = pg_prepare($dbconn, "register_form", 'call insert_form($1,$2,$3)');
+            $result = pg_send_execute($dbconn, "register_form", array($hotashi->fname, $hotashi->fmail, $hotashi->ftext));
+//            $err = pg_last_notice($dbconn);
+            $res = pg_get_result($dbconn);
+            $state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
+            $this->error_manager->pg_error_handler($state);
+        } else {
+            throw new DatabaseConnectionError();
+            }
+        }
+
+    }
 ?>

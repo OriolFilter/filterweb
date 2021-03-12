@@ -174,3 +174,6 @@ select func_return_session_code_from_email('oriol.filter.7e3@itb.cat');
 select func_return_session_code('test1234');
 select * from session_tokens;
 drop table session_tokens;
+call proc_check_user_is_activated(10);
+
+call proc_login_session_token('KlOL6MgUZadCGIC0fFo7J68dG5DIjO7Z7CbwdH9cbdq9PZzDTOZugbiP3cTS');

@@ -593,7 +593,7 @@ as $$
     end;
 $$ language plpgsql;
 
-    /* Session */
+    /* Session tokens */
 
 create or replace procedure proc_check_session_token_is_valid(p_token varchar)
 as $$
@@ -709,6 +709,41 @@ BEGIN
 
 END;
 $$ LANGUAGE plpgsql;
+
+    /* Check account is activated */
+
+create or replace procedure proc_check_user_is_activated(p_uid integer)
+as $$
+begin
+    case when not exists(select true from activated_accounts where user_id=p_uid and activated_bool=true)
+        then raise exception
+            using errcode = 'P7100',
+                message = 'This account is not activated';
+        else null;
+        end case;
+end;
+$$ language plpgsql;
+
+CREATE or replace procedure proc_enlarge_login(token varchar)
+as $$
+declare
+BEGIN
+    /* no control*/
+
+END;
+$$ LANGUAGE plpgsql;
+
+create or replace procedure proc_login_session_token(token varchar)
+as $$
+    begin
+        call proc_check_session_token_is_valid(token);
+        update session_tokens set expires_on=now() + '30 minute'::interval where token=token;
+    end;
+$$ language plpgsql;
+
+
+
+
 
 
 /* User management*/
