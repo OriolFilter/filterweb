@@ -55,12 +55,12 @@ class mailer{
             $mail->send();
             return true;
         } catch (Exception $e) {
-            throw new ErrorSendingMessage('Couldn\'t send the email to the desired destination.');
+            throw new MailerSendError();
         }
     }
 }
 
-class mailer_info{
+class mailer_info{ /* podria juntar amb mailer (hauria)*/
     public $email=null;
     public $subject=null;
     public $body=null;
@@ -89,6 +89,7 @@ class mailer_info{
         $this->altbody = sprintf("Thanks for using our services, you received your password updating link as requested\n: %s", $link);
     }
     public function prepare_contact_form_email($hotashi) {
+        $this->email = $hotashi->fmail;
         $this->subject = 'Thanks for contacting ArcadeShop!';
         $this->body = sprintf("<html><body><h2>Thanks for making contact with our company!</h2><p><span style='color: mediumpurple'>Soon we will send a reply from your message if there is any other issue please don't hesitate and send another message.</span></p><p style='color: #5f5f5f'>Content from the contact:</p><p><span style='color: darkred'>Name: </span>%s</p><p><span style='color: darkred'>Message left: </span>%s</p><p><small>This message is fully automated, please do not reply to this message</small></p></body></html>", htmlspecialchars($hotashi->fname),htmlspecialchars($hotashi->ftext));
         $this->altbody = sprintf("Thanks for making contact with our company!\nSoon we will send a reply from your message if there is any other issue please don't hesitate and send another message.\n\nContent from the contact:\n\nName:%s\n\nMessage left:%s\n\n(This message is fully automated, please do not reply to this message)", htmlspecialchars($hotashi->fname),htmlspecialchars($hotashi->ftext));

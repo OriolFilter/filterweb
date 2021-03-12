@@ -398,7 +398,7 @@ class db_manager {
             ;$err=pg_last_notice($dbconn);
             ;$res=pg_get_result($dbconn);
             ;$state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
-            $this->error_manager($state);
+            $this->error_manager->pg_error_handler($state);
         } else {throw new DatabaseConnectionError();}
     }
     public function register_contact_form($hotashi){
@@ -409,7 +409,7 @@ class db_manager {
 //            $err = pg_last_notice($dbconn);
             $res = pg_get_result($dbconn);
             $state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
-            $this->error_manager($state);
+            $this->error_manager->pg_error_handler($state);
         } else {throw new DatabaseConnectionError();}
     }
 }
