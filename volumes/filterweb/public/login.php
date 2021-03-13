@@ -1,17 +1,18 @@
 <?php
 ;
 ;include "../private/global_vars.php";
-$vars = new page_vars();
-$vars->title='Log In';
-echo $vars->return_header();
+;$scripts="<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script><script src='/src/js/forms/login.js'></script>";
+;$page_vars = new page_vars();
+;$hotashi = new hotashi;
+;$page_vars->scripts=$scripts;
+;$page_vars->title='Log In';
+;echo $page_vars->return_header($hotashi);
 ;
 ;echo"
     <div id='logIn'>
-        <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
-        <script src='/src/js/logIn.js'></script>
        <div id='logInBox'>
             <div class=\"form - single - column\">
-                <form id='logInForm'>
+                <form id='form'>
                     <h3>Log In</h3>
                     <table>
                         <tr>
@@ -20,8 +21,8 @@ echo $vars->return_header();
                         <tr><th>Password:</th>
                         <td><input aria-label=\"Password\" type='password' cols='20'  id='pass' required></input></td></tr>
                     </table>
-                    <span id='logInResponse' hidden></span>
-                    <div id='link' onclick='login()'><ins>Log in</ins></div>
+                    <span id='serverResponse' hidden></span>
+                    <button type='button' id='send_form'><ins>Log In</ins></button>
                 </form>
                 <p id='subform'><a href='/account_recovery.php'>Did you forgot your password?</a></p>
                 <p id='subform'>Don't have an account? <a href='/register.php'>Register!</a></p>
@@ -31,5 +32,5 @@ echo $vars->return_header();
 ";
 ;
 ;
-echo $vars->return_footer();
+echo $page_vars->return_footer();
 ;?>

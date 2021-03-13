@@ -9,8 +9,17 @@ class CustomError extends Exception {
     public $message = 'Unknown error';
     public $status = 'failed';
     public $hint = null;
-    public function formatJson(&$json_obj){
+    public function __construct()
+    {
 
+        error_log('ERROR');
+        error_log(sprintf('> Code %s',$this->error_code));
+        error_log(sprintf('>> Message %s',$this->message));
+        error_log(sprintf('>>> Hint %s',$this->hint));
+    }
+
+
+    public function formatJson(&$json_obj){
         $json_obj->status = $this->status?htmlspecialchars($this->status):null; /* ta b */
         $json_obj->status_code = $this->status_code?htmlspecialchars($this->status_code):null; /* ta b */
         $json_obj->error['code'] = $this-> error_code?htmlspecialchars($this-> error_code):null;
@@ -163,7 +172,7 @@ class MissingPasswordFieldError  extends CustomError  implements DefinedErrors {
     public $message = 'Password field is missing';
 }
 class MissingEmailFieldError  extends CustomError  implements DefinedErrors {
-    public $error_code = '2.3';
+//    public $error_code = '2.3';
     public $message = 'Email field is missing';
 }
 class MissingNameFieldError  extends CustomError  implements DefinedErrors {
@@ -197,8 +206,6 @@ class error_manager {
             if ($c == null or '') {
                 return null;
             }
-//        echo '>>>>>>>',$c;
-//        if (isset($c)) {
             switch (strval($c)) {
                 /* c = code/$status*/
                 case (!isset($c)): ;break; /* good */

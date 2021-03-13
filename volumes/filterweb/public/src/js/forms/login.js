@@ -17,26 +17,15 @@ async function register() {
             '1': 'Success',
 
             '2': 'Missing field(s)',
+            '2.1': 'Username field is missing',
             '2.2': 'Password field is missing',
-            '2.4': 'Repeat password field is missing',
-
-            '3': 'Requirements not achieved',
-            '3.2': 'Password does not meet the requirements',
-
-            '4': 'Field matching',
-            '4.1': 'Passwords don\'t match',
-            '4.2': 'Emails don\'t match',
 
             '5': 'Client-Server errors',
             '5.1': 'There was a unknown error sending the data, please, try again later, if this error is consistent please contact an administrator.',
             '5.2': 'Server under maintenance, please, try again bit later.'
         };
 
-        error_obj.code_hint_dict = {
-            '3.1': 'The username needs to be from 6 to 20 characters and contain only the following allowed characters:\nLetters from a to z (upper and lower case)\nNumbers from 0 to 9\nSpecial characters "_-+."',
-            '3.2': 'The password needs to be from 6 to 20 characters and contain only the following allowed characters:\nLetters from a to z (upper and lower case)\nNumbers from 0 to 9\nSpecial characters "$%.,?!@+_=-"',
-            '3.3': 'The given email is invalid',
-        };
+        // error_obj.code_hint_dict = {null};
         error_obj.json_response = null;
 
         if (check_fields(form, error_obj)) {
@@ -53,14 +42,15 @@ async function register() {
 }
 
 function return_json_form(form){
-    /* change password token*/
-    var token=t.cpt;
+
+    var uname=form['uname'].value;
     var pass=form['pass'].value;
 
     json={
-        token: token,
-        pass: pass,
+        uname: uname,
+        pass: pass
     }
+    console.log(json);
     return(json);
 
 }
@@ -93,11 +83,11 @@ function server_alert(json,server_response_obj){
 }
 function success(server_response_obj){
     server_response_obj.hidden=0;
-    server_response_obj.innerHTML='<p id="success_form">Success! Password updated correctly!</p>';
+    server_response_obj.innerHTML='<p id="success_form">Success!</p>';
 }
 
 function check_fields(form,error_obj){
-    var obligatory_fields = {"pass":'2.2',"pass2":"2.4"}; /* check specified*/
+    var obligatory_fields = {"uname":'2.1', "pass":'2.2'}; /* check specified*/
     var keys=Object.keys(obligatory_fields);
     var l = keys.length;
     var fieldname;
@@ -110,24 +100,10 @@ function check_fields(form,error_obj){
     if (error_obj.error_list.length>0){
         return false;
     }
-    /* Check regex */
-    if (!(/^[a-zA-Z0-9$%.,?!@+_=-]{6,20}$/g.test(form['pass'].value))){
-        error_obj.error_list.push('3.2');
-     }
 
     if (error_obj.error_list.length>0){
         return false;
-    }
-
-    /* Check fieldsmatch */
-    if (form['pass'].value!=form['pass2'].value){
-        error_obj.error_list.push('4.1');
-    };
-
-    if (error_obj.error_list.length>0){
-        return false;
-    }
-    return true;
+    }return true;
 
 
 }
@@ -137,7 +113,7 @@ async function post(json,error_obj,server_response_obj) {
 
     try {
         result = await $.ajax({
-            url: '/forms/change_password/',
+            url: '/forms/login/',
             type: 'POST',
             data: json
         });

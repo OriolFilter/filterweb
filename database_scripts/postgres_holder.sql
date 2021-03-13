@@ -176,4 +176,11 @@ select * from session_tokens;
 drop table session_tokens;
 call proc_check_user_is_activated(10);
 
-call proc_login_session_token('KlOL6MgUZadCGIC0fFo7J68dG5DIjO7Z7CbwdH9cbdq9PZzDTOZugbiP3cTS');
+call proc_login_session_token('iFMXN8t6dWoAiTuSbGrnEDB3DpmQP5LdDLe5Rx83zVlskq4IFegmGkSgDBni');
+
+select func_check_login('test123456','test123456');
+call proc_credentials_user('test123456','test123456');
+select func_return_session_token_from_credentials('test123456','test123456');
+select * from activate_account_tokens;
+call proc_activate_account('vIGriatpephpabejcumidUGFY1CYtjulJh6AqRz6LlD22TEbuAPaSGVjeZEi');
+select user_id from users where lower('test123456')=lower(username);

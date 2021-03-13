@@ -3,10 +3,17 @@
 //error_reporting(0);
 //;    $hostname='192.168.1.46';
 //    $hostname='172.30.2.20';
+// Date in the past
+
+    /* Prevent Cache */
+    header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+    header("Cache-Control: no-cache");
+    header("Pragma: no-cache");
+
 
     $project_dir='/var/www';
     require_once $project_dir.'/private/libraries/error_codes.php';
-    $mailer_file=$project_dir.'/private/libraries/mailer.php';
+//    $mailer_file=$project_dir.'/private/libraries/mailer.php';
 //    $mailer_folder=$project_dir.'/private/libraries/PHPMailer';
 //    require_once '/var/www/private/libraries/error_codes.php';
 
@@ -102,7 +109,8 @@
         public $contact_email='filter.web.asix@gmail.com';
 
 
-        public function return_header(){
+        public function return_header($hotahsi=null){
+            ($hotahsi?$hotahsi->login_from_stoken():null);
             return ('<!DOCTYPE html>
                         <html lang="es">
                         <head>
@@ -112,7 +120,7 @@
                             <link rel="stylesheet" media="screen and (min-width: 750px) and (max-width: 1200px)" href="/src/css/medium.css" type="text/css">
                             <meta charset="UTF-8">
                             <meta name="viewport" content="width=device-width, initial-scale=1.0">'
-                .($this->   title?sprintf('<title>%s</title>',$this->title):'<title>ArcadeShop</title>')
+                .($this->title?sprintf('<title>%s</title>',$this->title):'<title>ArcadeShop</title>')
                 .($this->scripts??null)
                         .'</head>
                         <body>
@@ -133,6 +141,7 @@
                             </div>
                             <div id="right-buttons">
                                 <ul>'.
+                                /* HEADER LINKS */
                                 ((isset($_COOKIE['loged']))?'<li><a href="/my_account.php">account</a></li>':'<li><a href="/login.php">Log in</a></li>')
                                 .'<li hidden><a href="#">Log out</a></li>'.
                                     '<li><a href="/cart.php">Shopping Cart'.
@@ -256,7 +265,16 @@ class hotashi {
       public $fname; // form name
       public $fmail; // form mail
       public $ftext; // form text
+      public $cookies=[];
 
+      /* Get post*/
+      public function get_login_vars() {
+        /* Get and validate vars  */
+
+
+          isset($_REQUEST['uname'])?$this->uname = $_REQUEST['uname']:throw new UsernameNotValidError();
+          isset($_REQUEST['pass'])?$this->upass = $_REQUEST['pass']:throw new PasswordNotValidError();
+    }
       public function get_registration_vars() {
           /* Get and validate vars  */
 
@@ -281,12 +299,7 @@ class hotashi {
       }
       public function get_change_password_vars() {
           /* Get and validate vars  */
-
-          if (isset($_REQUEST['token'])){
-              $this->cptoken=$_REQUEST['token'];
-          } else {
-              throw new TokenNullOrEmptyError;
-          }
+            isset($_REQUEST['token'])?$this->cptoken = $_REQUEST['token']:throw new TokenNullOrEmptyError();
 
           if (!(@preg_match("/^[a-zA-Z0-9$%.,?!@+_=-]{6,20}+$/", $_REQUEST['pass'], $pass))) {
               throw new PasswordNotValidError();
@@ -303,22 +316,40 @@ class hotashi {
         }
         /* tokens */
       public function get_change_password_token(){
-          if (isset($_GET['token']) and $_GET['token']!='') {
-              $this->cptoken = $_GET['token'];
-          } else {
-              throw new TokenNullOrEmptyError();
-          }
+          isset($_REQUEST['token'])?$this->cptoken = $_REQUEST['token']:throw new TokenNullOrEmptyError();
       }
       public function get_activate_account_token(){
-          if (isset($_GET['token']) and $_GET['token']!='') {
-              $this->atoken = $_GET['token'];
-          } else {
-              throw new TokenNullOrEmptyError();
+          isset($_REQUEST['token'])?$this->atoken = $_REQUEST['token']:throw new TokenNullOrEmptyError();
+      }
+      /* Cookies */
+      public function get_login_cookies(){
+          /* So far only stoken (session token) */
+          $this->stoken=$_COOKIE['session_token']??null;
+      }
+      public function fetch_cookies(){
+          setcookie(name: 'session_token', value: $this->stoken, expires_or_options: time() + (86400 * 1), path: "/",secure: true); /* 1 dia x 1 tot i que les sessions duren 30 minuts */
+          error_log(sprintf('Sended token %s',$this->stoken));
+//            $this->stoken=$_COOKIE['session_token']??null;
+      }
+      public function drop_cookies(){
+        setcookie(name: 'session_token', value: -1, expires_or_options: time() + -3600); /* 1 dia x 1 tot i que les sessions duren 30 minuts */
+//            $this->stoken=$_COOKIE['session_token']??null;
+    }
+      public function login_from_stoken(){
+          $db_manager = new db_manager();
+          $this->get_login_cookies($this);
+          if ($this->stoken) {
+              try {
+                    $db_manager->login_stoken($this);
+                    $this->fetch_cookies();
+              }
+              catch (DefinedErrors $e) {
+//                    $e->
+                  $this->drop_cookies();
+              } finally { null;
+              }
           }
       }
-      public function get_login_cookies(){
-          $this->stoken=$_COOKIE['session_token'];
-    }
        /* contact */
       public function get_contact_form_vars(){
           if (!(@preg_match("/^[\w0-9 ]{4,40}$/", $_REQUEST['name'], $name))) {
@@ -418,26 +449,41 @@ class db_manager {
         if ($dbconn && !pg_connection_busy($dbconn)) {
             $result = pg_prepare($dbconn, "register_form", 'call insert_form($1,$2,$3)');
             $result = pg_send_execute($dbconn, "register_form", array($hotashi->fname, $hotashi->fmail, $hotashi->ftext));
-//            $err = pg_last_notice($dbconn);
             $res = pg_get_result($dbconn);
             $state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
             $this->error_manager->pg_error_handler($state);
         } else {throw new DatabaseConnectionError();}
     }
-    public function login(&$hotashi)
-    {
-        $dbconn = @pg_connect("host=10.24.1.2 port=5432 dbname=contact_forms_db user=form_user password=form_pass");
+    public function login_stoken($hotashi) /* connection to db login using stoken (check token status)*/
+    { /* Under construction*/
+        $dbconn= @pg_connect("host=10.24.1.2 port=5432 dbname=shop_db user=test password=test");
         if ($dbconn && !pg_connection_busy($dbconn)) {
-            $result = pg_prepare($dbconn, "register_form", 'call insert_form($1,$2,$3)');
-            $result = pg_send_execute($dbconn, "register_form", array($hotashi->fname, $hotashi->fmail, $hotashi->ftext));
-//            $err = pg_last_notice($dbconn);
+            $result = pg_prepare($dbconn, "check_stoken_q", 'call proc_login_session_token($1);');
+            $result = pg_send_execute($dbconn, "check_stoken_q", array($hotashi->stoken));
             $res = pg_get_result($dbconn);
             $state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
             $this->error_manager->pg_error_handler($state);
         } else {
             throw new DatabaseConnectionError();
             }
+    }
+    public function logout($hotashi){
+        $hotashi->drop_cookies();
+    }
+    public function login_from_credentials(&$hotashi)
+    {
+        /* $hotahsi->stoken = session token */;
+        $dbconn = @pg_connect("host=10.24.1.2 port=5432 dbname=shop_db user=test password=test");
+        if ($dbconn && !pg_connection_busy($dbconn)) {
+            $result = pg_prepare($dbconn, "get_stoken_q", 'select func_return_session_token_from_credentials($1,$2)');
+            $result = pg_send_execute($dbconn, "get_stoken_q", array($hotashi->uname,$hotashi->upass));;
+            $res = pg_get_result($dbconn);
+            $state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
+            $this->error_manager->pg_error_handler($state);
+            $hotashi->stoken = pg_fetch_result($res, 0, 0);
+        } else {
+            throw new DatabaseConnectionError();
         }
-
+        }
     }
 ?>

@@ -660,6 +660,7 @@ begin
 end;
 $$ LANGUAGE plpgsql;
 
+/* /* WHY FROM EMAIL. */
 create or replace function func_return_session_code_from_email(p_email varchar) returns varchar(60)
 as $$
 declare
@@ -677,25 +678,10 @@ begin
     end if;
 end;
 
-$$ language plpgsql;
+$$ language plpgsql; -- ??
+*/
 
-    /* Login */
-    /* Check tables */
-
-CREATE or replace function func_check_login(p_uname users.username%TYPE, p_passwd users.password%TYPE)
-    returns boolean as $$
-declare
-    user_found boolean;
-BEGIN
-    select into user_found (case when exists (select from users where lower(username)=lower(p_uname) and password=crypt(p_passwd,password))
-                                     then 1
-                                 else 0
-        end) as found;
-    RETURN user_found;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE or replace procedure proc_check_login(p_uname users.username%TYPE, p_passwd users.password%TYPE)
+CREATE or replace procedure proc_credentials_user(p_uname users.username%TYPE, p_passwd users.password%TYPE)
 as $$
 declare
 BEGIN
@@ -705,8 +691,6 @@ BEGIN
                 message = 'Invalid Credentials';
         else null;
         end case;
-
-
 END;
 $$ LANGUAGE plpgsql;
 
@@ -724,25 +708,54 @@ begin
 end;
 $$ language plpgsql;
 
-CREATE or replace procedure proc_enlarge_login(token varchar)
+    /* Login */
+
+CREATE or replace procedure proc_enlarge_login(p_token varchar)
 as $$
 declare
 BEGIN
     /* no control*/
-
+    /* Extends login by 30 mins */
+    update session_tokens set expires_on=now() + '30 minute'::interval where session_token=p_token;
 END;
 $$ LANGUAGE plpgsql;
 
-create or replace procedure proc_login_session_token(token varchar)
+create or replace procedure proc_login_session_token(p_token varchar)
 as $$
-    begin
-        call proc_check_session_token_is_valid(token);
-        update session_tokens set expires_on=now() + '30 minute'::interval where token=token;
+    begin /* Login with session token */
+        call proc_check_session_token_is_valid(p_token);
+        call proc_enlarge_login(p_token);
+--         update session_tokens set expires_on=now() + '30 minute'::interval where session_token=p_token;
     end;
 $$ language plpgsql;
 
+create or replace function func_return_session_token_from_credentials(p_uname varchar, p_pass varchar) returns varchar
+as $$
+    declare
+        v_uid integer;
+        v_token varchar;
+begin
+        call proc_credentials_user(p_uname,p_pass);
+        select into v_uid user_id from users where lower(username)=lower(p_uname);
+        select into v_token func_return_session_code(v_uid);
+        return v_token;
 
+end;
+$$ language plpgsql;
 
+/* Check user+pass */
+CREATE or replace function func_credentials_user(p_uname users.username%TYPE, p_passwd users.password%TYPE)
+    returns boolean as $$
+declare
+    user_found boolean;
+BEGIN
+    select into user_found (case when exists (select from users where lower(username)=lower(p_uname) and password=crypt(p_passwd,password))
+                                     then 1
+                                 else 0
+        end) as found;
+    RETURN user_found;
+END;
+$$ LANGUAGE plpgsql;
 
 
 

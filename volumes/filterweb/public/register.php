@@ -1,6 +1,5 @@
 <?php
-;
-;
+;;
 ;include "../private/global_vars.php";
 ;$scripts="<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script><script src='/src/js/forms/signin.js'></script>";
 ;$page_vars = new page_vars();

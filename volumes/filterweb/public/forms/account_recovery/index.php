@@ -1,5 +1,5 @@
 <?php
-;/*Register form*/
+;/*Account recovery form*/
 /* Exceptions */
 
 /* Function */
@@ -20,14 +20,13 @@ try {
     $page_vars= new page_vars;
     $page_vars->import_mailer();
     $page_vars->import_errors();
+    $hotashi = new hotashi();
     $json_obj = new json_response();
     $db_manager = new db_manager();
 
     $mailer = new mailer();
     $mailer_info = new mailer_info($page_vars->hostname);
 
-    $hotashi = new hotashi();
-    $json_obj = new json_response();
 
     /* Main */
 

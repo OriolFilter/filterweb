@@ -41,7 +41,7 @@ try {
     (
         $json_obj->status_code==1?"<form id='form'>
             <h3>New Password</h3>
-                <script>t={'k':'".htmlspecialchars($hotashi->cptoken)."'}</script>
+                <script>t={'cpt':'".htmlspecialchars($hotashi->cptoken)."'}</script>
                 <table>
                     <tr><th>Password:</th>
                     <td><input aria-label='New Password' type='password' cols='20'  id='pass' required></input></td></tr>
