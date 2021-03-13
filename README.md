@@ -150,7 +150,7 @@ postgresql:
     - '6.4.4 :P6404'
 ```
 
-### ERROR MESSAGES HINTS
+### ERROR MESSAGES HINTS (update)
 
 ```yaml
   '3.1': 'The username needs to be from 6 to 20 characters and contain only the following allowed characters:\nLetters from a to z (upper and lower case)\nNumbers from 0 to 9\nSpecial characters "_-+."',
@@ -158,4 +158,14 @@ postgresql:
   '3.3': 'The given email is invalid',
   '3.4': 'Name must be from 4 to 40 characters from the english alphabet or numbers',
   '3.5': 'Text message must be from 20 to 255 characters'
+```
+
+### Javascript Tokens
+
+```yaml
+    't': # Tokens
+      'cpt'='Change Password TOKEN (1 use)'
+     
+    #'i': #info?
+
 ```

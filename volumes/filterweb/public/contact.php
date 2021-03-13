@@ -3,11 +3,11 @@
 ;include "../private/global_vars.php";
 ;$scripts="<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'>
            </script><script src='src/js/forms/contact_form.js'></script>";
-$vars = new page_vars();
-$vars->scripts=$scripts;
-$vars->title='Contact';
-$vars->import_errors();
-echo $vars->return_header();
+;$page_vars = new page_vars();
+;$hotashi = new hotashi;
+;$page_vars->scripts=$scripts;
+;$page_vars->title='Contact';
+;echo $page_vars->return_header($hotashi);
 
 
 ;echo "<div id='contact'>";
@@ -79,6 +79,6 @@ echo $vars->return_header();
 
 echo "</div>";
 
-echo $vars->return_footer();
+echo $page_vars->return_footer();
 //https://www.w3schools.com/jsref/tryit.asp?filename=tryjsref_onsubmit
 ;?>

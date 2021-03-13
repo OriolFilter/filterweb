@@ -1,8 +1,12 @@
 <?php
-include "../private/global_vars.php";
-$vars = new page_vars();
-$vars->title='Home';
-echo $vars->return_header();
+;include "../private/global_vars.php";
+;$scripts="<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script><script src='/src/js/forms/login.js'></script>";
+;$page_vars = new page_vars();
+;$hotashi = new hotashi;
+;$page_vars->scripts=$scripts;
+;$page_vars->title='Home';
+;echo $page_vars->return_header($hotashi);
+
 
 ;$joystickFolder="../private/productTxt/joysticks/";
 ;$buttonFolder="../private/productTxt/buttons/";
@@ -81,7 +85,7 @@ echo $vars->return_header();
 ;echo "</div>";
 ;echo "</div>";
 
-echo $vars->return_footer();
+echo $page_vars->return_footer();
 //https://www.w3schools.com/jsref/tryit.asp?filename=tryjsref_touchmove2 FEATURED
 //https://www.w3schools.com/jsref/tryit.asp?filename=tryjsref_transitionend idk where
 ;?>

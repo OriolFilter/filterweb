@@ -54,7 +54,6 @@ echo $page_vars->return_header();
 //echo $content;
 ;echo "
     <div id='logIn'>
-        <script src='/scripts/logIn.js'></script>
        <div id='logInBox'>
             <div class=\"form - single - column\">".
                 $content

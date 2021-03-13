@@ -184,3 +184,9 @@ select func_return_session_token_from_credentials('test123456','test123456');
 select * from activate_account_tokens;
 call proc_activate_account('vIGriatpephpabejcumidUGFY1CYtjulJh6AqRz6LlD22TEbuAPaSGVjeZEi');
 select user_id from users where lower('test123456')=lower(username);
+select expires_on from session_tokens where session_token='Vx21QIux6gep9t76oJCRAEgXoisIO66dIsZxhvHlcRUSInJViNCiNI6Mq73b';
+
+select * from users;
+call proc_check_user_is_activated(24);
+select activated_bool from activated_accounts where user_id=24;
+update users set password=return_crypted_pass('test1234') where lower(username)='test1234';

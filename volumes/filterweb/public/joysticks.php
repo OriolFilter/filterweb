@@ -1,10 +1,10 @@
 <?php
 
-
 ;include "../private/global_vars.php";
-$vars = new page_vars();
-$vars->title='Joysticks';
-echo $vars->return_header();
+;$page_vars = new page_vars();
+;$hotashi = new hotashi;
+;$page_vars->title='Joysticks';
+;echo $page_vars->return_header($hotashi);
 
 ;echo "<script src='/src/js/products_script.js'></script>"
 ;echo "<h1>Joysticks</h1><hr>";
@@ -54,7 +54,7 @@ echo $vars->return_header();
 
 
 ;
-echo $vars->return_footer();
+echo $page_vars->return_footer();
 
 ;?>
 

@@ -1,13 +1,11 @@
 <?php
 ;include "../private/global_vars.php";
 ;$scripts="<script src='/src/js/products_script.js'></script>";
-$vars = new page_vars();
-$vars->scripts=$scripts;
-$vars->title='Buttons';
-echo $vars->return_header();
-
-
-
+;$page_vars = new page_vars();
+;$hotashi = new hotashi;
+;$page_vars->scripts=$scripts;
+;$page_vars->title='Buttons';
+;echo $page_vars->return_header($hotashi);
 
 ;echo "<h1>Buttons</h1><hr>";
 ;echo "<div id='filters'>
@@ -53,6 +51,6 @@ echo $vars->return_header();
 ;echo "<script>onload(prodFilter(window.location.hash.replace('#','')))</script>"
 ;echo "</div>";
 
-echo $vars->return_footer();
+echo $page_vars->return_footer();
 ;?>
 

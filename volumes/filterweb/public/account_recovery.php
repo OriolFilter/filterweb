@@ -1,19 +1,22 @@
 <?php
-;
-;
 ;include "../private/global_vars.php";
 ;$scripts="<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'>
            </script><script src='/src/js/forms/account_recovery.js'></script>";
-$vars = new page_vars();
-$vars->scripts=$scripts;
-$vars->title='Account recovery';
-echo $vars->return_header();
+;$page_vars = new page_vars();
+;$hotashi = new hotashi;
+;$page_vars->scripts=$scripts;
+;$page_vars->title='Account Recovery';
+;echo $page_vars->return_header($hotashi);
 ;
-;echo"
-    <div id='signIn'>
-       <div id='signInBox'>
-            <div class='form - single - column'>
-                <form id='form'>
+$content =
+    ((isset($hotashi->uloged) && $hotashi->uloged)?
+        /* User is already loged */
+        "<form id='form'>
+            <h3 id='error_form'>You are already loged!</h3>
+        </form>"
+        :
+        /* User is not loged */
+        "<form id='form'>
                     <h3>Account Recovery</h3>
                     <table>
                         <tr><th>Email:</th>
@@ -24,14 +27,23 @@ echo $vars->return_header();
                     <span id='serverResponse' hidden></span>
                     <button type='button' id='send_form'><ins>Confirm In</ins></button>
                 </form>
-                <p id='subform'>Already have an account? <a href='/login.php'>Log in!</a></p>
-            </div>
+                <p id='subform'>Already have an account? <a href='/login.php'>Log in!</a></p>"
+    )
+
+
+
+;echo"
+    <div id='signIn'>
+       <div id='signInBox'>
+            <div class='form - single - column'>".
+            $content    
+            ."</div>
         </div>
     </div>
 ";
 ;
 ;
-echo $vars->return_footer();
+echo $page_vars->return_footer();
 ;?>
 <!--                <form action='/forms/login_form.php' method='post' id='logInForm'>-->
 <!--        <div id='logInBox'>-->

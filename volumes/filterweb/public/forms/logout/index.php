@@ -1,6 +1,7 @@
 <?php
 ;/*Login form*/
 /* Global try catch */
+/* Equals remove cookies (atleast user related ones) */
 try {
     require_once '/var/www/private/global_vars.php';
     /* vars */
@@ -13,23 +14,12 @@ try {
     $hotashi = new hotashi();
     $json_obj = new json_response();
 
-    /* Main */
+    /* Remove cookies */
+    $hotashi->drop_cookies();
 
-        /* Get Vars */
-        $hotashi->get_login_vars();
-
-        /* Database connection*/
-            /* Get stoken */
-        $db_manager->login_from_credentials($hotashi);
-
-//        $hotashi->login_from_stoken(); /* Placeholder*/
-
-        /* Write cookies */
-        $hotashi->fetch_cookies();
-
-        /* Success  */
-        $json_obj->status='success';
-        $json_obj->status_code=1;
+    /* Success  */
+    $json_obj->status='success';
+    $json_obj->status_code=1;
 
 }
 catch (DefinedErrors $e ) {

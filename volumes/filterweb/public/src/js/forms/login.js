@@ -1,8 +1,8 @@
 $(document).ready(function(){
-    $("button").click(function() {register();});
+    $("button").click(function() {login();});
 });
 
-async function register() {
+async function login() {
     try {
         document.getElementById("send_form").disabled = true;
         var server_response_obj = document.getElementById('serverResponse');
@@ -25,7 +25,7 @@ async function register() {
             '5.2': 'Server under maintenance, please, try again bit later.'
         };
 
-        // error_obj.code_hint_dict = {null};
+        error_obj.code_hint_dict = [];
         error_obj.json_response = null;
 
         if (check_fields(form, error_obj)) {
@@ -33,10 +33,12 @@ async function register() {
             data_obj.response= await post(data_obj.json,error_obj,server_response_obj);
             server_alert(data_obj.response,server_response_obj);
         } else {alert_error(error_obj,server_response_obj);}
+        console.log('ok');
     }
     catch (e){
         console.log(e);
     } finally {
+        server_response_obj.value='';
         document.getElementById("send_form").disabled = false;
     }
 }
@@ -84,6 +86,7 @@ function server_alert(json,server_response_obj){
 function success(server_response_obj){
     server_response_obj.hidden=0;
     server_response_obj.innerHTML='<p id="success_form">Success!</p>';
+    window.location.replace("/");
 }
 
 function check_fields(form,error_obj){

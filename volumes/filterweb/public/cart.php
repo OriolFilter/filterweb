@@ -2,11 +2,12 @@
 ;
 ;include "../private/global_vars.php";
 ;$scripts="<script src='/src/js/products_script.js'></script>";
-$vars = new page_vars();
-$vars->scripts=$scripts;
-$vars->title='Cart';
-echo $vars->return_header();
-
+;$page_vars = new page_vars();
+;$hotashi = new hotashi;
+;$page_vars->scripts=$scripts;
+;$page_vars->title='Cart';
+;echo $page_vars->return_header($hotashi);
+/* Still not done */
 echo "<div id='cart'>";
 ;echo "<script src=\"scripts/cart.js\"></script>";
 ;echo "<div id='cartList'>";
@@ -78,5 +79,5 @@ echo "<div id='cart'>";
 echo "<script>startupCart()</script>"
 ;echo "</div>";
 
-$vars->return_footer();
+echo $page_vars->return_footer();
 ;?>

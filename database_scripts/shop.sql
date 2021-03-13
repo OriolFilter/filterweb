@@ -715,8 +715,8 @@ as $$
 declare
 BEGIN
     /* no control*/
-    /* Extends login by 30 mins */
-    update session_tokens set expires_on=now() + '30 minute'::interval where session_token=p_token;
+    /* Extends login by 30 mins as long it be valid `*/
+    update session_tokens set expires_on=now() + '30 minute'::interval where session_token=p_token and expires_on<now() + '30 minute'::interval and expires_on>now();
 END;
 $$ LANGUAGE plpgsql;
 
@@ -725,6 +725,7 @@ as $$
     begin /* Login with session token */
         call proc_check_session_token_is_valid(p_token);
         call proc_enlarge_login(p_token);
+        update users set last_login=now() from users u,session_tokens s where u.user_id=s.user_id and s.session_token=p_token; /* No need to check token is valid due proc */
 --         update session_tokens set expires_on=now() + '30 minute'::interval where session_token=p_token;
     end;
 $$ language plpgsql;
@@ -737,7 +738,10 @@ as $$
 begin
         call proc_credentials_user(p_uname,p_pass);
         select into v_uid user_id from users where lower(username)=lower(p_uname);
+        call proc_check_user_is_activated(v_uid);
+        /* Also checks user is activated*/
         select into v_token func_return_session_code(v_uid);
+        update users set last_login=now() from users u,session_tokens s where u.user_id=v_uid; /* No need to check token is valid due proc */
         return v_token;
 
 end;

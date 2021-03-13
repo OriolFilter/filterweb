@@ -8,11 +8,16 @@
 ;$page_vars->title='Log In';
 ;echo $page_vars->return_header($hotashi);
 ;
-;echo"
-    <div id='logIn'>
-       <div id='logInBox'>
-            <div class=\"form - single - column\">
-                <form id='form'>
+
+$content =
+    ((isset($hotashi->uloged) && $hotashi->uloged)?
+        /* User is already loged */
+        "<form id='form'>
+            <h3 id='error_form'>You are already loged!</h3>
+        </form>"
+        :
+        /* User is not loged */
+        "<form id='form'> 
                     <h3>Log In</h3>
                     <table>
                         <tr>
@@ -25,9 +30,16 @@
                     <button type='button' id='send_form'><ins>Log In</ins></button>
                 </form>
                 <p id='subform'><a href='/account_recovery.php'>Did you forgot your password?</a></p>
-                <p id='subform'>Don't have an account? <a href='/register.php'>Register!</a></p>
-            </div>
-        </div>
+                <p id='subform'>Don't have an account? <a href='/register.php'>Register!</a></p></div>"
+    )
+
+
+;echo"
+    <div id='logIn'>
+       <div id='logInBox'>
+            <div class=\"form - single - column\">".
+            $content
+    ."</div>
     </div>
 ";
 ;

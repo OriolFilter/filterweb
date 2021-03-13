@@ -1,8 +1,9 @@
 <?php
 ;include "../private/global_vars.php";
 ;$page_vars = new page_vars();
-;$page_vars->title='Sign In';
-;echo $page_vars->return_header();
+;$hotashi = new hotashi;
+;$page_vars->title='Product';
+;echo $page_vars->return_header($hotashi);
 
 ;$prodFolder="../private/products/";
 ;$productName = $_GET['product'];

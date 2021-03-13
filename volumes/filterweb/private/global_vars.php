@@ -122,7 +122,11 @@
                             <meta name="viewport" content="width=device-width, initial-scale=1.0">'
                 .($this->title?sprintf('<title>%s</title>',$this->title):'<title>ArcadeShop</title>')
                 .($this->scripts??null)
-                        .'</head>
+                .
+                /* default scripts */
+                '<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+                <script src="/src/js/utilities/logout.js"></script>'.
+                            '</head>
                         <body>
                         <header>
                             <div id="logo">
@@ -142,8 +146,10 @@
                             <div id="right-buttons">
                                 <ul>'.
                                 /* HEADER LINKS */
-                                ((isset($_COOKIE['loged']))?'<li><a href="/my_account.php">account</a></li>':'<li><a href="/login.php">Log in</a></li>')
-                                .'<li hidden><a href="#">Log out</a></li>'.
+//                                ((isset($hotahsi->uloged)&&$hotahsi->uloged)?'<li><a href="/my_account.php">account</a></li><li><a id="logout_button" href="/">Log Out</a></li>':'<li><a href="/login.php">Log in</a></li>')
+                                ((isset($hotahsi->uloged)&&$hotahsi->uloged)?'<li><a href="/">account</a></li><li><a href="#" id="logout_button" >Log Out</a></li>':'<li><a href="/login.php">Log in</a></li>').
+//                                ((isset($_COOKIE['loged']))?'<li><a href="/my_account.php">account</a></li>':'<li><a href="/login.php">Log in</a></li>')
+                                '<li hidden><a href="#">Log out</a></li>'.
                                     '<li><a href="/cart.php">Shopping Cart'.
                                             ((isset($_COOKIE['number_cart_items']) && isset($_COOKIE['loged'])) ?
                                                     '('.$_COOKIE['number_cart_items'].')'
@@ -250,129 +256,131 @@
 
 class hotashi {
     /* https://www.twitch.tv/hotashi */
-      /* nice accpr streams */
+    /* nice accpr streams */
 
-      /* tokens */
-      public $stoken; //session token
-      public $atoken; //activation token
-      public $cptoken; //change password token
-      public $cppass; //change password Password
-      /* user */
-      public $uname; // user name
-      public $upass; // user password
-      public $umail; // user email
-      /* contact form*/
-      public $fname; // form name
-      public $fmail; // form mail
-      public $ftext; // form text
-      public $cookies=[];
+    /* Moslty a user manager */
 
-      /* Get post*/
-      public function get_login_vars() {
-        /* Get and validate vars  */
+    /* tokens */
+    public $stoken; //session token
+    public $atoken; //activation token
+    public $cptoken; //change password token
+    public $cppass; //change password Password
+    /* user */
+    public $uname; // user name
+    public $upass; // user password
+    public $umail; // user email
+    public $uloged=false; // user is loged? set after credentials, used to format page, default false, just set loged when all correct, still changing value when invalid
+    /* contact form*/
+    public $fname; // form name
+    public $fmail; // form mail
+    public $ftext; // form text
+    public $cookies=[];
 
-
-          isset($_REQUEST['uname'])?$this->uname = $_REQUEST['uname']:throw new UsernameNotValidError();
-          isset($_REQUEST['pass'])?$this->upass = $_REQUEST['pass']:throw new PasswordNotValidError();
+    /* Get post*/
+    public function get_login_vars() {
+    /* Get and validate vars  */
+      isset($_REQUEST['uname'])?$this->uname = $_REQUEST['uname']:throw new UsernameNotValidError();
+      isset($_REQUEST['pass'])?$this->upass = $_REQUEST['pass']:throw new PasswordNotValidError();
     }
-      public function get_registration_vars() {
-          /* Get and validate vars  */
-
-          if (!(@preg_match("/^[a-zA-Z0-9_.-.+]{6,20}+$/", $_REQUEST['uname'], $uname))) {
-              throw new UsernameNotValidError();
-          } else {
-              $this->uname = $uname[0];
-          }
-
-          if (!(@preg_match("/^[a-zA-Z0-9$%.,?!@+_=-]{6,20}+$/", $_REQUEST['pass'], $pass))) {
-              throw new PasswordNotValidError();
-          } else {
-              $this->upass = $pass[0];
-          }
-
-          $email = @filter_var($_REQUEST['email'], FILTER_VALIDATE_EMAIL);
-          if (!$email && !preg_match("/^[a-zA-Z0-9.!#$%&'*+=?^_`{|}~-]+@[a-zA-Z10-9-]+\.+[a-zA-Z0-9-]+$/", $email, $email)) {
-              throw new EmailNotValidError();
-          } else {
-              $this->umail = $email;
-          }
+    public function get_registration_vars() {
+      /* Get and validate vars  */
+      if (!(@preg_match("/^[a-zA-Z0-9_.-.+]{6,20}+$/", $_REQUEST['uname'], $uname))) {
+          throw new UsernameNotValidError();
+      } else {
+          $this->uname = $uname[0];
       }
-      public function get_change_password_vars() {
-          /* Get and validate vars  */
-            isset($_REQUEST['token'])?$this->cptoken = $_REQUEST['token']:throw new TokenNullOrEmptyError();
 
-          if (!(@preg_match("/^[a-zA-Z0-9$%.,?!@+_=-]{6,20}+$/", $_REQUEST['pass'], $pass))) {
-              throw new PasswordNotValidError();
-          } else {
-              $this->cppass = $pass[0];
-          }
+      if (!(@preg_match("/^[a-zA-Z0-9$%.,?!@+_=-]{6,20}+$/", $_REQUEST['pass'], $pass))) {
+          throw new PasswordNotValidError();
+      } else {
+          $this->upass = $pass[0];
       }
-      public function get_account_recovery_vars(){
-            $email = @filter_var($_REQUEST['email'], FILTER_VALIDATE_EMAIL);
-            if (!isset($email) or $email=='') {
-                throw new MissingEmailFieldError();
-            }
-            $this->umail=$email;
+
+      $email = @filter_var($_REQUEST['email'], FILTER_VALIDATE_EMAIL);
+      if (!$email && !preg_match("/^[a-zA-Z0-9.!#$%&'*+=?^_`{|}~-]+@[a-zA-Z10-9-]+\.+[a-zA-Z0-9-]+$/", $email, $email)) {
+          throw new EmailNotValidError();
+      } else {
+          $this->umail = $email;
+      }
+    }
+    public function get_change_password_vars() {
+      /* Get and validate vars  */
+        isset($_REQUEST['token'])?$this->cptoken = $_REQUEST['token']:throw new TokenNullOrEmptyError();
+
+      if (!(@preg_match("/^[a-zA-Z0-9$%.,?!@+_=-]{6,20}+$/", $_REQUEST['pass'], $pass))) {
+          throw new PasswordNotValidError();
+      } else {
+          $this->cppass = $pass[0];
+      }
+    }
+    public function get_account_recovery_vars(){
+        $email = @filter_var($_REQUEST['email'], FILTER_VALIDATE_EMAIL);
+        if (!isset($email) or $email=='') {
+            throw new MissingEmailFieldError();
         }
-        /* tokens */
-      public function get_change_password_token(){
-          isset($_REQUEST['token'])?$this->cptoken = $_REQUEST['token']:throw new TokenNullOrEmptyError();
-      }
-      public function get_activate_account_token(){
-          isset($_REQUEST['token'])?$this->atoken = $_REQUEST['token']:throw new TokenNullOrEmptyError();
-      }
-      /* Cookies */
-      public function get_login_cookies(){
-          /* So far only stoken (session token) */
-          $this->stoken=$_COOKIE['session_token']??null;
-      }
-      public function fetch_cookies(){
-          setcookie(name: 'session_token', value: $this->stoken, expires_or_options: time() + (86400 * 1), path: "/",secure: true); /* 1 dia x 1 tot i que les sessions duren 30 minuts */
-          error_log(sprintf('Sended token %s',$this->stoken));
-//            $this->stoken=$_COOKIE['session_token']??null;
-      }
-      public function drop_cookies(){
-        setcookie(name: 'session_token', value: -1, expires_or_options: time() + -3600); /* 1 dia x 1 tot i que les sessions duren 30 minuts */
-//            $this->stoken=$_COOKIE['session_token']??null;
+        $this->umail=$email;
     }
-      public function login_from_stoken(){
-          $db_manager = new db_manager();
-          $this->get_login_cookies($this);
-          if ($this->stoken) {
-              try {
-                    $db_manager->login_stoken($this);
-                    $this->fetch_cookies();
-              }
-              catch (DefinedErrors $e) {
-//                    $e->
-                  $this->drop_cookies();
-              } finally { null;
-              }
+    /* tokens */
+    public function get_change_password_token(){
+      isset($_REQUEST['token'])?$this->cptoken = $_REQUEST['token']:throw new TokenNullOrEmptyError();
+    }
+    public function get_activate_account_token(){
+      isset($_REQUEST['token'])?$this->atoken = $_REQUEST['token']:throw new TokenNullOrEmptyError();
+    }
+    /* Cookies */
+    public function get_login_cookies(){
+      /* So far only stoken (session token) */
+      $this->stoken=$_COOKIE['session_token']??null;
+    }
+    public function fetch_cookies(){
+      setcookie(name: 'session_token', value: $this->stoken, expires_or_options: time() + (86400 * 1), path: "/",secure: true); /* 1 dia x 1 tot i que les sessions duren 30 minuts */
+      error_log(sprintf('Sended token %s',$this->stoken));
+    //            $this->stoken=$_COOKIE['session_token']??null;
+    }
+    public function drop_cookies(){
+    setcookie(name: 'session_token', value: -1, expires_or_options: time() + -3600, path: "/",secure: true); /* 1 dia x 1 tot i que les sessions duren 30 minuts */
+    //            $this->stoken=$_COOKIE['session_token']??null;
+    }
+    public function login_from_stoken(){
+      $db_manager = new db_manager();
+      $this->get_login_cookies($this);
+      if ($this->stoken) {
+          try {
+              $db_manager->login_stoken($this);
+              $this->fetch_cookies(); /* Rewrites cookies */
+              $this->uloged=true;
+          }
+          catch (DefinedErrors $e) {
+    //                    $e->
+              $this->drop_cookies();
+              $this->uloged=false;
+          } finally { null;
           }
       }
-       /* contact */
-      public function get_contact_form_vars(){
-          if (!(@preg_match("/^[\w0-9 ]{4,40}$/", $_REQUEST['name'], $name))) {
-              throw new NameNotValidError();
-          } else {
-              $this->fname = $name[0];
-          }
-          $email = @filter_var($_REQUEST['email'], FILTER_VALIDATE_EMAIL);
-          if (!$email && !preg_match("/^[a-zA-Z0-9.!#$%&'*+=?^_`{|}~-]+@[a-zA-Z10-9-]+\.+[a-zA-Z0-9-]+$/", $email, $email)) {
-              throw new EmailNotValidError();
-          } else {
-              $this->fmail = $email;
-          }
-          if (!(@preg_match("/^[\w\W]{20,400}$/", $_REQUEST['text'], $text))) {
-              throw new TextNotValidError();
-          } else {
-              $this->ftext = $text[0];
-          }
+    }
+    /* contact */
+    public function get_contact_form_vars(){
+      if (!(@preg_match("/^[\w0-9 ]{4,40}$/", $_REQUEST['name'], $name))) {
+          throw new NameNotValidError();
+      } else {
+          $this->fname = $name[0];
       }
+      $email = @filter_var($_REQUEST['email'], FILTER_VALIDATE_EMAIL);
+      if (!$email && !preg_match("/^[a-zA-Z0-9.!#$%&'*+=?^_`{|}~-]+@[a-zA-Z10-9-]+\.+[a-zA-Z0-9-]+$/", $email, $email)) {
+          throw new EmailNotValidError();
+      } else {
+          $this->fmail = $email;
+      }
+      if (!(@preg_match("/^[\w\W]{20,400}$/", $_REQUEST['text'], $text))) {
+          throw new TextNotValidError();
+      } else {
+          $this->ftext = $text[0];
+      }
+    }
 
-//      public function check_login(){
-//          setcookie(session_token, $cookie_value, time() + (86400 * 30), "/"); // 86400 = 1 day
-//      }
+    //      public function check_login(){
+    //          setcookie(session_token, $cookie_value, time() + (86400 * 30), "/"); // 86400 = 1 day
+    //      }
 
   }
 
