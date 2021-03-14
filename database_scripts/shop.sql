@@ -84,7 +84,8 @@ CREATE TABLE if not exists products (
 CREATE TABLE if not exists product_models (
                                         model_id serial PRIMARY KEY,
                                         model_name varchar unique not null,
-                                        base_price decimal (10,2), /* Allow no price*/
+                                        model_base_price decimal (10,2), /* Allow null price*/
+                                        model_description text
 
 
 );
@@ -824,6 +825,7 @@ as $$
     declare
         v_uid integer;
 begin
+    call proc_check_session_token_is_valid(p_stoken);
     select into v_uid user_id from session_tokens where p_stoken=session_token;
     insert into user_payment_methods(user_id,user_payment_method_name) values (v_uid,p_name_method);
 end;
@@ -833,10 +835,28 @@ CREATE OR REPLACE PROCEDURE proc_remove_payment_method_from_stoken(p_stoken varc
 as $$
 declare
     v_uid integer;
+    v_pmid integer; /* payment method id */
 begin
+    call proc_check_session_token_is_valid(p_stoken);
     select into v_uid user_id from session_tokens where p_stoken=session_token;
 
-    insert into user_payment_methods(user_id,user_payment_method_name) values (v_uid,p_name_method);
+    select sq.pmid into v_pmid from (SELECT row_number() over (order by user_payment_method_id)::integer as rn, user_payment_method_id as pmid from user_payment_methods where user_id=v_uid)
+                                   as sq where sq.rn::integer=p_row_number::integer;
+    delete from user_payment_methods where user_payment_method_id::integer=v_pmid::integer;
+/*    then raise exception
+        using errcode = 'P6205',
+                        message = 'Payment method not found',
+                        hint = 'Payment method not found';
+
+    else
+    null;
+end case;*/
+/*    delete from user_payment_methods where user_payment_method_id=(
+        select sq.upd as pmid from (
+            SELECT row_number() over (order by user_payment_method_id)::integer as rn, user_payment_method_id as upd from user_payment_methods where user_id=22)
+            as sq where sq.rn=p_row_number); /* one line */*/
+
+--     delete from user_payment_methods where user_payment_method_id=(SELECT user_payment_method_id from user_payment_methods where user_id=v_uid and p_row_number=row_number() over (order by user_payment_method_id) );
 end;
 $$ language plpgsql;
 

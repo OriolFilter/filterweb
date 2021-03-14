@@ -192,10 +192,22 @@ call proc_check_user_is_activated(24);
 select activated_bool from activated_accounts where user_id=24;
 update users set password=return_crypted_pass('test1234') where lower(username)='test1234';
 select * from user_payment_methods;
-call proc_add_payment_method_from_stoken('byjUiqmbVrloXq2Gjn9VrxJjXHwwaYv2NYWnKLomDsoPuQRaNMeLL1tmCJ1h','my creditcard8');
-call proc_add_payment_method_from_stoken('HwU3WEg4DYtrEbtZOyIpjZdm90OEinKvSfzZ1IejOEXD9sGCJpi3djyj4pnx','my creditcard2');
+call proc_add_payment_method_from_stoken('pRnQPKWvgJQN19xKY8eOHjc68T9rgscyrTK1DUuejBZVlPV67aRRk7U0dHZt','my creditcard3');
+call proc_add_payment_method_from_stoken('HwU3WEg4DYtrEbtZOyIpjZdm90OEinKvSfzZ1IejOEXD9sGCJpi3djyj4pnx','my creditcard3');
 select user_id from session_tokens where session_token='HwU3WEg4DYtrEbtZOyIpjZdm90OEinKvSfzZ1IejOEXD9sGCJpi3djyj4pnx';
 select count(user_id),user_id from session_tokens where user_id=user_id group by session_token_id;
 SELECT row_number() over (order by expires_on), expires_on FROM session_tokens where user_id=22;
-select * from func_return_payment_methods_from_stoken('HwU3WEg4DYtrEbtZOyIpjZdm90OEinKvSfzZ1IejOEXD9sGCJpi3djyj4pnx');
-SELECT row_number() over (order by user_payment_method_id),user_payment_method_name from user_payment_methods where user_id=22;
+select * from func_return_payment_methods_from_stoken('pRnQPKWvgJQN19xKY8eOHjc68T9rgscyrTK1DUuejBZVlPV67aRRk7U0dHZt');
+SELECT row_number() over (order by user_payment_method_id),user_payment_method_name , user_payment_method_id from user_payment_methods where user_id=22;
+
+select sq.rn as row_nubmer,sq.upd as pmid from (SELECT row_number() over (order by user_payment_method_id)::integer as rn, user_payment_method_id as upd from user_payment_methods where user_id=22) as sq;
+select * from (select sq.upd as pmid from (SELECT row_number() over (order by user_payment_method_id)::integer as rn, user_payment_method_id as upd from user_payment_methods where user_id=22) as sq where sq.rn=2) sqq;
+delete from user_payment_methods where 3 in (SELECT user_payment_method_id as upd from user_payment_methods where user_id=22 order by user_payment_method_id)=3;
+
+call proc_remove_payment_method_from_stoken('pRnQPKWvgJQN19xKY8eOHjc68T9rgscyrTK1DUuejBZVlPV67aRRk7U0dHZt',4);
+-- delete from user_payment_methods where user_payment_method_id='4';
+select sq.pmid from (SELECT row_number() over (order by user_payment_method_id)::integer as rn, user_payment_method_id as pmid from user_payment_methods where user_id=22)
+                                    as sq where sq.rn='4';
+
+select sq.pmid into v_pmid from (SELECT row_number() over (order by user_payment_method_id)::integer as rn, user_payment_method_id as pmid from user_payment_methods where user_id=22)
+                                    as sq where sq.rn::integer='4'::integer;

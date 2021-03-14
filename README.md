@@ -113,6 +113,7 @@ php & js:
         '6.2.2': 'User_id not found',
         '6.2.3': 'Email not found',
         '6.2.4': 'Token not found',
+        '6.2.5': 'Payment method not found',
 
         '6.3': 'Tokens',
         '6.3.1': 'Token not valid',

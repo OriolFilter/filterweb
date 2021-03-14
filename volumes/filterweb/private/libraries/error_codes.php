@@ -170,7 +170,7 @@ class PaymentMethodDataNotValidError  extends CustomError  implements DefinedErr
 }
 
 
-## Forms Missing fields (unused in php)
+## Forms Missing fields
 class MissingField  extends CustomError  implements DefinedErrors {
     public $error_code = '2';
     public $message = 'Missing field(s)';
@@ -196,7 +196,7 @@ class MissingTextFieldError  extends CustomError  implements DefinedErrors {
     public $message = 'Text field is missing';
 }
 
-## Select
+## Select query
 class UsernameNotFoundError extends CustomError  implements DefinedErrors {
     public $error_code = '6.2.1';
     public $message = 'Username not found';
@@ -210,6 +210,11 @@ class UserIdNotFoundError extends CustomError  implements DefinedErrors {
 class EmailNotFoundError extends CustomError  implements DefinedErrors {
     public $error_code = '6.2.3';
     public $message = 'Email not found';
+    public $hint = null;
+}
+class PaymentMethodNotFoundError extends CustomError  implements DefinedErrors {
+    public $error_code = '6.2.5';
+    public $message = 'Payment method not found';
     public $hint = null;
 }
 
