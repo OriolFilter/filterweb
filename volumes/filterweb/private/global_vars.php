@@ -147,7 +147,7 @@
                                 <ul>'.
                                 /* HEADER LINKS */
 //                                ((isset($hotahsi->uloged)&&$hotahsi->uloged)?'<li><a href="/my_account.php">account</a></li><li><a id="logout_button" href="/">Log Out</a></li>':'<li><a href="/login.php">Log in</a></li>')
-                                ((isset($hotahsi->uloged)&&$hotahsi->uloged)?'<li><a href="/">account</a></li><li><a href="#" id="logout_button" >Log Out</a></li>':'<li><a href="/login.php">Log in</a></li>').
+                                ((isset($hotahsi->uloged)&&$hotahsi->uloged)?'<li><a href="/my_account">account</a></li><li><a href="#" id="logout_button" >Log Out</a></li>':'<li><a href="/login.php">Log in</a></li>').
 //                                ((isset($_COOKIE['loged']))?'<li><a href="/my_account.php">account</a></li>':'<li><a href="/login.php">Log in</a></li>')
                                 '<li hidden><a href="#">Log out</a></li>'.
                                     '<li><a href="/cart.php">Shopping Cart'.
@@ -265,7 +265,7 @@ class hotashi {
     public $atoken; //activation token
     public $cptoken; //change password token
     public $cppass; //change password Password
-    /* user */
+    /* user accoun t */
     public $uname; // user name
     public $upass; // user password
     public $umail; // user email
@@ -275,8 +275,12 @@ class hotashi {
     public $fmail; // form mail
     public $ftext; // form text
     public $cookies=[];
+    /* User Info */
+    public $pmname; // Payment method name
+    public $pmdata; // Payment method data
 
     /* Get post*/
+        /* login/register */
     public function get_login_vars() {
     /* Get and validate vars  */
       isset($_REQUEST['uname'])?$this->uname = $_REQUEST['uname']:throw new UsernameNotValidError();
@@ -303,6 +307,7 @@ class hotashi {
           $this->umail = $email;
       }
     }
+        /* account recovery */
     public function get_change_password_vars() {
       /* Get and validate vars  */
         isset($_REQUEST['token'])?$this->cptoken = $_REQUEST['token']:throw new TokenNullOrEmptyError();
@@ -319,6 +324,17 @@ class hotashi {
             throw new MissingEmailFieldError();
         }
         $this->umail=$email;
+    }
+        /* payment methods*/
+    public function get_manage_payment_methods_vars() {
+        /* Get and validate vars  */
+        isset($_COOKIE['session_token'])?$this->stoken = $_COOKIE['session_token']:throw new TokenNullOrEmptyError();
+
+        if (!(@preg_match("/^[a-zA-Z0-9]{6,20}+$/", $_REQUEST['pmname'], $pmname))) {
+            throw new PaymentMethodNameNotValidError();
+        } else {
+            $this->pmname = $pmname[0];
+        }
     }
     /* tokens */
     public function get_change_password_token(){

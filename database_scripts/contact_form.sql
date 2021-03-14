@@ -45,5 +45,5 @@ GRANT USAGE on SEQUENCE contact_forms_db.public.forms_table_form_id_seq to form_
 GRANT INSERT on TABLE forms_table to form_user;
 
 /*
-select * from forms_table;
 */
+select name from forms_table group by name,form_id order by name asc;

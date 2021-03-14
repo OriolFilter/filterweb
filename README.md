@@ -90,9 +90,10 @@ php & js:
         '3.1': 'Username does not meet the requirements',
         '3.2': 'Password does not meet the requirements',
         '3.3': 'Email does not meet the requirements',
-          # Possiblement canviar
         '3.4': 'Name does not meet the requirements',
         '3.5': 'Text does not meet the requirements',
+        '3.6': 'Payment method name does not meet the requirements',
+        '3.7': 'Payment method info does not meet the requirements',
 
         '4': 'Field matching',
         '4.1': 'Passwords don\'t match',
@@ -140,6 +141,14 @@ php & js:
         '8.4': 'Subject is missing',
 
         '9': 'Invalid Credentials',
+          
+        '10': 'Product stuff',
+          
+        '11': 'User conf stuff',
+        
+        '11.2': 'Not valid payment method data'
+        
+        '12': 'Order Stuff'
 postgresql:
   - 'Due postgresql not being able to use the same syntax as php and since the error codes seems easy to read using the syntax already done, it's been decided to leave the php and js codes as they, while using a similar (but valid) syntax for postgresql.'
   - 'P0000'

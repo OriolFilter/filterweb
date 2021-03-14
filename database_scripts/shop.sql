@@ -9,7 +9,7 @@
 
 CREATE TABLE if not exists users (
     user_id serial,
-    username VARCHAR ( 20 ) UNIQUE NOT NULL,
+    username VARCHAR ( 20 ) UNIQUE NOT NULL, /* instead of searching by lower(username) create index of all lower(usernames) with all passwords to check login credentials, or index of just lower(usernames) or lower(email) to check if username or email already exists*/
     password VARCHAR ( 60 ) NOT NULL, /* crypted and salted, returns 60 lenght */
     email VARCHAR ( 255 ) UNIQUE NOT NULL /* https://stackoverflow.com/questions/386294/what-is-the-maximum-length-of-a-valid-email-address */,
     --       email bytea UNIQUE NOT NULL, /* PD, no al final no */ /* al final si es guarda en hexa perque estalvies espais i no importen les majuscules*/
@@ -63,22 +63,57 @@ CREATE TABLE if not exists session_tokens (
     CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
 );
 
-/*
--- Products Related
+-- User Payment methods
 
+CREATE TABLE if not exists user_payment_methods (
+    user_payment_method_id serial,
+    user_payment_method_name varchar (40) NOT NULL, /*Varchar only */
+    user_id integer NOT NULL,
+    CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
+);
+
+/*
+
+-- Products Related
+CREATE TABLE if not exists products (
+                                        product_id serial PRIMARY KEY,
+                                        product_code varchar unique not null ,
+                                        available_bool bool
+);
+
+CREATE TABLE if not exists product_models (
+                                        model_id serial PRIMARY KEY,
+                                        model_name varchar unique not null,
+                                        base_price decimal (10,2), /* Allow no price*/
+
+
+);
 -- Categories table
 CREATE TABLE if not exists categories (
                                           category_id serial PRIMARY KEY,
-                                          category_name VARCHAR (50) NOT NULL,
-                                          description TEXT NOT NULL
+                                          category_name VARCHAR (50) NOT NULL, /* lowercase */
+                                          description TEXT default ''
 );
 
 -- Brands table
 CREATE TABLE if not exists brands (
                                       brand_id serial PRIMARY KEY,
-                                      brand_name VARCHAR (50) NOT NULL
+                                      brand_name VARCHAR (50) NOT NULL /* lowercase */
 );
 
+CREATE TABLE if not exists categories_binds (
+    categories_binds_id serial PRIMARY KEY,
+    category_id serial NOT NULL,
+    model_id serial NOT NULL,
+    CONSTRAINT category_id FOREIGN KEY (category_id) REFERENCES categories (category_id) ON DELETE CASCADE,
+    CONSTRAINT model_id FOREIGN KEY (model_id) REFERENCES product_models (model_id) ON DELETE CASCADE
+
+);
+*/
+
+
+
+/*
 -- Product table
 CREATE TABLE if not exists products (
         product_id serial,
@@ -309,8 +344,8 @@ begin
     /* text@text.text */
 end; $$ language plpgsql;
 
-    /* Check for already existing values */
-
+    /* Check for ALREADY existing values */
+/* Username exists*/
 CREATE OR REPLACE function func_check_user_exists(p_uname varchar) returns boolean
 as $$
 begin
@@ -342,6 +377,20 @@ begin
     end case;
 end;
 $$ language plpgsql;
+
+/* Check if user_id exists */ /* Not worth to do/use */
+/*
+CREATE OR REPLACE procedure proc_check_user_id_exists(p_uid varchar)
+as $$
+begin
+    case when exists(select lower(username) from users where user_id=p_uid)
+        then raise exception
+            using errcode = 'P6202',
+                message = 'This ';
+        else null;
+        end case;
+end;
+$$ language plpgsql;*/
 
 CREATE OR REPLACE procedure proc_check_email_exists(p_email varchar)
 as $$
@@ -704,7 +753,7 @@ begin
             using errcode = 'P7100',
                 message = 'This account is not activated';
         else null;
-        end case;
+        end case; /* Still can be a non existent user, but checking this two times is a waste of time */
 end;
 $$ language plpgsql;
 
@@ -761,8 +810,46 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+    /* Payment methods */
 
+CREATE OR REPLACE PROCEDURE proc_add_payment_method(p_user_id integer,p_name_method varchar)
+as $$
+    begin
+        insert into user_payment_methods(user_id,user_payment_method_name) values (p_user_id,p_name_method);
+    end;
+$$ language plpgsql;
 
+CREATE OR REPLACE PROCEDURE proc_add_payment_method_from_stoken(p_stoken varchar,p_name_method varchar)
+as $$
+    declare
+        v_uid integer;
+begin
+    select into v_uid user_id from session_tokens where p_stoken=session_token;
+    insert into user_payment_methods(user_id,user_payment_method_name) values (v_uid,p_name_method);
+end;
+$$ language plpgsql;
+
+CREATE OR REPLACE PROCEDURE proc_remove_payment_method_from_stoken(p_stoken varchar,p_row_number integer)
+as $$
+declare
+    v_uid integer;
+begin
+    select into v_uid user_id from session_tokens where p_stoken=session_token;
+
+    insert into user_payment_methods(user_id,user_payment_method_name) values (v_uid,p_name_method);
+end;
+$$ language plpgsql;
+
+CREATE OR REPLACE FUNCTION func_return_payment_methods_from_stoken(p_stoken varchar) returns table (payment_method_row_number integer,payment_method_name varchar)
+as $$
+    declare
+        v_uid integer;
+    begin
+        call proc_check_session_token_is_valid(p_stoken);
+        select into v_uid user_id from session_tokens where p_stoken=session_token;
+        return query SELECT row_number() over (order by user_payment_method_id)::integer,user_payment_method_name from user_payment_methods where user_id=v_uid;
+    end;
+$$ language plpgsql;
 /* User management*/
 
 CREATE or replace procedure register_user(p_username varchar, p_passwd varchar,p_email varchar)
@@ -796,8 +883,8 @@ as $$
         call proc_check_password_token_is_valid(p_token);
         select into v_uid user_id from change_password_tokens where change_password_token=p_token;
         update users set password=return_crypted_pass(p_pass) where user_id=v_uid;
+        update session_tokens set expires_on=now() - '2 minute'::interval where user_id=v_uid; /* On change password forces expire on all session tokens from the user */
         update change_password_tokens set used_bool=true where change_password_token=p_token;
-
 end;
 $$ language plpgsql;
 

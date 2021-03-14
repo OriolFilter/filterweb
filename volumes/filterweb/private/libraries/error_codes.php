@@ -11,7 +11,7 @@ class CustomError extends Exception {
     public $hint = null;
     public function __construct()
     {
-
+        /* Console logs */
         error_log('ERROR');
         error_log(sprintf('> Code %s',$this->error_code));
         error_log(sprintf('>> Message %s',$this->message));
@@ -157,6 +157,18 @@ class TextNotValidError  extends CustomError  implements DefinedErrors {
     public $message = 'Text does not meet the requirements';
     public $hint = 'Text message must be from 20 to 400 characters';
 }
+class PaymentMethodNameNotValidError  extends CustomError  implements DefinedErrors {
+    public $error_code = '3.6';
+    public $message = 'Payment method name does not meet the requirements';
+    public $hint = 'Payment method name must needs to be from 6 to 20 characters and contain only the following allowed characters:\nLetters from a to z (upper and lower case)\nNumbers from 0 to 9"';
+}
+//https://money.howstuffworks.com/personal-finance/debt-management/credit-card1.htm
+class PaymentMethodDataNotValidError  extends CustomError  implements DefinedErrors {
+    public $error_code = '3.6';
+    public $message = 'Payment method info does not meet the requirements';
+    public $hint = 'Payment method info must needs to be from 6 to 20 characters and contain only the following allowed characters:\nLetters from a to z (upper and lower case)\nNumbers from 0 to 9"';
+}
+
 
 ## Forms Missing fields (unused in php)
 class MissingField  extends CustomError  implements DefinedErrors {
@@ -200,6 +212,10 @@ class EmailNotFoundError extends CustomError  implements DefinedErrors {
     public $message = 'Email not found';
     public $hint = null;
 }
+
+## User Info
+### PaymentMethods
+
 
 class error_manager {
     function pg_error_handler ($c=''){
