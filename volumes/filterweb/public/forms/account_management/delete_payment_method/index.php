@@ -30,9 +30,9 @@ try {
     /* Main */
 
         /* Get Vars */
-        $hotashi->get_add_payment_method_vars();
+        $hotashi->get_delete_payment_method_vars();
         /* Database connection*/
-        $db_manager->add_payment_method($hotashi);
+        $db_manager->remove_payment_method($hotashi);
 
         /* success */
         $json_obj->status='success';

@@ -1,25 +1,31 @@
 <?php
 ;;
-;include "../../private/global_vars.php";
+;include "../../../private/global_vars.php";
 ;$page_vars = new page_vars();
 ;$hotashi = new hotashi;
-;$page_vars->title='My account';
+;$page_vars->title='Manage Payment Methods';
 ;echo $page_vars->return_header($hotashi);
 ;
 
 
+
 ;$content =
     ((isset($hotashi->uloged) && $hotashi->uloged)?
-    "<h3>My account</h3>
+        "
+
+            <h3>Manage My Payment Methods</h3>
                     <table>
                         <tr>
                         <td><p><a href='#'>View order history</a></p></tr>
-                        <td><p><a href='/my_account/payment_methods/'>Manage Payment methods</a></p></tr>
+                        <td><p><a href='#'>Manage Payment methods</a></p></tr>
                         <td><p><a href='#'>Manage Shipping address</a></p></tr>
                         <td><p><a href='#'>View cart</a></p></tr>
                         <td><p><a href='#'>Request change password</a></p></tr>
                     </table>
-                    <span id='serverResponse' hidden></span>"
+                    <span id='serverResponse' hidden></span>
+
+           "
+                    /* Error */
         :
         "<h3 id='error_form'>You need to log in!</h3>"
     );
@@ -30,8 +36,8 @@
        <div id='signInBox'>
             <div class='form - single - column'>
                 <form id='form'>".
-                 $content
-                ."</form>
+    $content
+    ."</form>
             </div>
         </div>
     </div>

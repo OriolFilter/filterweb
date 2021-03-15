@@ -277,7 +277,8 @@ class hotashi {
     public $cookies=[];
     /* User Info */
     public $pmname; // Payment method name
-    public $pmdata; // Payment method data
+    public $pmdata; // Payment method data, not used
+    public $pmid; // Payment method number id (row number in select)
 
     /* Get post*/
         /* login/register */
@@ -326,7 +327,7 @@ class hotashi {
         $this->umail=$email;
     }
         /* payment methods*/
-    public function get_manage_payment_methods_vars() {
+    public function get_add_payment_method_vars() {
         /* Get and validate vars  */
         isset($_COOKIE['session_token'])?$this->stoken = $_COOKIE['session_token']:throw new TokenNullOrEmptyError();
 
@@ -334,6 +335,16 @@ class hotashi {
             throw new PaymentMethodNameNotValidError();
         } else {
             $this->pmname = $pmname[0];
+        }
+    }
+    public function get_delete_payment_method_vars() {
+        /* Get and validate vars  */
+        isset($_COOKIE['session_token'])?$this->stoken = $_COOKIE['session_token']:throw new TokenNullOrEmptyError();
+
+         if (!(@preg_match("/^[0-9]$/", $_REQUEST['pmid'], $pmid))) {
+            throw new PaymentMethodIdError();
+        } else {
+            $this->pmid = $pmid[0];
         }
     }
     /* tokens */
@@ -359,7 +370,7 @@ class hotashi {
     }
     public function login_from_stoken(){
       $db_manager = new db_manager();
-      $this->get_login_cookies($this);
+      $this->get_login_cookies();
       if ($this->stoken) {
           try {
               $db_manager->login_stoken($this);
@@ -478,6 +489,7 @@ class db_manager {
             $this->error_manager->pg_error_handler($state);
         } else {throw new DatabaseConnectionError();}
     }
+    /* Session*/
     public function login_stoken($hotashi) /* connection to db login using stoken (check token status)*/
     { /* Under construction*/
         $dbconn= @pg_connect("host=10.24.1.2 port=5432 dbname=shop_db user=test password=test");
@@ -508,6 +520,58 @@ class db_manager {
         } else {
             throw new DatabaseConnectionError();
         }
+        }
+    /* Payment methods */
+    public function add_payment_method($hotashi){
+        ;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=shop_db user=test password=test") or die('connection failed');
+        if (!pg_connection_busy($dbconn)) {
+            ;$result = pg_prepare($dbconn, "add_payment_method_q", 'call proc_add_payment_method_from_stoken($1,$2)');
+            ;$res=pg_get_result($dbconn);
+            ;$result = pg_send_execute($dbconn, "add_payment_method_q",array($hotashi->stoken,$hotashi->pmname));
+            ;$err=pg_last_notice($dbconn);
+            ;$res=pg_get_result($dbconn);
+            ;$state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
+            $this->error_manager->pg_error_handler($state);
+        } else {throw new DatabaseConnectionError();}
+    }
+    public function remove_payment_method($hotashi){
+        ;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=shop_db user=test password=test") or die('connection failed');
+        if (!pg_connection_busy($dbconn)) {
+            ;$result = pg_prepare($dbconn, "del_payment_method_q", 'call proc_remove_payment_method_from_stoken($1,$2)');
+            ;$res=pg_get_result($dbconn);
+            ;$result = pg_send_execute($dbconn, "del_payment_method_q",array($hotashi->stoken,$hotashi->pmid));
+            ;$err=pg_last_notice($dbconn);
+            ;$res=pg_get_result($dbconn);
+            ;$state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
+            $this->error_manager->pg_error_handler($state);
+        } else {throw new DatabaseConnectionError();}
+    }
+    public function get_payment_method($hotashi){
+        ;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=shop_db user=test password=test") or die('connection failed');
+        if (!pg_connection_busy($dbconn)) {
+            ;$result = pg_prepare($dbconn, "sel_payment_method_q", 'select payment_method_row_number,payment_method_name from func_return_payment_methods_from_stoken($1);');
+            ;$res=pg_get_result($dbconn);
+            ;$result = pg_send_execute($dbconn, "sel_payment_method_q",array($hotashi->stoken));
+            ;$err=pg_last_notice($dbconn);
+            ;$res=pg_get_result($dbconn);
+            ;$state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
+//            echo var_dump(pg_fetch_all_columns ( $res, 0 ));
+
+            $this->error_manager->pg_error_handler($state);
+        } else {throw new DatabaseConnectionError();}
+    }
+
+    }
+    class train {
+        /* get arrays of objects to later print/manage the content */
+        public $payment_methods_obj_array=[];
+    }
+
+    class payment_methods {
+        public $name=null;
+        public $number=null;
+        public function print_php_format(){
+
         }
     }
 ?>

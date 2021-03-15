@@ -94,6 +94,7 @@ php & js:
         '3.5': 'Text does not meet the requirements',
         '3.6': 'Payment method name does not meet the requirements',
         '3.7': 'Payment method info does not meet the requirements',
+        '3.8': 'Payment method id does not meet the requirements', # It's a numeric value only
 
         '4': 'Field matching',
         '4.1': 'Passwords don\'t match',

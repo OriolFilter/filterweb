@@ -166,7 +166,12 @@ class PaymentMethodNameNotValidError  extends CustomError  implements DefinedErr
 class PaymentMethodDataNotValidError  extends CustomError  implements DefinedErrors {
     public $error_code = '3.6';
     public $message = 'Payment method info does not meet the requirements';
-    public $hint = 'Payment method info must needs to be from 6 to 20 characters and contain only the following allowed characters:\nLetters from a to z (upper and lower case)\nNumbers from 0 to 9"';
+    public $hint = 'Payment method info must needs to be from 6 to 20 characters and contain only the following allowed characters:\nLetters from a to z (upper and lower case)\nNumbers from 0 to 9"'; /* En vd da igual pk no es fa servir*/
+}
+class PaymentMethodIdError  extends CustomError  implements DefinedErrors {
+    public $error_code = '3.7';
+    public $message = 'Payment method id does not meet the requirements';
+    public $hint = 'Payment method info must be a integer';
 }
 
 
