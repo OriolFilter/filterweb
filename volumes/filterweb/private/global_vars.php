@@ -546,7 +546,7 @@ class db_manager {
             $this->error_manager->pg_error_handler($state);
         } else {throw new DatabaseConnectionError();}
     }
-    public function get_payment_method($hotashi){
+    public function get_payment_methods($hotashi,$train){
         ;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=shop_db user=test password=test") or die('connection failed');
         if (!pg_connection_busy($dbconn)) {
             ;$result = pg_prepare($dbconn, "sel_payment_method_q", 'select payment_method_row_number,payment_method_name from func_return_payment_methods_from_stoken($1);');
@@ -555,7 +555,31 @@ class db_manager {
             ;$err=pg_last_notice($dbconn);
             ;$res=pg_get_result($dbconn);
             ;$state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
-//            echo var_dump(pg_fetch_all_columns ( $res, 0 ));
+            $payment_obj = new  payment_methods();
+
+//            $data = pg_fetch_all($res);
+            $data =  pg_fetch_all($res);
+
+//            for ($i = 1; $i <= 10; $i++) {
+//                echo $i;
+//            }
+//            var_dump($data[1]);
+//            foreach ($data as $row) {
+//                echo "<p>{$row[0]}<p>";
+//                echo "<p>{vardump($data[$row])}</p>";
+//                echo vardump($data[$row]);
+//            }
+//            $data = pg_fetch_assoc ( $res,3);
+//            foreach ($data as $k => $d) {
+//                echo "{$d}->";
+//            }
+//            echo $res;
+//            echo  pg_affected_rows($res);
+//            $select = pg_fetch_all_columns($res, 1);
+//            foreach ( $select as $key) {
+//                 $arr[3] will be updated with each value from $arr...
+//                print_r($key);
+//            }
 
             $this->error_manager->pg_error_handler($state);
         } else {throw new DatabaseConnectionError();}
@@ -570,8 +594,7 @@ class db_manager {
     class payment_methods {
         public $name=null;
         public $number=null;
-        public function print_php_format(){
-
+        public function format_php(){ /* ??? */
         }
     }
 ?>

@@ -26,13 +26,14 @@ try {
     /* Json */
     $hotashi = new hotashi();
     $json_obj = new json_response();
+    $train = new train();
 
     /* Main */
 
         /* Get Vars */
         $hotashi->get_login_cookies();
         /* Database connection*/
-        $db_manager->get_payment_method($hotashi);
+        $db_manager->get_payment_methods($hotashi,$train);
 
         /* success */
         $json_obj->status='success';

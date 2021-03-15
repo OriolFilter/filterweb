@@ -207,7 +207,7 @@ delete from user_payment_methods where 3 in (SELECT user_payment_method_id as up
 
 call proc_remove_payment_method_from_stoken('pRnQPKWvgJQN19xKY8eOHjc68T9rgscyrTK1DUuejBZVlPV67aRRk7U0dHZt',4);
 call proc_add_payment_method_from_stoken('YEz1JtviHVHnYIcSZNWooARAUU0Cj4B1RxyZDkP1EJhtVgQnuQlVA1IDbloP','paymentmethod01');
-select payment_method_row_number,payment_method_name from func_return_payment_methods_from_stoken('RqilTqSy76oxRMOa6DboGY6sF4HSgjWJpSzNB74kju764sgX53pAu2ot8z8U');
+select payment_method_row_number,payment_method_name from func_return_payment_methods_from_stoken('cdhDtwkqNYQLiEbPbVFDcSm8S56P7VDm0MBaWD1BJ1XEMxfEQqWGkubcl793');
 -- delete from user_payment_methods where user_payment_method_id='4';
 -- select sq.pmid from (SELECT row_number() over (order by user_payment_method_id)::integer as rn, user_payment_method_id as pmid from user_payment_methods where user_id=22)
 --                                     as sq where sq.rn='4';
