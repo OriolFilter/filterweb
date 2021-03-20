@@ -609,7 +609,7 @@ div#pquant{
 }
 
 /* Label list */
-.labelListElementBox {
+#labelListElementBox {
     background-color: #353333;
     width: available;
     height: fit-content;
@@ -673,19 +673,28 @@ div#pquant{
 }
 
 .labelListContentBox {
-    order: 1;
+    order: 0;
 }
-.closeButton {
+.remove_payment {
     cursor: pointer;
     position: relative;
     /*top: 50%;*/
     /*right: 0%;*/
     padding: 12px 16px;
     transform: translate(0%, -50%);
-    order: 2;
+    order: 1;
+}
+.add_pmButton {
+    cursor: pointer;
+    position: relative;
+    /*top: 50%;*/
+    /*right: 0%;*/
+    padding: 12px 16px;
+    transform: translate(0%, -50%);
+    order: 1;
 }
 
-.closeButton:hover {background: rgba(255, 255, 255, 0.52);}
+.remove_payment:hover {background: rgba(255, 255, 255, 0.52);}
 
 
 .pmContentBox {
@@ -696,5 +705,5 @@ div#pquant{
     align-content: center;
     justify-content: center;
     align-items: center;
-    /*align-items: baseline;*/
+    width: auto;
 }

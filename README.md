@@ -61,12 +61,15 @@ PHP & JS:
   Change password form:
     token: "^[a-zA-Z0-9]{60}$"
     
+  Payment methods:
+    name: '^[a-zA-Z0-9 ]{6,20}$'
+    id: '^[0-9]+$'
+    
 POSTGRESQL:
   Contact form:
     name:  "^[\w0-9 ]{4,40}$"
     text:  "^[\w\\W]{20,255}$"
-    email: "^[a-zA-Z0-9.!#$%&'*+=?^_`{|}~-]+@[a-zA-Z10-9-]+\.[a-zA-Z0-9-]+$"
-
+    email: "^[a-zA-Z0-9.!#$%&'*+=?^_`{|}~-]+@[a-zA-Z10-9-]+\.[a-zA-Z0-9-]+$"  
 ```
 
 ## ERROR CODES
@@ -85,6 +88,9 @@ php & js:
         '2.5': 'Repeat email field is missing',
         '2.6': 'Name field is missing',
         '2.7': 'Text field is missing',
+        '2.8': 'Payment method name field is missing',
+        '2.9': 'Payment method info field is missing',
+        '2.10': 'Payment method id field is missing',
 
         '3': 'Requirements not achieved',
         '3.1': 'Username does not meet the requirements',
@@ -159,16 +165,20 @@ postgresql:
     - '7     :P7000'
     - '8.3   :P8300'
     - '6.4.4 :P6404'
+    - '2.1   :P2100'   
+    - '2.10  :P2010'   
 ```
 
-### ERROR MESSAGES HINTS (update)
+### ERROR MESSAGES HINTS
 
 ```yaml
+# NOT UPDATED
   '3.1': 'The username needs to be from 6 to 20 characters and contain only the following allowed characters:\nLetters from a to z (upper and lower case)\nNumbers from 0 to 9\nSpecial characters "_-+."',
   '3.2': 'The password needs to be from 6 to 20 characters and contain only the following allowed characters:\nLetters from a to z (upper and lower case)\nNumbers from 0 to 9\nSpecial characters "$%/.,?!@+_=-"',
   '3.3': 'The given email is invalid',
   '3.4': 'Name must be from 4 to 40 characters from the english alphabet or numbers',
   '3.5': 'Text message must be from 20 to 255 characters'
+  '3.6': 'Payment method name needs to be from 6 to 20 characters and contain only the following allowed characters:\nLetters from a to z (upper and lower case)\nNumbers from 0 to 9 and/or spaces or _'
 ```
 
 ### Javascript Tokens

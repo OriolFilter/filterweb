@@ -15,7 +15,8 @@ try {
 
     /* Main */
     $page_vars->title='Manage Payment Methods';
-    ;$scripts="<script src='/src/js/jquery.min.js'></script><script src='/src/js/forms/payment_methods.js'></script>";
+    ;$scripts="</script><script src='/src/js/forms/payment_methods.js'></script>";
+    ;$page_vars->scripts=$scripts;
 
     /* Get Vars */
 //    $hotashi->get_login_cookies();
@@ -51,9 +52,15 @@ finally {
                     <ul>".
 
             /* For form_oobj */
-            $builder->return_payment_info_list_content($train->payment_methods_obj_array)
-
-
+            $builder->return_payment_info_list_content($train->payment_methods_obj_array).
+            "<div class='pmAddContentBox'>
+                <div class='labelListAddContentBox'>
+                    <form id='send_form'>
+                    <p>p. method  name: <input type='text' id='fpmname'/></p>
+                    <button class='add_pmButton' type='button' id='add_payment'><ins>add payment method</ins></button>
+                    </form>
+                    </div>
+            </div>"
 
             ."</ul>
                     <span id='serverResponse' hidden></span>

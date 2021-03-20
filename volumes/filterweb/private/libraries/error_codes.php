@@ -160,16 +160,16 @@ class TextNotValidError  extends CustomError  implements DefinedErrors {
 class PaymentMethodNameNotValidError  extends CustomError  implements DefinedErrors {
     public $error_code = '3.6';
     public $message = 'Payment method name does not meet the requirements';
-    public $hint = 'Payment method name must needs to be from 6 to 20 characters and contain only the following allowed characters:\nLetters from a to z (upper and lower case)\nNumbers from 0 to 9"';
+    public $hint = 'Payment method name needs to be from 6 to 20 characters and contain only the following allowed characters:\nLetters from a to z (upper and lower case)\nNumbers from 0 to 9 and/or spaces or _';
 }
 //https://money.howstuffworks.com/personal-finance/debt-management/credit-card1.htm
 class PaymentMethodDataNotValidError  extends CustomError  implements DefinedErrors {
-    public $error_code = '3.6';
+    public $error_code = '3.7';
     public $message = 'Payment method info does not meet the requirements';
-    public $hint = 'Payment method info must needs to be from 6 to 20 characters and contain only the following allowed characters:\nLetters from a to z (upper and lower case)\nNumbers from 0 to 9"'; /* En vd da igual pk no es fa servir*/
+    public $hint = 'Payment method info must needs to be from 6 to 20 characters and contain only the following allowed characters:\nLetters from a to z (upper and lower case)\nNumbers from 0 to 9'; /* En vd da igual pk no es fa servir*/
 }
 class PaymentMethodIdError  extends CustomError  implements DefinedErrors {
-    public $error_code = '3.7';
+    public $error_code = '3.8';
     public $message = 'Payment method id does not meet the requirements';
     public $hint = 'Payment method info must be a integer';
 }
@@ -199,6 +199,14 @@ class MissingNameFieldError  extends CustomError  implements DefinedErrors {
 class MissingTextFieldError  extends CustomError  implements DefinedErrors {
     public $error_code = '2.7';
     public $message = 'Text field is missing';
+}
+class MissingPaymentMethodNameFieldError  extends CustomError  implements DefinedErrors {
+    public $error_code = '2.8';
+    public $message = 'Payment method name field is missing';
+}
+class MissingPaymentMethodInfoFieldError  extends CustomError  implements DefinedErrors {
+    public $error_code = '2.9';
+    public $message = 'Payment method info field is missing';
 }
 
 ## Select query
@@ -239,23 +247,31 @@ class error_manager {
                 case null: ;break; /* good */
                 case 'P0000':throw new UnknownError();break;
                 case 'P2000':throw new MissingField();break;
+                case 'P2100':throw new MissingUsernameFieldError();break;
                 case 'P2200':throw new MissingPasswordFieldError();break;
                 case 'P2300':throw new MissingEmailFieldError();break;
         //            case 'P2400':throw new Missing();break;
         //            case 'P2500':throw new ;break;
                 case 'P2600':throw new MissingNameFieldError();break;
                 case 'P2700':throw new MissingTextFieldError();break;
+                case 'P2800':throw new MissingPaymentMethodNameFieldError();break;
+                case 'P2900':throw new MissingPaymentMethodInfoFieldError();break;
+                case 'P2010':throw new MissingTextFieldError();break; //??
                 case 'P3100':throw new UsernameNotValidError();break;
                 case 'P3200':throw new PasswordNotValidError();break;
                 case 'P3300':throw new EmailNotValidError();break;
                 case 'P3400':throw new NameNotValidError();break;
                 case 'P3500':throw new TextNotValidError();break;
+                case 'P3600':throw new PaymentMethodNameNotValidError();break;
+                case 'P3700':throw new PaymentMethodDataNotValidError();break;
+                case 'P3800':throw new PaymentMethodIdError();break;
                 case 'P6101':throw new UsernameAlreadyExistsError();break;
                 case 'P6102':throw new UserEmailExistsError();break;
                 case 'P6201':throw new UsernameNotFoundError();break;
                 case 'P6202':throw new UserIdNotFoundError();break;
                 case 'P6203':throw new EmailNotFoundError();break;
                 case 'P6204':throw new TokenNotValidError();break; /* Not valid -> not found */
+                case 'P6205':throw new PaymentMethodNotFoundError();break; /* Not valid -> not found */
                 case 'P6301':throw new TokenNotValidError();break;
                 case 'P6302':throw new TokenAlreadyUsedError();break;
                 case 'P6303':throw new TokenExpiredError();break;

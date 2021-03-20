@@ -813,9 +813,24 @@ $$ LANGUAGE plpgsql;
 
     /* Payment methods */
 
+create or replace procedure check_payment_method_name(p_name_method varchar)
+as $$
+        begin
+            case when not exists (select regexp_matches(p_name_method,'^[a-zA-Z0-9_ ]{6,20}$'))
+                then raise exception
+                    using errcode = 'P3600',
+                        message = 'Payment method info does not meet the requirements',
+                        hint = 'Payment method name needs to be from 6 to 20 characters and contain only the following allowed characters:\nLetters from a to z (upper and lower case)\nNumbers from 0 to 9 and/or spaces or _';
+                else
+                    null;
+                end case; /*raises exception if name not matches regex*/
+        end;
+$$ language plpgsql;
+
 CREATE OR REPLACE PROCEDURE proc_add_payment_method(p_user_id integer,p_name_method varchar)
 as $$
     begin
+        call check_payment_method_name(p_name_method);
         insert into user_payment_methods(user_id,user_payment_method_name) values (p_user_id,p_name_method);
     end;
 $$ language plpgsql;
@@ -826,6 +841,7 @@ as $$
         v_uid integer;
 begin
     call proc_check_session_token_is_valid(p_stoken);
+    call check_payment_method_name(p_name_method);
     select into v_uid user_id from session_tokens where p_stoken=session_token;
     insert into user_payment_methods(user_id,user_payment_method_name) values (v_uid,p_name_method);
 end;

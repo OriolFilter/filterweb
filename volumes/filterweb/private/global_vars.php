@@ -120,12 +120,11 @@
                             <link rel="stylesheet" media="screen and (min-width: 750px) and (max-width: 1200px)" href="/src/css/medium.css" type="text/css">
                             <meta charset="UTF-8">
                             <meta name="viewport" content="width=device-width, initial-scale=1.0">'
-                .($this->title?sprintf('<title>%s</title>',$this->title):'<title>ArcadeShop</title>')
-                .($this->scripts??null)
-                .
+                .($this->title?sprintf('<title>%s</title>',$this->title):'<title>ArcadeShop</title>').
                 /* default scripts */
-                '<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+                '<script src="/src/js/jquery.min.js">
                 <script src="/src/js/utilities/logout.js"></script>'.
+                ($this->scripts??null).
                             '</head>
                         <body>
                         <header>
@@ -331,7 +330,7 @@ class hotashi {
         /* Get and validate vars  */
         isset($_COOKIE['session_token'])?$this->stoken = $_COOKIE['session_token']:throw new TokenNullOrEmptyError();
 
-        if (!(@preg_match("/^[a-zA-Z0-9]{6,20}+$/", $_REQUEST['pmname'], $pmname))) {
+        if (!(@preg_match("/^[a-zA-Z0-9_ ]{6,20}+$/", $_REQUEST['pmname'], $pmname))) {
             throw new PaymentMethodNameNotValidError();
         } else {
             $this->pmname = $pmname[0];
@@ -611,18 +610,18 @@ class db_manager {
             $list='';
             foreach ($train_pminfo as $key => $value) {
                 $element =
-                    "<li class='labelListElement'>
+                    "<li class='labelListElementBox'>
                         <div class='pmContentBox'>
                             <div class='labelListContentBox'>
-                                <p id='pmname'>$value</p>
-                                <p id='pmname'>0123 4567 8222?</p>
-                                <span id='pmid' hidden>$key</span>
+                                <p class='pmname'>$value</p>
+                                <p class='pmname'>0123 4567 8222?</p>
                             </div>
-                            <span class='closeButton'>&times;</span>
+                            <span class='remove_payment' id='$key'>&times;</span>
                         </div>
                   </li>";
                 $list = $list.$element;
             }
+//                                <span id='pmid' hidden>$key</span>
             unset($clave);
             unset($element);
             unset($key);
