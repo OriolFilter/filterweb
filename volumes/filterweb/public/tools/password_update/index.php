@@ -4,7 +4,7 @@
 
 try {
     ;include "/var/www/private/global_vars.php";
-    ;$scripts="<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'>
+    ;$scripts="<script src='/src/js/jquery.min.js'></script>
                </script><script src='/src/js/forms/password_update.js'></script>";
     $json_obj = new json_response();
     $page_vars= new page_vars;
@@ -19,6 +19,8 @@ try {
     $json_obj = new json_response();
 
     /* Main */
+
+        $hotashi->login_from_stoken($hotashi);
 
         /* Get Vars */
         $hotashi->get_change_password_token();

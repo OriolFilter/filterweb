@@ -1,34 +1,69 @@
 <?php
-;;
-;include "../../../private/global_vars.php";
-;$page_vars = new page_vars();
-;$hotashi = new hotashi;
-;$page_vars->title='Manage Payment Methods';
-;echo $page_vars->return_header($hotashi);
-;
+try {
+    require_once '/var/www/private/global_vars.php';
+    ;$builder = new builder();
+    /* vars */
+    $page_vars= new page_vars;
+    $page_vars->import_errors();
+
+    /* DB*/
+    $db_manager = new db_manager();
+    /* Json */
+    $hotashi = new hotashi();
+    $json_obj = new json_response();
+    $train = new train();
+
+    /* Main */
+    $page_vars->title='Manage Payment Methods';
+    ;$scripts="<script src='/src/js/jquery.min.js'></script><script src='/src/js/forms/payment_methods.js'></script>";
+
+    /* Get Vars */
+//    $hotashi->get_login_cookies();
+    $hotashi->login_from_stoken($hotashi);
+    /* Database connection*/
+    $db_manager->get_payment_methods($hotashi,$train);
+//    $json_obj->data['payment_methods']=$train->payment_methods_obj_array;
 
 
 
-;$content =
-    ((isset($hotashi->uloged) && $hotashi->uloged)?
-        "
 
-            <h3>Manage My Payment Methods</h3>
-                    <table>
-                        <tr>
-                        <td><p><a href='#'>View order history</a></p></tr>
-                        <td><p><a href='#'>Manage Payment methods</a></p></tr>
-                        <td><p><a href='#'>Manage Shipping address</a></p></tr>
-                        <td><p><a href='#'>View cart</a></p></tr>
-                        <td><p><a href='#'>Request change password</a></p></tr>
-                    </table>
+
+    /* success */
+    $json_obj->status='success';
+    $json_obj->status_code=1;
+
+
+}
+catch (DefinedErrors $e ) {
+    $e->formatJson($json_obj);
+}
+
+
+finally {
+    ;echo $page_vars->return_header($hotashi);
+
+    ;$content =
+        ((isset($hotashi->uloged) && $hotashi->uloged)?
+            "
+
+            <h3>My Payment Methods</h3>
+            
+                    <ul>".
+
+            /* For form_oobj */
+            $builder->return_payment_info_list_content($train->payment_methods_obj_array)
+
+
+
+            ."</ul>
                     <span id='serverResponse' hidden></span>
 
            "
-                    /* Error */
-        :
-        "<h3 id='error_form'>You need to log in!</h3>"
-    );
+            /* Error */
+            :
+            "<h3 id='error_form'>You need to log in!</h3>"
+        );
+
 
 ;
 ;echo"
@@ -45,8 +80,8 @@
 ;
 ;
 echo $page_vars->return_footer();
-;?>
-<!--                <form action='/forms/login_form.php' method='post' id='logInForm'>-->
-<!--        <div id='logInBox'>-->
-<!--            <p>Create account</p>-->
-<!--        </div>-->
+
+
+};?>
+
+

@@ -5,6 +5,7 @@
 ;$hotashi = new hotashi;
 ;$page_vars->scripts=$scripts;
 ;$page_vars->title='Buttons';
+$hotashi->login_from_stoken($hotashi);
 ;echo $page_vars->return_header($hotashi);
 
 ;echo "<h1>Buttons</h1><hr>";

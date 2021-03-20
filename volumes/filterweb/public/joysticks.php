@@ -4,6 +4,7 @@
 ;$page_vars = new page_vars();
 ;$hotashi = new hotashi;
 ;$page_vars->title='Joysticks';
+$hotashi->login_from_stoken($hotashi);
 ;echo $page_vars->return_header($hotashi);
 
 ;echo "<script src='/src/js/products_script.js'></script>"

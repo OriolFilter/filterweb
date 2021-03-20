@@ -32,8 +32,11 @@ try {
 
         /* Get Vars */
         $hotashi->get_login_cookies();
+//        $hotashi->login_from_stoken();
         /* Database connection*/
         $db_manager->get_payment_methods($hotashi,$train);
+        $json_obj->data['payment_methods']=$train->payment_methods_obj_array;
+
 
         /* success */
         $json_obj->status='success';

@@ -440,7 +440,7 @@ margin-top: 15px;
 }
 
 #cart .close:hover {background: rgba(255, 255, 255, 0.52);}
-
+/* Product box */
 .cartProduct {
     background-color: #353333;
     width: available;
@@ -606,4 +606,95 @@ div#pquant{
     align-content: center;
     justify-content: center;
     align-items: center;
+}
+
+/* Label list */
+.labelListElementBox {
+    background-color: #353333;
+    width: available;
+    height: fit-content;
+    margin: 15px 32px;
+    box-shadow: 11px 12px 6px 0 rgba(0,0,0,0.42);
+    -webkit-box-shadow: 11px 12px 6px 0 rgba(0,0,0,0.42);
+    box-sizing: border-box;
+    border-radius: 4px;
+    border-style: solid;
+    border-width: 7px;
+    border-color: #5f5f5f;
+}
+.pmContentBox{
+    min-width: fit-content;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 4px;
+    border-style: solid;
+    border-width: 2px;
+    border-color: rgb(255, 209, 85);
+    margin: 5px;
+    padding: 10px;
+    /*font-family: arial, Times new roman, monospace;*/
+    font-size: 25px;
+
+}
+
+/*#cartList {*/
+/*    width: fit-content;*/
+/*    width: -moz-fit-content;*/
+/*}*/
+.pmContentBox {
+    width: fit-content;
+    width: -moz-fit-content;
+}
+.pmContentBox ul {
+    list-style-type: none;
+    padding: 0 10vw;
+    margin: 2vw 2vw;
+    border-radius: 40px;
+}
+
+.pmContentBox ul li {
+    border: 1px solid #ddd;
+    margin-top: -1px; /* Prevent double borders */
+    background-color: #353333;
+    padding: 12px;
+    text-decoration: none;
+    font-size: 18px;
+    display: block;
+    position: relative;
+}
+
+.pmContentBox ul li:hover {
+    background-color: #5f5f5f;
+}
+
+.labelListContentBox {
+    order: 1;
+}
+.closeButton {
+    cursor: pointer;
+    position: relative;
+    /*top: 50%;*/
+    /*right: 0%;*/
+    padding: 12px 16px;
+    transform: translate(0%, -50%);
+    order: 2;
+}
+
+.closeButton:hover {background: rgba(255, 255, 255, 0.52);}
+
+
+.pmContentBox {
+    min-width: fit-content;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+    /*align-items: baseline;*/
 }

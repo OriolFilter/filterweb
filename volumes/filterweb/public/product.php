@@ -3,8 +3,8 @@
 ;$page_vars = new page_vars();
 ;$hotashi = new hotashi;
 ;$page_vars->title='Product';
+;$hotashi->login_from_stoken($hotashi);
 ;echo $page_vars->return_header($hotashi);
-
 ;$prodFolder="../private/products/";
 ;$productName = $_GET['product'];
 //  Neteja

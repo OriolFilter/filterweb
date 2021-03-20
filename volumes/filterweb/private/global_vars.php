@@ -110,7 +110,7 @@
 
 
         public function return_header($hotahsi=null){
-            ($hotahsi?$hotahsi->login_from_stoken():null);
+//            ($hotahsi?$hotahsi->login_from_stoken():null);
             return ('<!DOCTYPE html>
                         <html lang="es">
                         <head>
@@ -494,8 +494,8 @@ class db_manager {
     { /* Under construction*/
         $dbconn= @pg_connect("host=10.24.1.2 port=5432 dbname=shop_db user=test password=test");
         if ($dbconn && !pg_connection_busy($dbconn)) {
-            $result = pg_prepare($dbconn, "check_stoken_q", 'call proc_login_session_token($1);');
-            $result = pg_send_execute($dbconn, "check_stoken_q", array($hotashi->stoken));
+            $result = pg_prepare($dbconn, "check_stoken_q2", 'call proc_login_session_token($1);');
+            $result = pg_send_execute($dbconn, "check_stoken_q2", array($hotashi->stoken));
             $res = pg_get_result($dbconn);
             $state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
             $this->error_manager->pg_error_handler($state);
@@ -555,11 +555,17 @@ class db_manager {
             ;$err=pg_last_notice($dbconn);
             ;$res=pg_get_result($dbconn);
             ;$state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
-            $payment_obj = new  payment_methods();
-
-//            $data = pg_fetch_all($res);
-            $data =  pg_fetch_all($res);
-
+            $this->error_manager->pg_error_handler($state);
+            ;$payment_obj = new  payment_methods();
+            $data_n = pg_fetch_all_columns($res,0); //number
+            $data_s = pg_fetch_all_columns($res,1); //string
+            foreach ($data_s as $key => $value) {
+                $train->payment_methods_obj_array[$data_n[$key]]=$value;
+                unset($clave);
+                unset($key);
+            }
+//            $data =  pg_fetch_all($res);
+//            echo var_dump($data);
 //            for ($i = 1; $i <= 10; $i++) {
 //                echo $i;
 //            }
@@ -581,7 +587,7 @@ class db_manager {
 //                print_r($key);
 //            }
 
-            $this->error_manager->pg_error_handler($state);
+
         } else {throw new DatabaseConnectionError();}
     }
 
@@ -591,10 +597,53 @@ class db_manager {
         public $payment_methods_obj_array=[];
     }
 
-    class payment_methods {
+    class payment_methods { /* Unused */
         public $name=null;
         public $number=null;
         public function format_php(){ /* ??? */
         }
+    }
+     /* Format objects for html */
+    class builder {
+
+        public function return_payment_info_list_content($train_pminfo) {
+            /* For form_oobj */
+            $list='';
+            foreach ($train_pminfo as $key => $value) {
+                $element =
+                    "<li class='labelListElement'>
+                        <div class='pmContentBox'>
+                            <div class='labelListContentBox'>
+                                <p id='pmname'>$value</p>
+                                <p id='pmname'>0123 4567 8222?</p>
+                                <span id='pmid' hidden>$key</span>
+                            </div>
+                            <span class='closeButton'>&times;</span>
+                        </div>
+                  </li>";
+                $list = $list.$element;
+            }
+            unset($clave);
+            unset($element);
+            unset($key);
+            return $list;
+//                                <span class='closeButton'>&times;</span>
+
+//            "<li class='labelListElement'>
+//                        <div id='labelListContentBox'>
+//                                <p id='pmname'>$value</p>
+//                                <pid='pmname'>0123 4567 8910?</p>
+//                                <span id='pmid' hidden>$key</span>
+//                                <span class='closeButton'>&times;</span>
+//                        </div>
+//                  </li>";
+//            for ()
+        }
+//        "<li class='cartProduct'>
+//                                <div id='pinfo'>
+//                                    <span id='pmid' hidden></span>
+//                                    <span id='ptitle'>info</span>
+//                                    <span class='close'>&times;</span>"
+//        ."</li>
     }
 ?>

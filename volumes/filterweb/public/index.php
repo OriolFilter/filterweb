@@ -1,10 +1,11 @@
 <?php
 ;include "../private/global_vars.php";
-;$scripts="<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script><script src='/src/js/forms/login.js'></script>";
+;$scripts="<script src='/src/js/jquery.min.js'></script><script src='/src/js/forms/login.js'></script>";
 ;$page_vars = new page_vars();
 ;$hotashi = new hotashi;
 ;$page_vars->scripts=$scripts;
 ;$page_vars->title='Home';
+$hotashi->login_from_stoken($hotashi);
 ;echo $page_vars->return_header($hotashi);
 
 

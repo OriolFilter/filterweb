@@ -1,11 +1,12 @@
 <?php
 ;include "../private/global_vars.php";
-;$scripts="<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'>
+;$scripts="<script src='/src/js/jquery.min.js'></script>
            </script><script src='/src/js/forms/account_recovery.js'></script>";
 ;$page_vars = new page_vars();
 ;$hotashi = new hotashi;
 ;$page_vars->scripts=$scripts;
 ;$page_vars->title='Account Recovery';
+$hotashi->login_from_stoken($hotashi);
 ;echo $page_vars->return_header($hotashi);
 ;
 $content =

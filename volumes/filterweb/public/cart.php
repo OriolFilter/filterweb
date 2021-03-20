@@ -6,6 +6,7 @@
 ;$hotashi = new hotashi;
 ;$page_vars->scripts=$scripts;
 ;$page_vars->title='Cart';
+$hotashi->login_from_stoken($hotashi);
 ;echo $page_vars->return_header($hotashi);
 /* Still not done */
 echo "<div id='cart'>";

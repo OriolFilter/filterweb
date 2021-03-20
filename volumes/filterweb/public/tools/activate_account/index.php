@@ -15,6 +15,8 @@
 
     /* Main */
 
+        $hotashi->login_from_stoken($hotashi);
+
         /* Get Vars */
         $hotashi->get_activate_account_token();
 
