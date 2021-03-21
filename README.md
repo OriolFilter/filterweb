@@ -196,6 +196,12 @@ postgresql:
 #### Country format
     ISO 3166-2
 
+#### Postal codes 
+- https://en.wikipedia.org/wiki/Postal_code
+
+#### Don't check input besides lenght
+- https://stackoverflow.com/questions/37956584/characters-and-symbols-allowed-in-shipping-and-billing-address
+- https://pe.usps.com/text/pub28/28c3_019.htm
 
 #### Validate shipping address
 - https://www.ups.com/es/en/help-center/technology-support/developer-resource-center.page

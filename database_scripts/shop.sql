@@ -72,6 +72,20 @@ CREATE TABLE if not exists user_payment_methods (
     CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
 );
 
+-- Shipping address
+
+CREATE TABLE if not exists shipping_address (
+    shipping_address_id serial,
+    shipping_address_country varchar (2) NOT NULL, /* ES, CA, FR */
+    shipping_address_city varchar NOT NULL, /* https://en.wikipedia.org/wiki/Postal_code */
+    shipping_address_postal_code varchar NOT NULL, /* https://en.wikipedia.org/wiki/Postal_code */
+    shipping_address_line1 varchar NOT NULL, /* Undefined lenght */
+    shipping_address_line2 varchar,
+    shipping_address_line3 varchar,
+    user_id integer NOT NULL,
+    CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
+);
+
 /*
 
 -- Products Related
