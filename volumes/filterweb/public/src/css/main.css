@@ -320,7 +320,7 @@ html {
 #loading {
     width: 60px;
     height: 60px;
-    background-image: url("/src/images/loading_01.gif");
+    background-image: url("/ src/images/loading_01.gif");
     background-repeat: no-repeat;
     background-size: contain;
 }

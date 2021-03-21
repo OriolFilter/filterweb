@@ -190,3 +190,12 @@ postgresql:
     #'i': #info?
 
 ```
+
+### Shipping adress
+
+#### Country format
+    ISO 3166-2
+
+
+#### Validate shipping address
+- https://www.ups.com/es/en/help-center/technology-support/developer-resource-center.page
