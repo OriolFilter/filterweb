@@ -215,3 +215,14 @@ select payment_method_row_number,payment_method_name from func_return_payment_me
 -- select sq.pmid into v_pmid from (SELECT row_number() over (order by user_payment_method_id)::integer as rn, user_payment_method_id as pmid from user_payment_methods where user_id=22)
 --                                     as sq where sq.rn::integer='4'::integer;
 call proc_check_session_token_is_valid('RqilTqSy76oxRMOa6DboGY6sF4HSgjWJpSzNB74kju764sgX53pAu2ot8z8U');
+
+call check_shipping_address_l2('');
+
+call proc_add_shipping_address(10,'ES','my city','08777','my line 1','','');
+call proc_add_shipping_address_from_stoken('NCLZdF7lsMfpEAQToK5OhLWik5IsgxH5HiOfryekuct1aN6AeGxBCi6VIx3P','ES','my city','08777','my line 2','zz','zzzzzzzzzz');
+call proc_remove_shipping_address_from_stoken('HIBlnbNfvq6Av7VK8tkVCbSeONQrs4KdHWY806wExtmhDeafxMwWIlAKP4MW',1);
+
+select length('') = 0 ;
+select func_return_session_token_from_credentials('test1234','test1234');
+select * from func_return_shipping_address_from_stoken('HIBlnbNfvq6Av7VK8tkVCbSeONQrs4KdHWY806wExtmhDeafxMwWIlAKP4MW');
+drop function func_return_shipping_address_from_stoken;

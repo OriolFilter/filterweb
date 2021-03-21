@@ -157,12 +157,14 @@ class TextNotValidError  extends CustomError  implements DefinedErrors {
     public $message = 'Text does not meet the requirements';
     public $hint = 'Text message must be from 20 to 400 characters';
 }
+
+# Payment method
+//https://money.howstuffworks.com/personal-finance/debt-management/credit-card1.htm
 class PaymentMethodNameNotValidError  extends CustomError  implements DefinedErrors {
     public $error_code = '3.6';
     public $message = 'Payment method name does not meet the requirements';
     public $hint = 'Payment method name needs to be from 6 to 20 characters and contain only the following allowed characters:\nLetters from a to z (upper and lower case)\nNumbers from 0 to 9 and/or spaces or _';
 }
-//https://money.howstuffworks.com/personal-finance/debt-management/credit-card1.htm
 class PaymentMethodDataNotValidError  extends CustomError  implements DefinedErrors {
     public $error_code = '3.7';
     public $message = 'Payment method info does not meet the requirements';
@@ -174,6 +176,42 @@ class PaymentMethodIdError  extends CustomError  implements DefinedErrors {
     public $hint = 'Payment method info must be a integer';
 }
 
+# Shipping address
+class ShippingAddressCountryError  extends CustomError  implements DefinedErrors {
+    public $error_code = '3.9.1';
+    public $message = 'Shipping address country field does not meet the requirements';
+    public $hint = 'Shipping address country needs to be 2 characters that represent the country following the standard ISO 3166-2';
+}
+class ShippingAddressCityError  extends CustomError  implements DefinedErrors {
+    public $error_code = '3.9.2';
+    public $message = 'Shipping address city field does not meet the requirements';
+    public $hint = null; // Unused
+}
+class ShippingAddressPostalCodeError  extends CustomError  implements DefinedErrors {
+    public $error_code = '3.9.3';
+    public $message = 'Shipping address postal code field does not meet the requirements';
+    public $hint = null; // Unused
+}
+class ShippingAddressLine1Error  extends CustomError  implements DefinedErrors {
+    public $error_code = '3.9.4';
+    public $message = 'Shipping address line 1 field does not meet the requirements';
+    public $hint = 'Shipping address line 1 needs to be from 5 to 200 characters'; // Unused
+}
+class ShippingAddressLine2Error  extends CustomError  implements DefinedErrors {
+    public $error_code = '3.9.5';
+    public $message = 'Shipping address line 2 field does not meet the requirements';
+    public $hint = null; // Unused
+}
+class ShippingAddressLine3Error  extends CustomError  implements DefinedErrors {
+    public $error_code = '3.9.6';
+    public $message = 'Shipping address line 3 field does not meet the requirements';
+    public $hint = null; // Unused
+}
+class ShippingAddressIdError  extends CustomError  implements DefinedErrors {
+    public $error_code = '3.9.7';
+    public $message = 'Shipping address line 3 field does not meet the requirements';
+    public $hint = 'Shipping address id must be a integer'; // Unused
+}
 
 ## Forms Missing fields
 class MissingField  extends CustomError  implements DefinedErrors {
@@ -208,6 +246,30 @@ class MissingPaymentMethodInfoFieldError  extends CustomError  implements Define
     public $error_code = '2.9';
     public $message = 'Payment method info field is missing';
 }
+class MissingPaymentMethodIdFieldError  extends CustomError  implements DefinedErrors {
+    public $error_code = '2.10';
+    public $message = 'Payment method id field is missing';
+}
+class MissingShippingAddressCountryField  extends CustomError  implements DefinedErrors {
+    public $error_code = '2.11.1';
+    public $message = 'Shipping address country field is missing';
+}
+class MissingShippingAddressCityField  extends CustomError  implements DefinedErrors {
+    public $error_code = '2.11.2';
+    public $message = 'Shipping address city field is missing';
+}
+class MissingShippingAddressPostalCodeField  extends CustomError  implements DefinedErrors {
+    public $error_code = '2.11.3';
+    public $message = 'Shipping address postal code field is missing';
+}
+class MissingShippingAddressLine1Field  extends CustomError  implements DefinedErrors {
+    public $error_code = '2.11.4';
+    public $message = 'Shipping address line 1 field is missing';
+}
+class MissingShippingAddressIdField  extends CustomError  implements DefinedErrors {
+    public $error_code = '2.11.5';
+    public $message = 'Shipping address id field is missing';
+}
 
 ## Select query
 class UsernameNotFoundError extends CustomError  implements DefinedErrors {
@@ -228,6 +290,11 @@ class EmailNotFoundError extends CustomError  implements DefinedErrors {
 class PaymentMethodNotFoundError extends CustomError  implements DefinedErrors {
     public $error_code = '6.2.5';
     public $message = 'Payment method not found';
+    public $hint = null;
+}
+class ShippingAddressFoundError extends CustomError  implements DefinedErrors {
+    public $error_code = '6.2.6';
+    public $message = 'Shipping address not found';
     public $hint = null;
 }
 
@@ -256,7 +323,12 @@ class error_manager {
                 case 'P2700':throw new MissingTextFieldError();break;
                 case 'P2800':throw new MissingPaymentMethodNameFieldError();break;
                 case 'P2900':throw new MissingPaymentMethodInfoFieldError();break;
-                case 'P2010':throw new MissingTextFieldError();break; //??
+                case 'P2010':throw new MissingPaymentMethodIdFieldError();break; //??
+                case 'P2111':throw new MissingShippingAddressCountryField();break; //??
+                case 'P2112':throw new MissingShippingAddressCityField();break; //??
+                case 'P2113':throw new MissingShippingAddressPostalCodeField();break; //??
+                case 'P2114':throw new MissingShippingAddressLine1Field();break; //??
+                case 'P2115':throw new MissingShippingAddressIdField();break; //??
                 case 'P3100':throw new UsernameNotValidError();break;
                 case 'P3200':throw new PasswordNotValidError();break;
                 case 'P3300':throw new EmailNotValidError();break;
@@ -265,6 +337,13 @@ class error_manager {
                 case 'P3600':throw new PaymentMethodNameNotValidError();break;
                 case 'P3700':throw new PaymentMethodDataNotValidError();break;
                 case 'P3800':throw new PaymentMethodIdError();break;
+                case 'P3901':throw new ShippingAddressCountryError();break;
+                case 'P3902':throw new ShippingAddressCityError();break;
+                case 'P3903':throw new ShippingAddressPostalCodeError();break;
+                case 'P3904':throw new ShippingAddressLine1Error();break;
+                case 'P3905':throw new ShippingAddressLine2Error();break;
+                case 'P3906':throw new ShippingAddressLine3Error();break;
+                case 'P3907':throw new ShippingAddressLine3Error();break;
                 case 'P6101':throw new UsernameAlreadyExistsError();break;
                 case 'P6102':throw new UserEmailExistsError();break;
                 case 'P6201':throw new UsernameNotFoundError();break;
@@ -272,6 +351,7 @@ class error_manager {
                 case 'P6203':throw new EmailNotFoundError();break;
                 case 'P6204':throw new TokenNotValidError();break; /* Not valid -> not found */
                 case 'P6205':throw new PaymentMethodNotFoundError();break; /* Not valid -> not found */
+                case 'P6206':throw new ShippingAddressFoundError();break; /* Not valid -> not found */
                 case 'P6301':throw new TokenNotValidError();break;
                 case 'P6302':throw new TokenAlreadyUsedError();break;
                 case 'P6303':throw new TokenExpiredError();break;

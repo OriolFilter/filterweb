@@ -77,9 +77,9 @@ CREATE TABLE if not exists user_payment_methods (
 CREATE TABLE if not exists shipping_address (
     shipping_address_id serial,
     shipping_address_country varchar (2) NOT NULL, /* ES, CA, FR */
-    shipping_address_city varchar NOT NULL, /* https://en.wikipedia.org/wiki/Postal_code */
+    shipping_address_city varchar NOT NULL,
     shipping_address_postal_code varchar NOT NULL, /* https://en.wikipedia.org/wiki/Postal_code */
-    shipping_address_line1 varchar NOT NULL, /* Undefined lenght */
+    shipping_address_line1 varchar NOT NULL, /* Undefined length */
     shipping_address_line2 varchar,
     shipping_address_line3 varchar,
     user_id integer NOT NULL,
@@ -900,6 +900,124 @@ as $$
         return query SELECT row_number() over (order by user_payment_method_id)::integer,user_payment_method_name from user_payment_methods where user_id=v_uid;
     end;
 $$ language plpgsql;
+
+/* Shipping address methods */
+
+create or replace procedure check_shipping_country_code_name(p_name_method varchar)
+as $$
+begin
+    /* check 2 chars and chars */
+    case when not exists (select regexp_matches(p_name_method,'^[a-zA-Z]{2}$'))
+        then raise exception
+            using errcode = 'P3901',
+                message = 'Shipping address country does not meet the requirements',
+                hint = 'Shipping address country needs to be 2 characters that represent the country following the standar ISO 3166-2';
+        else
+            null;
+        end case; /*raises exception if name not matches regex*/
+end;
+$$ language plpgsql;
+
+create or replace procedure check_shipping_address_l1(p_name_method varchar)
+as $$
+begin
+    /* 5 - 200 chars */
+    if (length(p_name_method) < 5 or length(p_name_method) > 200) then
+        raise exception
+            using errcode = 'P3904',
+                message = 'Shipping address line 1 field does not meet the requirements',
+                hint = 'Shipping address line 1 needs to be from 5 to 200 characters';
+    end if;
+end;
+$$ language plpgsql;
+
+/* UNUSED, NO CHECKING, NO REASON TO CHECK BESIDES THE FIRST FIELD WHICH IS REQUIRED
+create or replace procedure check_shipping_address_l2(p_name_method varchar)
+as $$
+begin
+    /* 5 - 200 chars - empty */
+    if ((length(p_name_method::varchar) < 5 or length(p_name_method::varchar) > 200) and (length(p_name_method::varchar) is null or length(p_name_method::varchar) = 0) ) then
+        raise exception
+            using errcode = 'P3905',
+                message = 'Shipping address line 2 field does not meet the requirements',
+                hint = 'Shipping address line 2 needs to be from 5 to 200 or empty';
+    end if;
+end;
+$$ language plpgsql;
+
+create or replace procedure check_shipping_address_l3(p_name_method varchar)
+as $$
+begin
+    /* 5 - 200 chars - empty */
+    if ((length(p_name_method::varchar) < 5 or length(p_name_method::varchar) > 200) and (not length(p_name_method::varchar) is null and not length(p_name_method::varchar) = 0) ) then
+        raise exception
+            using errcode = 'P3906',
+                message = 'Shipping address line 3 field does not meet the requirements',
+                hint = 'Shipping address line 3 needs to be from 5 to 200 or empty';
+    end if;
+end;
+$$ language plpgsql;
+
+
+ */
+
+CREATE OR REPLACE PROCEDURE proc_add_shipping_address(p_user_id integer,p_country varchar, p_city varchar, p_postalcode varchar, p_addline1 varchar,  p_addline2 varchar default null, p_addline3 varchar default null)
+as $$
+begin
+    call check_shipping_country_code_name(p_country);
+    call check_shipping_address_l1(p_addline1);
+--     call check_shipping_address_l2(p_addline2);
+--     call check_shipping_address_l3(p_addline3);
+    insert into shipping_address(user_id,shipping_address_country,shipping_address_city,shipping_address_postal_code,shipping_address_line1,shipping_address_line2,shipping_address_line3)
+                         values (p_user_id,upper(p_country),p_city,p_postalcode,p_addline1,p_addline2,p_addline3);
+end;
+$$ language plpgsql;
+
+CREATE OR REPLACE PROCEDURE proc_add_shipping_address_from_stoken(p_stoken varchar,p_country varchar, p_city varchar, p_postalcode varchar, p_addline1 varchar,  p_addline2 varchar default null, p_addline3 varchar default null)
+as $$
+declare
+    v_uid integer;
+begin
+    call proc_check_session_token_is_valid(p_stoken);
+    call check_shipping_country_code_name(p_country);
+    call check_shipping_address_l1(p_addline1);
+--     call check_shipping_address_l2(p_addline2);
+--     call check_shipping_address_l3(p_addline3);
+    select into v_uid user_id from session_tokens where p_stoken=session_token;
+    insert into shipping_address(user_id,shipping_address_country,shipping_address_city,shipping_address_postal_code,shipping_address_line1,shipping_address_line2,shipping_address_line3)
+                         values (v_uid,upper(p_country),p_city,p_postalcode,p_addline1,p_addline2,p_addline3);
+end;
+$$ language plpgsql;
+
+CREATE OR REPLACE PROCEDURE proc_remove_shipping_address_from_stoken(p_stoken varchar,p_row_number integer)
+as $$
+declare
+    v_uid integer;
+    v_said integer; /* payment method id */
+begin
+    call proc_check_session_token_is_valid(p_stoken);
+    select into v_uid user_id from session_tokens where p_stoken=session_token;
+
+    select sq.pmid into v_said from (SELECT row_number() over (order by shipping_address_id)::integer as rn, shipping_address_id as pmid from shipping_address where user_id=v_uid)
+                                        as sq where sq.rn::integer=p_row_number::integer;
+
+    delete from shipping_address where shipping_address_id::integer=v_said::integer;
+end;
+$$ language plpgsql;
+
+CREATE OR REPLACE FUNCTION func_return_shipping_address_from_stoken(p_stoken varchar) returns table (sa_row_number integer,sa_country varchar,sa_city  varchar, sa_postal_code varchar,sa_line1 varchar,sa_line2  varchar,sa_line3  varchar)
+as $$
+declare
+    v_uid integer;
+begin
+    call proc_check_session_token_is_valid(p_stoken);
+    select into v_uid user_id from session_tokens where p_stoken=session_token;
+    return query SELECT row_number() over (order by shipping_address_id)::integer, shipping_address_country::varchar,shipping_address_city::varchar, shipping_address_postal_code::varchar,shipping_address_line1::varchar,shipping_address_line2::varchar,shipping_address_line3::varchar from shipping_address where user_id=v_uid;
+--     return query SELECT row_number() over (order by user_payment_method_id)::integer,user_payment_method_name from user_payment_methods where user_id=v_uid;
+end;
+$$ language plpgsql;
+
+
 /* User management*/
 
 CREATE or replace procedure register_user(p_username varchar, p_passwd varchar,p_email varchar)

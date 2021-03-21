@@ -275,9 +275,19 @@ class hotashi {
     public $ftext; // form text
     public $cookies=[];
     /* User Info */
+    /* Payment methods */
     public $pmname; // Payment method name
     public $pmdata; // Payment method data, not used
     public $pmid; // Payment method number id (row number in select)
+    /* Shipping address */
+    public $sa_country;
+    public $sa_city;
+    public $sa_pcode; /* postal code*/
+    public $sa_add1;
+    public $sa_add2;
+    public $sa_add3;
+    public $sa_id; /* Row in select */
+
 
     /* Get post*/
         /* login/register */
@@ -344,6 +354,58 @@ class hotashi {
             throw new PaymentMethodIdError();
         } else {
             $this->pmid = $pmid[0];
+        }
+    }
+
+    /* shipping address */
+    public function get_add_shipping_address_vars() {
+        /* Get and validate vars  */
+        isset($_COOKIE['session_token'])?$this->stoken = $_COOKIE['session_token']:throw new TokenNullOrEmptyError();
+
+        if (!(@preg_match("/^[a-zA-Z]{2}$/", $_REQUEST['sa_country'], $sa_country))) {
+            throw new ShippingAddressCountryError();
+        } else {
+            $this->sa_country = $sa_country[0];
+        }
+        if (!(@preg_match("/^[\w\W]+$/", $_REQUEST['sa_city'], $sa_city))) {
+            throw new ShippingAddressCityError();
+        } else {
+            $this->sa_city = $sa_city[0];
+        }
+        if (!(@preg_match("/^[\w\W]+$/", $_REQUEST['sa_pcode'], $sa_pcode))) {
+            throw new ShippingAddressPostalCodeError();
+        } else {
+            $this->sa_pcode = $sa_pcode[0];
+        }
+        if (!(@preg_match("/^[\w\W]+$/", $_REQUEST['sa_pcode'], $sa_pcode))) {
+            throw new ShippingAddressPostalCodeError();
+        } else {
+            $this->sa_pcode = $sa_pcode[0];
+        }
+        if (!(@preg_match("/^[\w\W]{5,200}$/", $_REQUEST['sa_add1'], $sa_add1))) {
+            throw new ShippingAddressLine1Error();
+        } else {
+            $this->sa_add1 = $sa_add1[0];
+        }
+        if (!(@preg_match("/^[\w\W]{0,}$/", $_REQUEST['sa_add2'], $sa_add2))) {
+            throw new ShippingAddressLine2Error();
+        } else {
+            $this->sa_add2 = $sa_add2[0];
+        }
+        if (!(@preg_match("/^[\w\W]{0,}$/", $_REQUEST['sa_add3'], $sa_add3))) {
+            throw new ShippingAddressLine3Error();
+        } else {
+            $this->sa_add3 = $sa_add3[0];
+        }
+    }
+    public function get_delete_shipping_address_vars() {
+        /* Get and validate vars  */
+        isset($_COOKIE['session_token'])?$this->stoken = $_COOKIE['session_token']:throw new TokenNullOrEmptyError();
+
+        if (!(@preg_match("/^[0-9]$/", $_REQUEST['sa_id'], $sa_id))) {
+            throw new ShippingAddressIdError();
+        } else {
+            $this->sa_id = $sa_id[0];
         }
     }
     /* tokens */
@@ -559,7 +621,7 @@ class db_manager {
             $data_n = pg_fetch_all_columns($res,0); //number
             $data_s = pg_fetch_all_columns($res,1); //string
             foreach ($data_s as $key => $value) {
-                $train->payment_methods_obj_array[$data_n[$key]]=$value;
+                $train->shipping_address_obj_array[$data_n[$key]]=$value;
                 unset($clave);
                 unset($key);
             }
@@ -589,11 +651,58 @@ class db_manager {
 
         } else {throw new DatabaseConnectionError();}
     }
-
+    /* Shipping address */
+    public function add_shipping_address($hotashi){
+        ;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=shop_db user=test password=test") or die('connection failed');
+        if (!pg_connection_busy($dbconn)) {
+            ;$result = pg_prepare($dbconn, "add_shipping_address_q", 'call proc_add_shipping_address_from_stoken($1,$2,$3,$4,$5,$6,$7);');
+            ;$res=pg_get_result($dbconn);
+            ;$result = pg_send_execute($dbconn, "add_shipping_address_q",array($hotashi->stoken,$hotashi->sa_country,$hotashi->sa_city,$hotashi->sa_pcode,$hotashi->sa_add1,$hotashi->sa_add2,$hotashi->sa_add3));
+            ;$err=pg_last_notice($dbconn);
+            ;$res=pg_get_result($dbconn);
+            ;$state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
+            $this->error_manager->pg_error_handler($state);
+        } else {throw new DatabaseConnectionError();}
     }
+    public function remove_shipping_address($hotashi){
+        ;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=shop_db user=test password=test") or die('connection failed');
+        if (!pg_connection_busy($dbconn)) {
+            ;$result = pg_prepare($dbconn, "del_shipping_address_q", 'call proc_remove_shipping_address_from_stoken($1,$2)');
+            ;$res=pg_get_result($dbconn);
+            ;$result = pg_send_execute($dbconn, "del_shipping_address_q",array($hotashi->stoken,$hotashi->said));
+            ;$err=pg_last_notice($dbconn);
+            ;$res=pg_get_result($dbconn);
+            ;$state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
+            $this->error_manager->pg_error_handler($state);
+        } else {throw new DatabaseConnectionError();}
+    }
+    public function get_shipping_address($hotashi,$train){
+        ;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=shop_db user=test password=test") or die('connection failed');
+        if (!pg_connection_busy($dbconn)) {
+            ;$result = pg_prepare($dbconn, "sel_payment_method_q", 'select payment_method_row_number,payment_method_name from func_return_payment_methods_from_stoken($1);');
+            ;$res=pg_get_result($dbconn);
+            ;$result = pg_send_execute($dbconn, "sel_payment_method_q",array($hotashi->stoken));
+            ;$err=pg_last_notice($dbconn);
+            ;$res=pg_get_result($dbconn);
+            ;$state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
+            $this->error_manager->pg_error_handler($state);
+            ;$payment_obj = new  payment_methods();
+            $data_n = pg_fetch_all_columns($res,0); //number
+            $data_s = pg_fetch_all_columns($res,1); //string
+            foreach ($data_s as $key => $value) {
+                $train->payment_methods_obj_array[$data_n[$key]]=$value;
+                unset($clave);
+                unset($key);
+            }
+        } else {throw new DatabaseConnectionError();
+        }
+    }
+
+}
     class train {
         /* get arrays of objects to later print/manage the content */
         public $payment_methods_obj_array=[];
+        public $shipping_address_obj_array=[]; /* ATM IS A DICTIONARY NOT AN ARRAY OF OBJECTS*/
     }
 
     class payment_methods { /* Unused */

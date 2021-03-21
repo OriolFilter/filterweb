@@ -45,7 +45,8 @@
 
 
 ## REGEX
-Recordar que fa falta guardar el correu en minuscules, i que fa falta comprobar que no estigui en la base de dades (select en minuscules i entrada en minuscules)
+
+[comment]: <> (https://www.postgresql.org/docs/current/functions-matching.html#FUNCTIONS-POSIX-REGEXP)
 ```yaml
 PHP & JS:
   Registration:
@@ -64,11 +65,14 @@ PHP & JS:
   Payment methods:
     name: '^[a-zA-Z0-9 ]{6,20}$'
     id: '^[0-9]+$'
+  Shipping adress:
+    Country code: '^[a-zA-Z]{2}$'
+    id: '^[0-9]+$'
     
 POSTGRESQL:
   Contact form:
     name:  "^[\w0-9 ]{4,40}$"
-    text:  "^[\w\\W]{20,255}$"
+#    text:  "^[\w\W]{20,255}$" # NOT USED
     email: "^[a-zA-Z0-9.!#$%&'*+=?^_`{|}~-]+@[a-zA-Z10-9-]+\.[a-zA-Z0-9-]+$"  
 ```
 
@@ -91,6 +95,12 @@ php & js:
         '2.8': 'Payment method name field is missing',
         '2.9': 'Payment method info field is missing',
         '2.10': 'Payment method id field is missing',
+        '2.11': 'Shipping address fields topic',
+        '2.11.1': 'Shipping address country field is missing',
+        '2.11.2': 'Shipping address city field is missing',
+        '2.11.3': 'Shipping address postal code field is missing',
+        '2.11.4': 'Shipping address line 1 field is missing',
+        '2.11.5': 'Shipping address id field is missing',
 
         '3': 'Requirements not achieved',
         '3.1': 'Username does not meet the requirements',
@@ -101,6 +111,14 @@ php & js:
         '3.6': 'Payment method name does not meet the requirements',
         '3.7': 'Payment method info does not meet the requirements',
         '3.8': 'Payment method id does not meet the requirements', # It's a numeric value only
+        '3.9': 'Shipping address fields topic',
+        '3.9.1': 'Shipping address country field does not meet the requirements',
+        '3.9.2': 'Shipping address city field does not meet the requirements',
+        '3.9.3': 'Shipping address postal code field does not meet the requirements',
+        '3.9.4': 'Shipping address line 1 field does not meet the requirements',
+        '3.9.5': 'Shipping address line 2 field does not meet the requirements',
+        '3.9.6': 'Shipping address line 3 field does not meet the requirements',
+        '3.9.7': 'Shipping address id does not meet the requirements', # It's a numeric value only
 
         '4': 'Field matching',
         '4.1': 'Passwords don\'t match',
@@ -121,6 +139,7 @@ php & js:
         '6.2.3': 'Email not found',
         '6.2.4': 'Token not found',
         '6.2.5': 'Payment method not found',
+        '6.2.6': 'Shipping address not found',
 
         '6.3': 'Tokens',
         '6.3.1': 'Token not valid',
@@ -172,13 +191,16 @@ postgresql:
 ### ERROR MESSAGES HINTS
 
 ```yaml
-# NOT UPDATED
+# NOT UPDATED (at all)
   '3.1': 'The username needs to be from 6 to 20 characters and contain only the following allowed characters:\nLetters from a to z (upper and lower case)\nNumbers from 0 to 9\nSpecial characters "_-+."',
   '3.2': 'The password needs to be from 6 to 20 characters and contain only the following allowed characters:\nLetters from a to z (upper and lower case)\nNumbers from 0 to 9\nSpecial characters "$%/.,?!@+_=-"',
   '3.3': 'The given email is invalid',
   '3.4': 'Name must be from 4 to 40 characters from the english alphabet or numbers',
   '3.5': 'Text message must be from 20 to 255 characters'
   '3.6': 'Payment method name needs to be from 6 to 20 characters and contain only the following allowed characters:\nLetters from a to z (upper and lower case)\nNumbers from 0 to 9 and/or spaces or _'
+  '3.9.1': 'Shipping address country needs to be 2 characters that represent the country following the standard ISO 3166-2'
+  '3.9.4': 'Shipping address line 1 needs to be from 5 to 200 characters'
+  '3.9.7': 'Shipping address id must be a integer'
 ```
 
 ### Javascript Tokens
@@ -205,3 +227,10 @@ postgresql:
 
 #### Validate shipping address
 - https://www.ups.com/es/en/help-center/technology-support/developer-resource-center.page
+
+
+## Improvements
+
+### Shipping address
+
+#### Confirm address
