@@ -1,5 +1,5 @@
 <?php
-;/*Register form*/
+;/*Add shipping address*/
 /* Exceptions */
 
 /* Function */

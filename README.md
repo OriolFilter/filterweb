@@ -1,48 +1,4 @@
-# FilterWeb
-
-## Tematica
-
-	Botiga online
-
-## Diseny
-
-	<header><logo/><div><nav/></div><div><buttons></div>></header>
-
-	<content/>
-
-	<footer><copyright></footer>
-
-## Nav
-
-	DraggableButton -> Producte > Brands
-
-## Main content
-
-	Highlighted product
-
-## Product content
-
-	Llista de productes -> php, no gaire complicat
-
-	Sort By button -> php -> flexbox order, JS, facil
-
-## Buttons 
-
-	Account button -> Formulari -> mirar com fer cookies.
-
-	ShopList -> Fer formulari amb un exemple,
-
-	Contact
-
-### Contact
-
-	Direccio correu
-	Telf
-	GoogleMaps
-	/
-	Formulari
-
-
+# ArcadeShop
 
 ## REGEX
 
@@ -66,8 +22,12 @@ PHP & JS:
     name: '^[a-zA-Z0-9 ]{6,20}$'
     id: '^[0-9]+$'
   Shipping adress:
-    Country code: '^[a-zA-Z]{2}$'
-    id: '^[0-9]+$'
+    Country code: '/^[a-zA-Z]{2}$/'
+    id: '/^[0-9]+$/'
+    postal code & city: '/^[\w\W]+$/' # Checks not empty
+    address line 1: '/^[\w\W]{5,200}$/'
+    address line 2 & 3 : "/^[\w\W]{0,}$/" # A lie, doesn't checks nothing
+    
     
 POSTGRESQL:
   Contact form:

@@ -16,7 +16,7 @@ $hotashi->login_from_stoken($hotashi);
                         <tr>
                         <td><p><a href='#'>View order history</a></p></tr>
                         <td><p><a href='/my_account/payment_methods/'>Manage Payment methods</a></p></tr>
-                        <td><p><a href='#'>Manage Shipping address</a></p></tr>
+                        <td><p><a href='/my_account/shipping_address/'>Manage Shipping address</a></p></tr>
                         <td><p><a href='#'>View cart</a></p></tr>
                         <td><p><a href='#'>Request change password</a></p></tr>
                     </table>

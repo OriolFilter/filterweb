@@ -1,7 +1,7 @@
 <?php
 ;
 ;include "../private/global_vars.php";
-;$scripts="<script src='/src/js/products_script.js'></script>";
+;$scripts="<script src='/src/js/cart.js'></script>";
 ;$page_vars = new page_vars();
 ;$hotashi = new hotashi;
 ;$page_vars->scripts=$scripts;

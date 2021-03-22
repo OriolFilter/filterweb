@@ -103,6 +103,9 @@
     {
         /* page content*/
         public $hostname='localhost';
+//        $hostname='192.168.1.46';
+//        $hostname='172.30.2.20';
+
         public $title='Arcade Shop';
         public $scripts='';
         public $contact_phone='+34 689543670';
@@ -122,8 +125,8 @@
                             <meta name="viewport" content="width=device-width, initial-scale=1.0">'
                 .($this->title?sprintf('<title>%s</title>',$this->title):'<title>ArcadeShop</title>').
                 /* default scripts */
-                '<script src="/src/js/jquery.min.js">
-                <script src="/src/js/utilities/logout.js"></script>'.
+                '<script src="/src/js/jquery.min.js"></script>'.
+                ((isset($hotahsi->uloged)&&$hotahsi->uloged)?'<script src="/src/js/utilities/logout.js"></script>':null).
                 ($this->scripts??null).
                             '</head>
                         <body>
@@ -377,11 +380,6 @@ class hotashi {
         } else {
             $this->sa_pcode = $sa_pcode[0];
         }
-        if (!(@preg_match("/^[\w\W]+$/", $_REQUEST['sa_pcode'], $sa_pcode))) {
-            throw new ShippingAddressPostalCodeError();
-        } else {
-            $this->sa_pcode = $sa_pcode[0];
-        }
         if (!(@preg_match("/^[\w\W]{5,200}$/", $_REQUEST['sa_add1'], $sa_add1))) {
             throw new ShippingAddressLine1Error();
         } else {
@@ -621,10 +619,11 @@ class db_manager {
             $data_n = pg_fetch_all_columns($res,0); //number
             $data_s = pg_fetch_all_columns($res,1); //string
             foreach ($data_s as $key => $value) {
-                $train->shipping_address_obj_array[$data_n[$key]]=$value;
-                unset($clave);
+                $train->payment_methods_obj_array[$data_n[$key]]=$value;
+                unset($value);
                 unset($key);
             }
+
 //            $data =  pg_fetch_all($res);
 //            echo var_dump($data);
 //            for ($i = 1; $i <= 10; $i++) {
@@ -668,8 +667,9 @@ class db_manager {
         ;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=shop_db user=test password=test") or die('connection failed');
         if (!pg_connection_busy($dbconn)) {
             ;$result = pg_prepare($dbconn, "del_shipping_address_q", 'call proc_remove_shipping_address_from_stoken($1,$2)');
+
             ;$res=pg_get_result($dbconn);
-            ;$result = pg_send_execute($dbconn, "del_shipping_address_q",array($hotashi->stoken,$hotashi->said));
+            ;$result = pg_send_execute($dbconn, "del_shipping_address_q",array($hotashi->stoken,$hotashi->sa_id));
             ;$err=pg_last_notice($dbconn);
             ;$res=pg_get_result($dbconn);
             ;$state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
@@ -679,20 +679,34 @@ class db_manager {
     public function get_shipping_address($hotashi,$train){
         ;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=shop_db user=test password=test") or die('connection failed');
         if (!pg_connection_busy($dbconn)) {
-            ;$result = pg_prepare($dbconn, "sel_payment_method_q", 'select payment_method_row_number,payment_method_name from func_return_payment_methods_from_stoken($1);');
+            ;$result = pg_prepare($dbconn, "sel_shipping_address_q", 'select sa_row_number ,sa_country ,sa_city  , sa_postal_code ,sa_line1 ,sa_line2  ,sa_line3 from func_return_shipping_address_from_stoken($1);');
+//
             ;$res=pg_get_result($dbconn);
-            ;$result = pg_send_execute($dbconn, "sel_payment_method_q",array($hotashi->stoken));
+            ;$result = pg_send_execute($dbconn, "sel_shipping_address_q",array($hotashi->stoken));
             ;$err=pg_last_notice($dbconn);
             ;$res=pg_get_result($dbconn);
             ;$state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
             $this->error_manager->pg_error_handler($state);
             ;$payment_obj = new  payment_methods();
-            $data_n = pg_fetch_all_columns($res,0); //number
-            $data_s = pg_fetch_all_columns($res,1); //string
-            foreach ($data_s as $key => $value) {
-                $train->payment_methods_obj_array[$data_n[$key]]=$value;
-                unset($clave);
+            $row = pg_fetch_all_columns($res,0); //number
+            $country = pg_fetch_all_columns($res,1); //string
+            $city = pg_fetch_all_columns($res,2); //string
+            $p_code = pg_fetch_all_columns($res,3); //string
+            $line1 = pg_fetch_all_columns($res,4); //string
+            $line2 = pg_fetch_all_columns($res,5); //string
+            $line3 = pg_fetch_all_columns($res,6); //string
+            foreach ($country as $key=>$value) {
+                $obj=new shipping_address_obj();
+                $obj->sa_row=$row[$key];
+                $obj->sa_country=$country[$key];
+                $obj->sa_city=$city[$key];
+                $obj->sa_pcode=$p_code[$key];
+                $obj->sa_add1=$line1[$key];
+                $obj->sa_add2=$line2[$key];
+                $obj->sa_add3=$line3[$key];
                 unset($key);
+                unset($value);
+                array_push($train->shipping_address_obj_array,$obj);
             }
         } else {throw new DatabaseConnectionError();
         }
@@ -711,7 +725,17 @@ class db_manager {
         public function format_php(){ /* ??? */
         }
     }
-     /* Format objects for html */
+    class shipping_address_obj { /* USED */
+        public $sa_country;
+        public $sa_city;
+        public $sa_pcode; /* postal code*/
+        public $sa_add1;
+        public $sa_add2;
+        public $sa_add3;
+        public $sa_row; /* Row in select */
+    }
+     /* Format 'objects' for html */
+
     class builder {
 
         public function return_payment_info_list_content($train_pminfo) {
@@ -722,18 +746,18 @@ class db_manager {
                     "<li class='labelListElementBox'>
                         <div class='pmContentBox'>
                             <div class='labelListContentBox'>
-                                <p class='pmname'>$value</p>
-                                <p class='pmname'>0123 4567 8222?</p>
+                                <p class='pmname'><span class='user_info'>".htmlspecialchars($value)."</span></p>
+                                <p class='pminfo'><span class='user_info'>0123 4567 8222?</span></p>
                             </div>
                             <span class='remove_payment' id='$key'>&times;</span>
                         </div>
                   </li>";
                 $list = $list.$element;
+                unset($value);
+                unset($element);
+                unset($key);
             }
 //                                <span id='pmid' hidden>$key</span>
-            unset($clave);
-            unset($element);
-            unset($key);
             return $list;
 //                                <span class='closeButton'>&times;</span>
 
@@ -753,5 +777,41 @@ class db_manager {
 //                                    <span id='ptitle'>info</span>
 //                                    <span class='close'>&times;</span>"
 //        ."</li>
+    public function return_shipping_address_list_content($train_sainfo)
+    {
+        /* For form_oobj */
+        $list = '';
+        foreach ($train_sainfo as $key => $value) {
+            $element =
+                "<li class='labelListElementBox'>
+                    <div class='pmContentBox'>
+                        <div class='labelListContentBox'>
+                            <p class='sa_country'>Country code: <span class='user_info'>".htmlspecialchars($train_sainfo[$key]->sa_country)."</span></p>
+                            <p class='sa_city'>City: <span class='user_info'>".htmlspecialchars($train_sainfo[$key]->sa_city)."</span></p>
+                            <p class='sa_pcode'>Postal code: <span class='user_info'>".htmlspecialchars($train_sainfo[$key]->sa_pcode)."</span></p>
+                            <p class='sa_add1'>Address information line 1: <span class='user_info'>".htmlspecialchars($train_sainfo[$key]->sa_add1)."</span></p>
+                            <p class='sa_add2'>Address information line 2: <span class='user_info'>".htmlspecialchars($train_sainfo[$key]->sa_add2)."</span></p>
+                            <p class='sa_add3'>Address information line 3: <span class='user_info'>".htmlspecialchars($train_sainfo[$key]->sa_add3)."</span></p>
+                        </div>
+                        <span class='remove_shipping' id='".htmlspecialchars($train_sainfo[$key]->sa_row)."'>&times;</span>
+                    </div>
+                </li>";
+            $list = $list . $element;
+            unset($value);
+            unset($element);
+            unset($key);
+
+//            public $sa_country;
+//            public $sa_city;
+//            public $sa_pcode; /* postal code*/
+//            public $sa_add1;
+//            public $sa_add2;
+//            public $sa_add3;
+//            public $sa_row; /* Row in select */
+
+        }
+//                                <span id='pmid' hidden>$key</span>
+        return $list;
+    }
     }
 ?>

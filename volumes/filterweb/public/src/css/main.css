@@ -320,7 +320,7 @@ html {
 #loading {
     width: 60px;
     height: 60px;
-    background-image: url("/ src/images/loading_01.gif");
+    background-image: url("/src/images/loading_01.gif");
     background-repeat: no-repeat;
     background-size: contain;
 }
@@ -622,8 +622,10 @@ div#pquant{
     border-width: 7px;
     border-color: #5f5f5f;
 }
-.pmContentBox{
+.pmContentBox, .saContentBox, .add_new_element{
     min-width: fit-content;
+    /*width: -moz-fit-content;*/
+    width: auto;
     display: flex;
     flex-wrap: nowrap;
     flex-direction: column;
@@ -634,30 +636,32 @@ div#pquant{
     border-radius: 4px;
     border-style: solid;
     border-width: 2px;
-    border-color: rgb(255, 209, 85);
     margin: 5px;
     padding: 10px;
     /*font-family: arial, Times new roman, monospace;*/
     font-size: 25px;
-
 }
+.pmContentBox, .saContentBox{
+    border-color: rgb(255, 209, 85);
+}
+.add_new_element {
+    border-color: rgb(173, 255, 150);
+}
+
+
 
 /*#cartList {*/
 /*    width: fit-content;*/
 /*    width: -moz-fit-content;*/
 /*}*/
-.pmContentBox {
-    width: fit-content;
-    width: -moz-fit-content;
-}
-.pmContentBox ul {
+.pmContentBox ul, .pmContentBox ul {
     list-style-type: none;
     padding: 0 10vw;
     margin: 2vw 2vw;
     border-radius: 40px;
 }
 
-.pmContentBox ul li {
+.pmContentBox ul li, .saContentBox ul li{
     border: 1px solid #ddd;
     margin-top: -1px; /* Prevent double borders */
     background-color: #353333;
@@ -668,14 +672,14 @@ div#pquant{
     position: relative;
 }
 
-.pmContentBox ul li:hover {
+.pmContentBox ul li:hover, .saContentBox ul li:hover {
     background-color: #5f5f5f;
 }
 
 .labelListContentBox {
     order: 0;
 }
-.remove_payment {
+.remove_payment, .remove_shipping {
     cursor: pointer;
     position: relative;
     /*top: 50%;*/
@@ -684,7 +688,7 @@ div#pquant{
     transform: translate(0%, -50%);
     order: 1;
 }
-.add_pmButton {
+.add_pmButton, .add_saButton  {
     cursor: pointer;
     position: relative;
     /*top: 50%;*/
@@ -694,10 +698,10 @@ div#pquant{
     order: 1;
 }
 
-.remove_payment:hover {background: rgba(255, 255, 255, 0.52);}
+.remove_payment:hover, .remove_shipping:hover {background: rgba(255, 255, 255, 0.52);}
 
 
-.pmContentBox {
+.pmContentBox, .saContentBox {
     min-width: fit-content;
     display: flex;
     flex-wrap: nowrap;
@@ -706,4 +710,12 @@ div#pquant{
     justify-content: center;
     align-items: center;
     width: auto;
+}
+.user_info{
+    color: #ff7d7d;
+}
+
+/*https://stackoverflow.com/questions/49719774/whats-the-correct-way-to-display-multi-line-text*/
+.multiline {
+    white-space: pre-wrap;
 }

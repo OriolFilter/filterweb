@@ -34,7 +34,7 @@ try {
         $hotashi->get_login_cookies();
 //        $hotashi->login_from_stoken();
         /* Database connection*/
-        $db_manager->get_payment_methods($hotashi,$train);
+        $db_manager->get_shipping_address($hotashi,$train);
         $json_obj->data['shipping_address']=$train->shipping_address_obj_array;
 
 

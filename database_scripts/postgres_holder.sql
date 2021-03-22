@@ -207,7 +207,7 @@ delete from user_payment_methods where 3 in (SELECT user_payment_method_id as up
 
 call proc_remove_payment_method_from_stoken('pRnQPKWvgJQN19xKY8eOHjc68T9rgscyrTK1DUuejBZVlPV67aRRk7U0dHZt',4);
 call proc_add_payment_method_from_stoken('YEz1JtviHVHnYIcSZNWooARAUU0Cj4B1RxyZDkP1EJhtVgQnuQlVA1IDbloP','paymentmethod01');
-select payment_method_row_number,payment_method_name from func_return_payment_methods_from_stoken('cdhDtwkqNYQLiEbPbVFDcSm8S56P7VDm0MBaWD1BJ1XEMxfEQqWGkubcl793');
+select payment_method_row_number,payment_method_name from func_return_payment_methods_from_stoken('PDbiAvKmHBSkSg33KMmPQ5uFLkiJG36THHnZq3QcH4RjCqgElBmMQ6cRYM7Y');
 -- delete from user_payment_methods where user_payment_method_id='4';
 -- select sq.pmid from (SELECT row_number() over (order by user_payment_method_id)::integer as rn, user_payment_method_id as pmid from user_payment_methods where user_id=22)
 --                                     as sq where sq.rn='4';
@@ -224,5 +224,5 @@ call proc_remove_shipping_address_from_stoken('HIBlnbNfvq6Av7VK8tkVCbSeONQrs4KdH
 
 select length('') = 0 ;
 select func_return_session_token_from_credentials('test1234','test1234');
-select * from func_return_shipping_address_from_stoken('HIBlnbNfvq6Av7VK8tkVCbSeONQrs4KdHWY806wExtmhDeafxMwWIlAKP4MW');
+select * from func_return_shipping_address_from_stoken('fvxHdHuAvtgkR7vAbsF225GueAeXaEO0SWBEE8bDNDUsplrUX7U4eiELFXPT');
 drop function func_return_shipping_address_from_stoken;

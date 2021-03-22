@@ -209,7 +209,7 @@ class ShippingAddressLine3Error  extends CustomError  implements DefinedErrors {
 }
 class ShippingAddressIdError  extends CustomError  implements DefinedErrors {
     public $error_code = '3.9.7';
-    public $message = 'Shipping address line 3 field does not meet the requirements';
+    public $message = 'Shipping address id does not meet the requirements';
     public $hint = 'Shipping address id must be a integer'; // Unused
 }
 
