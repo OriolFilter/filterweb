@@ -193,4 +193,10 @@ postgresql:
 
 ### Shipping address
 
-#### Confirm address
+- Confirm address
+- Improve regex
+
+### Add functionalities
+
+- Add products to database -> Add featured table
+- Allow orders -> 
