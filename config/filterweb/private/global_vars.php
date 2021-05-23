@@ -257,10 +257,7 @@
 
 
 class hotashi {
-    /* https://www.twitch.tv/hotashi */
-    /* nice accpr streams */
-
-    /* Moslty a user manager */
+    /* Mostly a "user" manager */
 
     /* tokens */
     public $stoken; //session token
@@ -471,11 +468,12 @@ class hotashi {
   }
 
 class db_manager {
+//    public static $dbconn;
     function __construct(){
         $this->error_manager= new error_manager;
+        $this->dbconn = @pg_connect("host=getenv('SHOP_DB_LOCATION', true) port=5432 dbname=shop_db user=test password=test");
     }
     public function register_user(&$hotashi){
-            $dbconn = @pg_connect("host=10.24.1.2 port=5432 dbname=shop_db user=test password=test");
             if ($dbconn && !pg_connection_busy($dbconn)) {
                 $result = pg_prepare($dbconn, "register_user_q", 'call register_user($1,$2,$3)');
                 $result = pg_send_execute($dbconn, "register_user_q", array($hotashi->uname, $hotashi->upass, $hotashi->umail));
