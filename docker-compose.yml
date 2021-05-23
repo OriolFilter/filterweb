@@ -19,6 +19,11 @@ services:
       build:
         context: dockerfiles
         dockerfile: dockerfiles/php
+        user: "${UID}"
+        gid: "${GID}"
+#        target:
+
+
       image: filtershop/php
       volumes:
 #        - ./config/filterweb/:/code
@@ -33,6 +38,8 @@ services:
     db:
       build:
         context: dockerfiles/postgresql
+        args:
+          BUILD_DATABASE_LIST: "shop contact_form"
       image: filtershop/postgresql
       ports:
         - target: 5432 # docker port
@@ -41,7 +48,6 @@ services:
       environment:
         POSTGRES_PASSWORD: test
         POSTGRES_USER: test
-        BUILD_DATABASE_LIST: ["shop" "contact_form"]
 #        POSTGRES_DB: shop_db
         POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256 --auth-local=scram-sha-256"
       volumes:
