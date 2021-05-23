@@ -1,5 +1,4 @@
 #!/bin/bash
-
 ##########################
 # @Oriol Filter Anson    #
 # @13/05/2021            #
@@ -8,7 +7,6 @@
 #########################################
 # Script intended for dockerfiles usage #
 #########################################
-
 
 ##############
 # COLOR VARS #
@@ -34,14 +32,18 @@ export PGPASSWORD="$POSTGRES_PASSWORD"
 #    VARS     #
 ###############
 
-declare -a DATABASE_ARR=($BUILD_DATABASE_LIST)
+
+# Reference
+# https://stackoverflow.com/questions/10586153/how-to-split-a-string-into-an-array-in-bash
+
+# DOESNT SUPPORT HAVING SPACES OR COMAS IN THE NAME, SINCE WILL USE THOSE CHARACTERS TO SPLIT INTO AN ARRAY
+declare -a DATABASE_ARR=( $( awk '{ gsub(","," "); gsub("  "," "); gsub(" ","\n"); print}' <<< $BUILD_DATABASE_LIST ) );
 
 ########
 # MAIN #
 ########
 
 printf "${COLOR_YELLOW}[!INFO] [$(date +%H:%m:%S)]${COLOR_DEFAULT} ${COLOR_BLUE}INITIATING DATABASE CREATION${COLOR_DEFAULT}\n"
-
 # Create a database for every entry in $DATABASE_ARR
 
 for database in "${DATABASE_ARR[@]}"
