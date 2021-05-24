@@ -1,0 +1,24 @@
+version: '3.8'
+services:
+ sftp: # PORT 23
+  image: atmoz/sftp
+  ports:
+    - target: 22
+      published: 23
+      protocol: tcp
+      mode: host
+  volumes:
+    - ./users.conf:/etc/sftp/users.conf:ro
+    - ./ssh_keys/ssh_host_rsa_key.pub:/etc/ssh/ssh_host_rsa_key.pub:ro
+    - ./ssh_keys/ssh_host_rsa_key:/etc/ssh/ssh_host_rsa_key:ro
+    - ./ssh_keys/ssh_host_ed25519_key:/etc/ssh/ssh_host_ed25519_key:ro
+    - ./ssh_keys/ssh_host_ed25519_key.pub:/etc/ssh/ssh_host_ed25519_key.pub:ro
+    # SSH keys
+    - ./user_ssh_keys/docker_backups.key.pub:/home/docker_backups/.ssh/authorized_keys:ro
+networks:
+  ssh_net:
+    driver: host
+    driver_opts:
+      parent: enp4s0
+    ipam:
+      driver: default
