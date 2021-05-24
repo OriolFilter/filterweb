@@ -44,7 +44,7 @@ finally {
     ;echo $page_vars->return_header($hotashi);
 
     ;$content =
-        ((isset($hotashi->uloged) && $hotashi->uloged)?
+        ((isset($hotashi->ulogged) && $hotashi->ulogged)?
             "
 
             <h3>My Payment Methods</h3>

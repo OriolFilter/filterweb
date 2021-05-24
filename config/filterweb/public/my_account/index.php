@@ -11,7 +11,7 @@ $hotashi->login_from_stoken($hotashi);
 
 
 ;$content =
-    ((isset($hotashi->uloged) && $hotashi->uloged)?
+    ((isset($hotashi->ulogged) && $hotashi->ulogged)?
     "<h3>My account</h3>
                     <table>
                         <tr>

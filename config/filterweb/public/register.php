@@ -11,7 +11,7 @@ include "../private/global_vars.php";
 
 ;echo $page_vars->return_header($hotashi);
 $content =
-    ((isset($hotashi->uloged) && $hotashi->uloged)?
+    ((isset($hotashi->ulogged) && $hotashi->ulogged)?
         /* User is already loged */
         "<form id='form'>
             <h3 id='error_form'>You are already loged!</h3>
