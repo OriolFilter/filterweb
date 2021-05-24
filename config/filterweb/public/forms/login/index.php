@@ -22,8 +22,6 @@ try {
             /* Get stoken */
         $db_manager->login_from_credentials($hotashi);
 
-//        $hotashi->login_from_stoken(); /* Placeholder*/
-
         /* Write cookies */
         $hotashi->fetch_cookies();
 

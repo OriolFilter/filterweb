@@ -434,16 +434,16 @@ class db_manager {
             $this->error_manager->pg_error_handler($state);
         }else {throw new DatabaseConnectionError();}
     }
-    public function account_recovery_from_email(hotashi &$hotashi){
+    public function account_password_recovery_from_email(hotashi &$hotashi){
         ;$dbconn = @pg_connect("host=10.24.1.2 port=5432 dbname=shop user=test password=test");
         if ($dbconn && !pg_connection_busy($dbconn)) {
-            $result = pg_prepare($dbconn, "get_email_and_activation_account_token", 'select username from users, func_return_change_password_code_from_email($1) where users.username=$1');
-            $result = pg_send_execute($dbconn, "get_email_and_activation_account_token", array($hotashi->umail));
+            $result = pg_prepare($dbconn, "q_get_email_and_account_password_update_token", 'select * from func_return_password_code_and_username_from_email($1)');
+            $result = pg_send_execute($dbconn, "q_get_email_and_account_password_update_token", array($hotashi->umail));
             $res = pg_get_result($dbconn);
             $state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
             $this->error_manager->pg_error_handler($state);
-            $hotashi->cptoken= pg_fetch_result($res,0);
-            $hotashi->uname= pg_fetch_result($res,1);
+            $hotashi->uname= pg_fetch_result($res,0,0);
+            $hotashi->cptoken= pg_fetch_result($res,0,1);
         }else {throw new DatabaseConnectionError();}
     }
     public function activate_account($hotashi){
@@ -472,8 +472,8 @@ class db_manager {
     public function get_activation_token_and_email_from_username(hotashi &$hotashi){
         $dbconn = @pg_connect("host={$this->shop_db_location} port=5432 dbname=shop user=test password=test");
         if ($dbconn && !pg_connection_busy($dbconn)) {
-            $result = pg_prepare($dbconn, "get_activation_token_and_email", 'select email from users users, func_return_activation_code($1) where users.username=$1');
-            $result = pg_send_execute($dbconn, "get_activation_token_and_email", array($hotashi->uname));
+            $result = pg_prepare($dbconn, "q_get_email_and_account_activation_token", 'select func_return_activation_code_and_email_from_username($1)');
+            $result = pg_send_execute($dbconn, "q_get_email_and_account_activation_token", array($hotashi->uname));
             $res = pg_get_result($dbconn);
             $state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
             $this->error_manager->pg_error_handler($state);

@@ -32,7 +32,7 @@ $content =
                     <button type='button' id='send_form'><ins>Log In</ins></button>
                 </form>
                 <p id='subform'><a href='/account_recovery.php'>Did you forgot your password?</a></p>
-                <p id='subform'>Don't have an account? <a href='/register.php'>Register!</a></p></div>"
+                <p id='subform'>Did lost access to the account? <a href='/register.php'>Register!</a></p></div>"
     )
 
 

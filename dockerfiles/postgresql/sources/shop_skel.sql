@@ -512,8 +512,20 @@ begin
     end case;
     select into v_string func_return_activation_code(v_uid);
     return v_string;
+end;
+$$ LANGUAGE plpgsql;
 
-
+create or replace function func_return_activation_code_and_email_from_username(p_username varchar)
+    returns table (email varchar,token varchar)
+as $$
+declare
+v_mail varchar;
+v_string varchar;
+begin
+    select into v_string func_return_activation_code(p_username);
+    select into v_mail us.email from users us where lower(us.username)=lower(p_username);
+--     return query select 'aaaaaaaaaaaaaaa'::varchar,'bbbbbbbbbbbb'::varchar;
+    return query select v_mail, v_string;
 end;
 $$ LANGUAGE plpgsql;
 
@@ -629,6 +641,19 @@ as $$
     end;
 
 $$ language plpgsql;
+
+create or replace function func_return_password_code_and_username_from_email(p_mail varchar)
+    returns table (uname varchar,token varchar)
+as $$
+declare
+    v_uname varchar;
+    v_string varchar;
+begin
+    select into v_string func_return_change_password_code_from_email(p_mail);
+    select into v_uname us.username from users us where lower(us.email)=lower(p_mail);
+    return query select v_uname, v_string;
+end;
+$$ LANGUAGE plpgsql;
 
 create or replace procedure proc_check_password_token_is_valid(p_token varchar)
 as $$

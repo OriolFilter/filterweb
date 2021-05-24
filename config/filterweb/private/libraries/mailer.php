@@ -76,16 +76,16 @@ class mailer_info{ /* podria juntar amb mailer (hauria)*/
 
         $link = sprintf('https://%s/tools/activate_account/?token=%s', $this->hostname, $this->token);
         $this->subject = 'Welcome to arcadeshop, here is your activation code';
-        $this->body = "<html><body><h2>Thanks for using our services!</h2><span style='color: mediumpurple'>Thanks for using our services, now that you have registered, it's time to activate your account!\n press the following link in order to activate your account</span>: <a href='{$link}'>ACTIVATE ACCOUNT<a/></p></body></html>";
+        $this->body = "<html><body><h2>Thanks for using our services!</h2><span style='color: mediumpurple'>Thanks for using our services, now that you have registered, it's time to activate your account!\n press the following link in order to activate your account:</span> <a href='{$link}'>ACTIVATE ACCOUNT<a/></p></body></html>";
         $this->altbody = "Thanks for using our services, now that you have registered, it's time to activate your account!\n access the following link in order to activate your account: {$link}";
     }
     public function prepare_password_updating_email(hotashi $hotashi) {
         $this->token = $hotashi->cptoken;
         $this->email = $hotashi->umail;
-        $link = sprintf('https://%s/tools/password_update/?token=%s', $this->hostname, $this->token);
+        $link = "https://{$this->hostname}/tools/password_update/?token={$this->token}";
         $this->subject = 'Welcome to arcadeshop, here is your password updating link';
-        $this->body = "<html><body><h2>Thanks for using our services!</h2><span style='color: mediumpurple'>Thanks for using our services, you received your password updating link for the user <span style='color: #1c9757'>{$hotashi->umail}</span> as requested</span>\n: <a style='color: #506dff' href='{$link}'></a><p><small>This message is fully automated, please do not reply to this message</small></p></body></html>";
-        $this->altbody = "Thanks for using our services!\nThanks for using our services, you received your password updating link for the user {$hotashi->umail} as requested:\n {$link}'>\nThis message is fully automated, please do not reply to this message";
+        $this->body = "<html><body><h2>Thanks for using our services!</h2><span style='color: mediumpurple'>Thanks for using our services, you received your password updating link for the user: <span style='color: #1c9757'>{$hotashi->uname}</span> as requested</span>\n: <a style='color: #506dff' href='{$link}'>CHANGE PASSWORD</a><p><small>This message is fully automated, please do not reply to this message</small></p></body></html>";
+        $this->altbody = "Thanks for using our services!\nThanks for using our services, you received your password updating link for the user {$hotashi->uname} as requested:\n {$link}'>\nThis message is fully automated, please do not reply to this message";
     }
     public function prepare_contact_form_email(hotashi $hotashi) {
         $this->email = $hotashi->fmail;
