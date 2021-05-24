@@ -34,7 +34,7 @@ try {
         $hotashi->get_account_recovery_vars();
 
         /* Database connection*/
-        $db_manager->account_recovery_from_email($hotashi);
+        $db_manager->account_password_recovery_from_email($hotashi);
 
         /* Mailer */
         $mailer_info->prepare_password_updating_email($hotashi);

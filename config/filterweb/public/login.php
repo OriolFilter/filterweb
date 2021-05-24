@@ -7,19 +7,19 @@ include "../private/global_vars.php";
 ;$hotashi = new hotashi;
 ;$page_vars->scripts=$scripts;
 ;$page_vars->title='Log In';
-$hotashi->login_from_stoken($hotashi);
+;$hotashi->login_from_stoken($hotashi);
 ;echo $page_vars->return_header($hotashi);
 ;
 
 $content =
-    ((isset($hotashi->uloged) && $hotashi->uloged)?
+    ((isset($hotashi->ulogged) && $hotashi->ulogged)?
         /* User is already loged */
         "<form id='form'>
             <h3 id='error_form'>You are already loged!</h3>
         </form>"
         :
         /* User is not loged */
-        "<form id='form'> 
+        "<form id='form'>
                     <h3>Log In</h3>
                     <table>
                         <tr>
@@ -32,7 +32,7 @@ $content =
                     <button type='button' id='send_form'><ins>Log In</ins></button>
                 </form>
                 <p id='subform'><a href='/account_recovery.php'>Did you forgot your password?</a></p>
-                <p id='subform'>Don't have an account? <a href='/register.php'>Register!</a></p></div>"
+                <p id='subform'>Did lost access to the account? <a href='/register.php'>Register!</a></p></div>"
     )
 
 

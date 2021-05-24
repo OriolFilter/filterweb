@@ -25,7 +25,7 @@ try {
         $db_manager->register_user($hotashi);
 
         /* Mail */
-        $mailer_info->prepare_registration_email($hotashi);
+        $mailer_info->prepare_activation_email($hotashi);
         $mailer->send_body($mailer_info);
 
         /* Success  */
@@ -37,10 +37,7 @@ catch (DefinedErrors $e ) {
     $e->formatJson($json_obj);
 }
 catch (Exception $e) {
-    $json_obj->status = 'failed';
-    $json_obj->error['code'] = 0;
-    $json_obj->error['message'] = 'Unknown error';
-    $json_obj->status_code = 0;
+    $json_obj->set_unknown_error();
 }
 finally {
     echo json_encode($json_obj);
