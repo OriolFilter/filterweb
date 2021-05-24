@@ -1,5 +1,5 @@
 <?php
-;/*Register form*/
+;/*Change password form*/
 /* Exceptions */
 
 /* Function */
