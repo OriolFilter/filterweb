@@ -12,5 +12,5 @@ services:
       SFTPREMOTE_DIR: ${SFTPREMOTE_DIR:-/backups}
       SFTPFILE_TO_UPLOAD: ${SFTPFILE_TO_UPLOAD:-/backupfolder/backupfile}
     volumes:
-      - ./backup_server/user_ssh_keys/docker_backups.key:/root/.ssh/id_rsa:rw
-      - ./backup_server/user_ssh_keys/docker_backups.key.pub:/root/.ssh/id_rsa.pub:rw
+      - ./backup_server/user_ssh_keys/docker_backups.key:/root/.ssh/id_rsa:ro
+      - ./backup_server/user_ssh_keys/docker_backups.key.pub:/root/.ssh/id_rsa.pub:ro
