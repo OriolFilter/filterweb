@@ -32,15 +32,14 @@ try {
 
     /* Main */
 
-        /* Get Vars */
-        $hotashi->get_change_password_vars();
+    /* Get Vars */
+    $hotashi->get_change_password_vars();
 
-        /* Database connection*/
-        $db_manager->change_account_password($hotashi);
+    /* Database connection*/
+    $db_manager->change_account_password($hotashi);
 
-        /* success */
-        $json_obj->status='success';
-        $json_obj->status_code=1;
+    /* success */
+    $json_obj->success();
 }
 catch (DefinedErrors $e ) {
     $e->formatJson($json_obj);
