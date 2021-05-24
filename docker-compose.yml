@@ -19,7 +19,7 @@ services:
 
            php:
             build:
-             context: dockerfiles
+             context: Dockerfiles
              dockerfile: php
             configs:
              - uid="${UID:-1000}"
@@ -38,7 +38,7 @@ services:
 
            shop_db:
             build:
-             context: dockerfiles/postgresql
+             context: Dockerfiles/postgresql
 #             args:
             image: filtershop/postgresql
             ports:
