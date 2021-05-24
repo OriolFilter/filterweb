@@ -10,7 +10,7 @@
 CREATE TABLE if not exists users (
     user_id serial,
     username VARCHAR ( 20 ) UNIQUE NOT NULL, /* instead of searching by lower(username) create index of all lower(usernames) with all passwords to check login credentials, or index of just lower(usernames) or lower(email) to check if username or email already exists*/
-    password VARCHAR ( 60 ) NOT NULL, /* crypted and salted, returns 60 lenght */
+    password VARCHAR ( 60 ) NOT NULL, /* encrypted and salted, returns 60 length */
     email VARCHAR ( 255 ) UNIQUE NOT NULL /* https://stackoverflow.com/questions/386294/what-is-the-maximum-length-of-a-valid-email-address */,
     --       email bytea UNIQUE NOT NULL, /* PD, no al final no */ /* al final si es guarda en hexa perque estalvies espais i no importen les majuscules*/
     --                          role_id serial NOT NULL,

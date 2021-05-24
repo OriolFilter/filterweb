@@ -1,8 +1,6 @@
 <?php
 
 //error_reporting(0);
-//;    $hostname='192.168.1.46';
-//    $hostname='172.30.2.20';
 // Date in the past
 
     /* Prevent Cache */
@@ -13,86 +11,26 @@
 
     $project_dir='/var/www';
     require_once $project_dir.'/private/libraries/error_codes.php';
-//    $mailer_file=$project_dir.'/private/libraries/mailer.php';
-//    $mailer_folder=$project_dir.'/private/libraries/PHPMailer';
-//    require_once '/var/www/private/libraries/error_codes.php';
-
-//    $hostname='localhost';
-
-//    $contact_phone='+34 689543670';
-//    $contact_email='filter.web.asix@gmail.com';
-
-//    /* %1 title, %2 scripts*/
-//    ;$top_format = '<!DOCTYPE html>
-//        <html lang="es">
-//        <head>
-//            <link rel="stylesheet" href="/src/css/main.css"/>
-//        <!--    <link rel="stylesheet" href="css/main_old.css"/>-->
-//            <link rel="stylesheet" media="screen and (max-width: 750px)" href="/src/css/small.css" type="text/css">
-//            <link rel="stylesheet" media="screen and (min-width: 750px) and (max-width: 1200px)" href="/src/css/medium.css" type="text/css">
-//            <meta charset="UTF-8">
-//            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-//            <title>%s</title>
-//        %s
-//        </head>
-//        <body>
-//        <header>
-//            <div id="logo">
-//                <a href="/index.php">
-//                <img src="/src/logo.png" alt="LOGO">
-//                </a>
-//            </div>
-//            <div id="nav-buttons">
-//                <nav>
-//                    <ul>
-//                        <li><a href="/joysticks.php">Joysticks</a></li>
-//                        <li><a href="/buttons.php">Buttons</a></li>
-//                        <li><a href="/contact.php">Contact us</a></li>
-//                    </ul>
-//                </nav>
-//            </div>
-//            <div id="right-buttons">
-//                <ul>'.
-//                    sprintf((isset($_COOKIE['loged']) && $_COOKIE['loged'])?'<li><a href="/my_account.php">account</a></li>':'<li><a href="/login.php">Log in</a></li>')
-//                    .
-//                    '<li hidden><a href="#">Log out</a></li>
-//                    <li><a href="/cart.php">Shopping Cart</a></li>
-//                </ul>
-//            </div>
-//        </header>
-//        <main>';
-//
-//    /* %1 phone*/
-//    /* %2 email*/
-//    $bot_format=sprintf('</main>
-//        <footer>
-//            <div id="info">
-//                <h4>Location</h4>
-//                <p>Barcelona barcelona c\Barcelona nº barcelona 087Ba</p>
-//                <p>Tel. %s</p>
-//            <!--<p>E-mail: <a href="mailto:%s">arcadeshop_bcn@gmail.com</a></p>-->
-//
-//            </div>
-//            <hr>
-//            <p id="copyright">Copyright © 2020 ArcadeShop. All rights reserved.</p>
-//            <!--    <p style="color: whitesmoke">*nota, els colors no seran aquests, ara mateix estan per poder veure les coses més facilment</p>-->
-//            </footer>
-//        </body>
-//        </html>',$contact_phone,$contact_email);
 
 //    /*functions*/
     /* Classes */
     /* Generate JSON */
     class json_response
     {
-        public $status=null;
-        public $status_code=null;
-        public $data=[];
-        public $error=[
+        public string|null $status='';
+        public string|null $status_code='';
+        public array $data=[];
+        public array $error=[
             "code"=>null,
             "message"=>null,
             "hint"=>null
         ];
+        public function set_unknown_error(){
+            $this->status = 'failed';
+            $this->error['code'] = '0';
+            $this->error['message'] = 'Unknown error';
+            $this->status_code = '0';
+        }
         public function success(){
             $this->status='success';
             $this->status_code=1;
@@ -102,18 +40,17 @@
     class page_vars
     {
         /* page content*/
-        public $hostname='localhost';
-//        $hostname='192.168.1.46';
-//        $hostname='172.30.2.20';
+        public string $hostname;
+        public string $title='Arcade Shop';
+        public string $scripts='';
+        public string $contact_phone='+34 689543670';
+        public string $contact_email='filter.web.asix@gmail.com';
 
-        public $title='Arcade Shop';
-        public $scripts='';
-        public $contact_phone='+34 689543670';
-        public $contact_email='filter.web.asix@gmail.com';
-
-
-        public function return_header($hotahsi=null){
-//            ($hotahsi?$hotahsi->login_from_stoken():null);
+        public function __construct(){
+            $this->hostname=getenv('HOSTNAME', true);
+        }
+        public function return_header($hotahsi=null): string
+        {
             return ('<!DOCTYPE html>
                         <html lang="es">
                         <head>
@@ -122,10 +59,10 @@
                             <link rel="stylesheet" media="screen and (max-width: 750px)" href="/src/css/small.css" type="text/css">
                             <link rel="stylesheet" media="screen and (min-width: 750px) and (max-width: 1200px)" href="/src/css/medium.css" type="text/css">
                             <meta charset="UTF-8">
-                            <meta name="viewport" content="width=device-width, initial-scale=1.0">'
-                .($this->title?sprintf('<title>%s</title>',$this->title):'<title>ArcadeShop</title>').
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                            <title>'.($this->title?:'ArcadeShop').
                 /* default scripts */
-                '<script src="/src/js/jquery.min.js"></script>'.
+                '</title><script src="/src/js/jquery.min.js"></script>'.
                 ((isset($hotahsi->uloged)&&$hotahsi->uloged)?'<script src="/src/js/utilities/logout.js"></script>':null).
                 ($this->scripts??null).
                             '</head>
@@ -148,15 +85,13 @@
                             <div id="right-buttons">
                                 <ul>'.
                                 /* HEADER LINKS */
-//                                ((isset($hotahsi->uloged)&&$hotahsi->uloged)?'<li><a href="/my_account.php">account</a></li><li><a id="logout_button" href="/">Log Out</a></li>':'<li><a href="/login.php">Log in</a></li>')
                                 ((isset($hotahsi->uloged)&&$hotahsi->uloged)?'<li><a href="/my_account">account</a></li><li><a href="#" id="logout_button" >Log Out</a></li>':'<li><a href="/login.php">Log in</a></li>').
-//                                ((isset($_COOKIE['loged']))?'<li><a href="/my_account.php">account</a></li>':'<li><a href="/login.php">Log in</a></li>')
                                 '<li hidden><a href="#">Log out</a></li>'.
                                     '<li><a href="/cart.php">Shopping Cart'.
                                             ((isset($_COOKIE['number_cart_items']) && isset($_COOKIE['loged'])) ?
                                                     '('.$_COOKIE['number_cart_items'].')'
                                                 :
-                                                    null)
+                                                    null) // under construction
                                                     .'</a></li>
                                 </ul>
                             </div>
@@ -191,106 +126,46 @@
             require_once $mailer_file;
         }
     }
-/* UNUSED  i desfassed*/
-    /*class json_error_codes{
-        public $codes=[
-        '0'=>'Unknown error',
-
-        '1'=>'Success',
-
-        '2'=>'Missing field(s)',
-        '2.1'=>'Username field is missing',
-        '2.2'=>'Password field is missing',
-        '2.3'=>'Email field is missing',
-        '2.4'=>'Repeat password field is missing',
-        '2.5'=>'Repeat email field is missing',
-
-        '3'=>'Requirements not achieved',
-        '3.1'=>'Username does not meet the requirements',
-        '3.2'=>'Password does not meet the requirements',
-        '3.3'=>'Email does not meet the requirements',
-
-        '4'=>'Field matching',
-        '4.1'=>'Passwords don\'t match',
-        '4.2'=>'Emails don\'t match',
-
-        '5'=>'Client-Server errors',
-        '5.1'=>'There was a unknown error sending the data, please, try again bit later, if this error is consistent please contact an administrator.',
-        '5.2'=>'Server under maintenance, please, try again bit later.',
-
-        '6'=>'Database side error',
-        '6.1'=>'Data Insert errors',
-        '6.1.1'=>'Username is already in use',
-        '6.1.2'=>'Email is already in use',
-
-
-        '6.2'=>'Data Select errors',
-        '6.2.1'=>'Username not found',
-        '6.2.2'=>'User_id not found',
-        '6.2.3'=>'Email not found',
-        '6.2.4'=>'Token not found',
-
-        '6.3'=>'Tokens',
-        '6.3.1'=>'Token not valid',
-        '6.3.2'=>'Token already used',
-        '6.3.3'=>'Token expired',
-        '6.3.4'=>'Token is null or empty',
-
-        '6.4'=>'Database connection error',
-        '6.4.1'=>'Error communicating to database',
-        '6.4.2'=>'Wrong credentials connecting to database',
-        '6.4.3'=>'The user don\'t has permission for the requested action(s)',
-
-        '7'=>'Account related issues',
-        '7.1'=>'The account is not activated',
-        '7.2'=>'The account is already activated',
-        '7.3'=>'The account been banned',
-
-        '8'=> 'PHP mailer issues',
-        '8.1'=> 'Email couldn\'t be send',
-        '8.2'=> 'Email address is missing',
-        '8.3'=> 'Body is missing',
-        '8.4'=> 'Subject is missing',
-        ];
-    }*/
-    /* Regex? Ho podria fer... */
-
 
 class hotashi {
-    /* Mostly a "user" manager */
+    /* Mostly a "user" manager or a variable storing*/
 
     /* tokens */
-    public $stoken; //session token
-    public $atoken; //activation token
-    public $cptoken; //change password token
-    public $cppass; //change password Password
+    public string|null $stoken; //session token
+    public string|null $atoken; //activation token
+    public string|null $cptoken; //change password token
+    public string|null $cppass; //change password Password
     /* user accoun t */
-    public $uname; // user name
-    public $upass; // user password
-    public $umail; // user email
-    public $uloged=false; // user is loged? set after credentials, used to format page, default false, just set loged when all correct, still changing value when invalid
+    public string|null $uname; // user name
+    public string|null $upass; // user password
+    public string|null $umail; // user email
+    public bool $uloged=false; // user is loged? set after credentials, used to format page, default false, just set logged when all correct, still changing value when invalid
     /* contact form*/
-    public $fname; // form name
-    public $fmail; // form mail
-    public $ftext; // form text
-    public $cookies=[];
+    public string|null $fname; // form name
+    public string|null $fmail; // form mail
+    public string|null $ftext; // form text
+    public array $cookies=[]; // unused
     /* User Info */
     /* Payment methods */
-    public $pmname; // Payment method name
-    public $pmdata; // Payment method data, not used
-    public $pmid; // Payment method number id (row number in select)
+    public string|null $pmname; // Payment method name
+    public string|null $pmdata; // Payment method data, not used
+    public string|null $pmid; // Payment method number id (row number in select)
     /* Shipping address */
-    public $sa_country;
-    public $sa_city;
-    public $sa_pcode; /* postal code*/
-    public $sa_add1;
-    public $sa_add2;
-    public $sa_add3;
-    public $sa_id; /* Row in select */
+    public string|null $sa_country;
+    public string|null $sa_city;
+    public string|null $sa_pcode; /* postal code*/
+    public string|null $sa_add1;
+    public string|null $sa_add2;
+    public string|null $sa_add3;
+    public string|null $sa_id; /* Row in select */
 
 
     /* Get post*/
         /* login/register */
+    /**
+     * @throws PasswordNotValidError
+     * @throws UsernameNotValidError
+     */
     public function get_login_vars() {
     /* Get and validate vars  */
       isset($_REQUEST['uname'])?$this->uname = $_REQUEST['uname']:throw new UsernameNotValidError();
@@ -318,6 +193,10 @@ class hotashi {
       }
     }
         /* account recovery */
+    /**
+     * @throws PasswordNotValidError
+     * @throws TokenNullOrEmptyError
+     */
     public function get_change_password_vars() {
       /* Get and validate vars  */
         isset($_REQUEST['token'])?$this->cptoken = $_REQUEST['token']:throw new TokenNullOrEmptyError();
@@ -336,16 +215,25 @@ class hotashi {
         $this->umail=$email;
     }
         /* payment methods*/
+    /**
+     * @throws TokenNullOrEmptyError
+     * @throws PaymentMethodNameNotValidError
+     */
     public function get_add_payment_method_vars() {
         /* Get and validate vars  */
         isset($_COOKIE['session_token'])?$this->stoken = $_COOKIE['session_token']:throw new TokenNullOrEmptyError();
 
-        if (!(@preg_match("/^[a-zA-Z0-9_ ]{6,20}+$/", $_REQUEST['pmname'], $pmname))) {
+        if (!(@preg_match("/^[a-zA- Z0-9_ ]{6,20}+$/", $_REQUEST['pmname'], $pmname))) {
             throw new PaymentMethodNameNotValidError();
         } else {
             $this->pmname = $pmname[0];
         }
     }
+
+    /**
+     * @throws PaymentMethodIdError
+     * @throws TokenNullOrEmptyError
+     */
     public function get_delete_payment_method_vars() {
         /* Get and validate vars  */
         isset($_COOKIE['session_token'])?$this->stoken = $_COOKIE['session_token']:throw new TokenNullOrEmptyError();
@@ -358,6 +246,15 @@ class hotashi {
     }
 
     /* shipping address */
+    /**
+     * @throws TokenNullOrEmptyError
+     * @throws ShippingAddressLine2Error
+     * @throws ShippingAddressLine1Error
+     * @throws ShippingAddressPostalCodeError
+     * @throws ShippingAddressLine3Error
+     * @throws ShippingAddressCountryError
+     * @throws ShippingAddressCityError
+     */
     public function get_add_shipping_address_vars() {
         /* Get and validate vars  */
         isset($_COOKIE['session_token'])?$this->stoken = $_COOKIE['session_token']:throw new TokenNullOrEmptyError();
@@ -393,6 +290,11 @@ class hotashi {
             $this->sa_add3 = $sa_add3[0];
         }
     }
+
+    /**
+     * @throws TokenNullOrEmptyError
+     * @throws ShippingAddressIdError
+     */
     public function get_delete_shipping_address_vars() {
         /* Get and validate vars  */
         isset($_COOKIE['session_token'])?$this->stoken = $_COOKIE['session_token']:throw new TokenNullOrEmptyError();
@@ -404,9 +306,16 @@ class hotashi {
         }
     }
     /* tokens */
+    /**
+     * @throws TokenNullOrEmptyError
+     */
     public function get_change_password_token(){
       isset($_REQUEST['token'])?$this->cptoken = $_REQUEST['token']:throw new TokenNullOrEmptyError();
     }
+
+    /**
+     * @throws TokenNullOrEmptyError
+     */
     public function get_activate_account_token(){
       isset($_REQUEST['token'])?$this->atoken = $_REQUEST['token']:throw new TokenNullOrEmptyError();
     }
@@ -417,7 +326,7 @@ class hotashi {
     }
     public function fetch_cookies(){
       setcookie(name: 'session_token', value: $this->stoken, expires_or_options: time() + (86400 * 1), path: "/",secure: true); /* 1 dia x 1 tot i que les sessions duren 30 minuts */
-      error_log(sprintf('Sended token %s',$this->stoken));
+      error_log(sprintf('Sent token %s',$this->stoken));
     //            $this->stoken=$_COOKIE['session_token']??null;
     }
     public function drop_cookies(){
@@ -433,15 +342,18 @@ class hotashi {
               $this->fetch_cookies(); /* Rewrites cookies */
               $this->uloged=true;
           }
-          catch (DefinedErrors $e) {
-    //                    $e->
+          catch (DefinedErrors ) {
               $this->drop_cookies();
               $this->uloged=false;
-          } finally { null;
           }
       }
     }
     /* contact */
+    /**
+     * @throws NameNotValidError
+     * @throws TextNotValidError
+     * @throws EmailNotValidError
+     */
     public function get_contact_form_vars(){
       if (!(@preg_match("/^[\w0-9 ]{4,40}$/", $_REQUEST['name'], $name))) {
           throw new NameNotValidError();
@@ -460,20 +372,18 @@ class hotashi {
           $this->ftext = $text[0];
       }
     }
-
-    //      public function check_login(){
-    //          setcookie(session_token, $cookie_value, time() + (86400 * 30), "/"); // 86400 = 1 day
-    //      }
-
   }
 
 class db_manager {
 //    public static $dbconn;
+    private string $shop_db_location;
     function __construct(){
         $this->error_manager= new error_manager;
-        $this->dbconn = @pg_connect("host=getenv('SHOP_DB_LOCATION', true) port=5432 dbname=shop_db user=test password=test");
+        $this->shop_db_location=getenv('SHOP_DB_LOCATION', true);
     }
-    public function register_user(&$hotashi){
+
+    public function register_user(hotashi &$hotashi){
+            $dbconn = @pg_connect("host={$this->shop_db_location} port=5432 dbname=shop user=test password=test");
             if ($dbconn && !pg_connection_busy($dbconn)) {
                 $result = pg_prepare($dbconn, "register_user_q", 'call register_user($1,$2,$3)');
                 $result = pg_send_execute($dbconn, "register_user_q", array($hotashi->uname, $hotashi->upass, $hotashi->umail));
@@ -491,8 +401,9 @@ class db_manager {
             }
             else {throw new DatabaseConnectionError();}
         }
+
     public function check_change_password_token($hotashi){
-        ;$dbconn = @pg_connect("host=10.24.1.2 port=5432 dbname=shop_db user=test password=test");
+        ;$dbconn = @pg_connect("host=10.24.1.2 port=5432 dbname=shop user=test password=test");
 
         if ($dbconn && !pg_connection_busy($dbconn)) {
             $result = pg_prepare($dbconn, "check_cptoken_q", 'call proc_check_password_token_is_valid($1)');;
@@ -504,7 +415,7 @@ class db_manager {
         else {throw new DatabaseConnectionError();}
       }
     public function change_account_password($hotashi){
-        $dbconn = @pg_connect("host=10.24.1.2 port=5432 dbname=shop_db user=test password=test");
+        $dbconn = @pg_connect("host=10.24.1.2 port=5432 dbname=shop user=test password=test");
         if ($dbconn && !pg_connection_busy($dbconn)) {
             $result = pg_prepare($dbconn, "register_user_q", 'call proc_change_password_user($1,$2)');;
             $result = pg_send_execute($dbconn, "register_user_q", array($hotashi->cptoken, $hotashi->cppass));;
@@ -514,7 +425,7 @@ class db_manager {
         }else {throw new DatabaseConnectionError();}
     }
     public function account_recovery_from_email(&$hotashi){
-        ;$dbconn = @pg_connect("host=10.24.1.2 port=5432 dbname=shop_db user=test password=test");
+        ;$dbconn = @pg_connect("host=10.24.1.2 port=5432 dbname=shop user=test password=test");
         if ($dbconn && !pg_connection_busy($dbconn)) {
             $result = pg_prepare($dbconn, "get_token_q", 'select func_return_change_password_code_from_email($1)');
             $result = pg_send_execute($dbconn, "get_token_q", array($hotashi->umail));;
@@ -525,7 +436,7 @@ class db_manager {
         }else {throw new DatabaseConnectionError();}
     }
     public function activate_account($hotashi){
-        ;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=shop_db user=test password=test") or die('connection failed');
+        ;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=shop user=test password=test") or die('connection failed');
         if (!pg_connection_busy($dbconn)) {
             ;$result = pg_prepare($dbconn, "register_user_q", 'call proc_activate_account($1)');
             ;$res=pg_get_result($dbconn);
@@ -546,10 +457,23 @@ class db_manager {
             $this->error_manager->pg_error_handler($state);
         } else {throw new DatabaseConnectionError();}
     }
+    /* Account activation */
+    public function get_activation_token_and_email_from_username(hotashi &$hotashi){
+        $dbconn = @pg_connect("host={$this->shop_db_location} port=5432 dbname=shop user=test password=test");
+        if ($dbconn && !pg_connection_busy($dbconn)) {
+            $result = pg_prepare($dbconn, "get_activation_token_and_email", 'select email from users us, func_return_activation_code($1) where us.username=$1');
+            $result = pg_send_execute($dbconn, "get_activation_token_and_email", array($hotashi->uname));
+            $res = pg_get_result($dbconn);
+            $state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
+            $hotashi->umail = pg_fetch_result($res, 0);
+            $hotashi->atoken = pg_fetch_result($res, 1);
+        }
+        else {throw new DatabaseConnectionError();}
+    }
     /* Session*/
     public function login_stoken($hotashi) /* connection to db login using stoken (check token status)*/
-    { /* Under construction*/
-        $dbconn= @pg_connect("host=10.24.1.2 port=5432 dbname=shop_db user=test password=test");
+    {
+        $dbconn= @pg_connect("host=10.24.1.2 port=5432 dbname=shop user=test password=test");
         if ($dbconn && !pg_connection_busy($dbconn)) {
             $result = pg_prepare($dbconn, "check_stoken_q2", 'call proc_login_session_token($1);');
             $result = pg_send_execute($dbconn, "check_stoken_q2", array($hotashi->stoken));
@@ -566,7 +490,7 @@ class db_manager {
     public function login_from_credentials(&$hotashi)
     {
         /* $hotahsi->stoken = session token */;
-        $dbconn = @pg_connect("host=10.24.1.2 port=5432 dbname=shop_db user=test password=test");
+        $dbconn = @pg_connect("host=10.24.1.2 port=5432 dbname=shop user=test password=test");
         if ($dbconn && !pg_connection_busy($dbconn)) {
             $result = pg_prepare($dbconn, "get_stoken_q", 'select func_return_session_token_from_credentials($1,$2)');
             $result = pg_send_execute($dbconn, "get_stoken_q", array($hotashi->uname,$hotashi->upass));;
@@ -577,10 +501,10 @@ class db_manager {
         } else {
             throw new DatabaseConnectionError();
         }
-        }
+    }
     /* Payment methods */
     public function add_payment_method($hotashi){
-        ;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=shop_db user=test password=test") or die('connection failed');
+        ;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=shop user=test password=test") or die('connection failed');
         if (!pg_connection_busy($dbconn)) {
             ;$result = pg_prepare($dbconn, "add_payment_method_q", 'call proc_add_payment_method_from_stoken($1,$2)');
             ;$res=pg_get_result($dbconn);
@@ -592,7 +516,7 @@ class db_manager {
         } else {throw new DatabaseConnectionError();}
     }
     public function remove_payment_method($hotashi){
-        ;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=shop_db user=test password=test") or die('connection failed');
+        ;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=shop user=test password=test") or die('connection failed');
         if (!pg_connection_busy($dbconn)) {
             ;$result = pg_prepare($dbconn, "del_payment_method_q", 'call proc_remove_payment_method_from_stoken($1,$2)');
             ;$res=pg_get_result($dbconn);
@@ -604,7 +528,7 @@ class db_manager {
         } else {throw new DatabaseConnectionError();}
     }
     public function get_payment_methods($hotashi,$train){
-        ;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=shop_db user=test password=test") or die('connection failed');
+        ;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=shop user=test password=test") or die('connection failed');
         if (!pg_connection_busy($dbconn)) {
             ;$result = pg_prepare($dbconn, "sel_payment_method_q", 'select payment_method_row_number,payment_method_name from func_return_payment_methods_from_stoken($1);');
             ;$res=pg_get_result($dbconn);
@@ -613,7 +537,7 @@ class db_manager {
             ;$res=pg_get_result($dbconn);
             ;$state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
             $this->error_manager->pg_error_handler($state);
-            ;$payment_obj = new  payment_methods();
+//            ;$payment_obj = new  payment_methods();
             $data_n = pg_fetch_all_columns($res,0); //number
             $data_s = pg_fetch_all_columns($res,1); //string
             foreach ($data_s as $key => $value) {
@@ -621,36 +545,11 @@ class db_manager {
                 unset($value);
                 unset($key);
             }
-
-//            $data =  pg_fetch_all($res);
-//            echo var_dump($data);
-//            for ($i = 1; $i <= 10; $i++) {
-//                echo $i;
-//            }
-//            var_dump($data[1]);
-//            foreach ($data as $row) {
-//                echo "<p>{$row[0]}<p>";
-//                echo "<p>{vardump($data[$row])}</p>";
-//                echo vardump($data[$row]);
-//            }
-//            $data = pg_fetch_assoc ( $res,3);
-//            foreach ($data as $k => $d) {
-//                echo "{$d}->";
-//            }
-//            echo $res;
-//            echo  pg_affected_rows($res);
-//            $select = pg_fetch_all_columns($res, 1);
-//            foreach ( $select as $key) {
-//                 $arr[3] will be updated with each value from $arr...
-//                print_r($key);
-//            }
-
-
         } else {throw new DatabaseConnectionError();}
     }
     /* Shipping address */
     public function add_shipping_address($hotashi){
-        ;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=shop_db user=test password=test") or die('connection failed');
+        ;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=shop user=test password=test") or die('connection failed');
         if (!pg_connection_busy($dbconn)) {
             ;$result = pg_prepare($dbconn, "add_shipping_address_q", 'call proc_add_shipping_address_from_stoken($1,$2,$3,$4,$5,$6,$7);');
             ;$res=pg_get_result($dbconn);
@@ -662,7 +561,7 @@ class db_manager {
         } else {throw new DatabaseConnectionError();}
     }
     public function remove_shipping_address($hotashi){
-        ;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=shop_db user=test password=test") or die('connection failed');
+        ;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=shop user=test password=test") or die('connection failed');
         if (!pg_connection_busy($dbconn)) {
             ;$result = pg_prepare($dbconn, "del_shipping_address_q", 'call proc_remove_shipping_address_from_stoken($1,$2)');
 
@@ -674,8 +573,8 @@ class db_manager {
             $this->error_manager->pg_error_handler($state);
         } else {throw new DatabaseConnectionError();}
     }
-    public function get_shipping_address($hotashi,$train){
-        ;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=shop_db user=test password=test") or die('connection failed');
+    public function get_shipping_address($hotashi, $train){
+        ;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=shop user=test password=test") or die('connection failed');
         if (!pg_connection_busy($dbconn)) {
             ;$result = pg_prepare($dbconn, "sel_shipping_address_q", 'select sa_row_number ,sa_country ,sa_city  , sa_postal_code ,sa_line1 ,sa_line2  ,sa_line3 from func_return_shipping_address_from_stoken($1);');
 //
@@ -685,7 +584,7 @@ class db_manager {
             ;$res=pg_get_result($dbconn);
             ;$state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
             $this->error_manager->pg_error_handler($state);
-            ;$payment_obj = new  payment_methods();
+//            ;$payment_obj = new  payment_methods();
             $row = pg_fetch_all_columns($res,0); //number
             $country = pg_fetch_all_columns($res,1); //string
             $city = pg_fetch_all_columns($res,2); //string
@@ -713,103 +612,74 @@ class db_manager {
 }
     class train {
         /* get arrays of objects to later print/manage the content */
-        public $payment_methods_obj_array=[];
-        public $shipping_address_obj_array=[]; /* ATM IS A DICTIONARY NOT AN ARRAY OF OBJECTS*/
+        public array $payment_methods_obj_array=[];
+        public array $shipping_address_obj_array=[]; /* ATM IS A DICTIONARY NOT AN ARRAY OF OBJECTS*/
     }
 
     class payment_methods { /* Unused */
-        public $name=null;
-        public $number=null;
-        public function format_php(){ /* ??? */
-        }
+        public string $name='';
+        public string $number='';
     }
     class shipping_address_obj { /* USED */
-        public $sa_country;
-        public $sa_city;
-        public $sa_pcode; /* postal code*/
-        public $sa_add1;
-        public $sa_add2;
-        public $sa_add3;
-        public $sa_row; /* Row in select */
+        public string|null  $sa_country;
+        public string|null  $sa_city;
+        public string|null  $sa_pcode; /* postal code*/
+        public string|null  $sa_add1;
+        public string|null  $sa_add2;
+        public string|null  $sa_add3;
+        public string|null  $sa_row; /* Row in select */
     }
      /* Format 'objects' for html */
 
     class builder {
 
-        public function return_payment_info_list_content($train_pminfo) {
+        public function return_payment_info_list_content(train $train_info)
+        {
             /* For form_oobj */
-            $list='';
-            foreach ($train_pminfo as $key => $value) {
+            $list = '';
+            foreach ($train_info as $key => $value) {
                 $element =
                     "<li class='labelListElementBox'>
                         <div class='pmContentBox'>
                             <div class='labelListContentBox'>
-                                <p class='pmname'><span class='user_info'>".htmlspecialchars($value)."</span></p>
+                                <p class='pmname'><span class='user_info'>" . htmlspecialchars($value) . "</span></p>
                                 <p class='pminfo'><span class='user_info'>0123 4567 8222?</span></p>
                             </div>
                             <span class='remove_payment' id='$key'>&times;</span>
                         </div>
                   </li>";
-                $list = $list.$element;
+                $list = $list . $element;
                 unset($value);
                 unset($element);
                 unset($key);
             }
-//                                <span id='pmid' hidden>$key</span>
             return $list;
-//                                <span class='closeButton'>&times;</span>
-
-//            "<li class='labelListElement'>
-//                        <div id='labelListContentBox'>
-//                                <p id='pmname'>$value</p>
-//                                <pid='pmname'>0123 4567 8910?</p>
-//                                <span id='pmid' hidden>$key</span>
-//                                <span class='closeButton'>&times;</span>
-//                        </div>
-//                  </li>";
-//            for ()
         }
-//        "<li class='cartProduct'>
-//                                <div id='pinfo'>
-//                                    <span id='pmid' hidden></span>
-//                                    <span id='ptitle'>info</span>
-//                                    <span class='close'>&times;</span>"
-//        ."</li>
-    public function return_shipping_address_list_content($train_sainfo)
-    {
-        /* For form_oobj */
+    public function return_shipping_address_list_content(train $train_info): string
+            {
+        /* For form_obj */
         $list = '';
-        foreach ($train_sainfo as $key => $value) {
+        foreach ($train_info as $key => $value) {
             $element =
                 "<li class='labelListElementBox'>
                     <div class='pmContentBox'>
                         <div class='labelListContentBox'>
-                            <p class='sa_country'>Country code: <span class='user_info'>".htmlspecialchars($train_sainfo[$key]->sa_country)."</span></p>
-                            <p class='sa_city'>City: <span class='user_info'>".htmlspecialchars($train_sainfo[$key]->sa_city)."</span></p>
-                            <p class='sa_pcode'>Postal code: <span class='user_info'>".htmlspecialchars($train_sainfo[$key]->sa_pcode)."</span></p>
-                            <p class='sa_add1'>Address information line 1: <span class='user_info'>".htmlspecialchars($train_sainfo[$key]->sa_add1)."</span></p>
-                            <p class='sa_add2'>Address information line 2: <span class='user_info'>".htmlspecialchars($train_sainfo[$key]->sa_add2)."</span></p>
-                            <p class='sa_add3'>Address information line 3: <span class='user_info'>".htmlspecialchars($train_sainfo[$key]->sa_add3)."</span></p>
+                            <p class='sa_country'>Country code: <span class='user_info'>".htmlspecialchars($train_info[$key]->sa_country)."</span></p>
+                            <p class='sa_city'>City: <span class='user_info'>".htmlspecialchars($train_info[$key]->sa_city)."</span></p>
+                            <p class='sa_pcode'>Postal code: <span class='user_info'>".htmlspecialchars($train_info[$key]->sa_pcode)."</span></p>
+                            <p class='sa_add1'>Address information line 1: <span class='user_info'>".htmlspecialchars($train_info[$key]->sa_add1)."</span></p>
+                            <p class='sa_add2'>Address information line 2: <span class='user_info'>".htmlspecialchars($train_info[$key]->sa_add2)."</span></p>
+                            <p class='sa_add3'>Address information line 3: <span class='user_info'>".htmlspecialchars($train_info[$key]->sa_add3)."</span></p>
                         </div>
-                        <span class='remove_shipping' id='".htmlspecialchars($train_sainfo[$key]->sa_row)."'>&times;</span>
+                        <span class='remove_shipping' id='".htmlspecialchars($train_info[$key]->sa_row)."'>&times;</span>
                     </div>
                 </li>";
             $list = $list . $element;
             unset($value);
             unset($element);
             unset($key);
-
-//            public $sa_country;
-//            public $sa_city;
-//            public $sa_pcode; /* postal code*/
-//            public $sa_add1;
-//            public $sa_add2;
-//            public $sa_add3;
-//            public $sa_row; /* Row in select */
-
         }
-//                                <span id='pmid' hidden>$key</span>
         return $list;
-    }
+        }
     }
 ?>

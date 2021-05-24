@@ -7,7 +7,7 @@ include "../private/global_vars.php";
 ;$hotashi = new hotashi;
 ;$page_vars->scripts=$scripts;
 ;$page_vars->title='Log In';
-$hotashi->login_from_stoken($hotashi);
+;$hotashi->login_from_stoken($hotashi);
 ;echo $page_vars->return_header($hotashi);
 ;
 
@@ -19,7 +19,7 @@ $content =
         </form>"
         :
         /* User is not loged */
-        "<form id='form'> 
+        "<form id='form'>
                     <h3>Log In</h3>
                     <table>
                         <tr>

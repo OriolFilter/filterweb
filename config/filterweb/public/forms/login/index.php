@@ -34,6 +34,19 @@ try {
 }
 catch (DefinedErrors $e ) {
     $e->formatJson($json_obj);
+    if ($json_obj->error['code'] == '7.1' ){
+        /* #Import Mailer */
+        $page_vars->import_mailer();
+        $mailer = new mailer();
+        $mailer_info = new mailer_info($page_vars->hostname);
+        /* Import DB*/
+        $db_manager = new db_manager();
+        /* Get email and token */
+        $db_manager->get_activation_token_and_email_from_username($hotashi);
+        /* Prepare and send mail */
+        $mailer_info->prepare_activation_email($hotashi);
+        $mailer->send_body($mailer_info);
+    }
 }
 catch (Exception $e) {
     $json_obj->status = 'failed';

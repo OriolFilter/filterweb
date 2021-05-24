@@ -18,7 +18,7 @@ require_once $src_folder.'/SMTP.php';
 
 class mailer{
 //    public function send_body(string  $email,string $subject,string $body, string $altbody){
-    public function send_body($info){
+    public function send_body(mailer_info $info){
         /* $info
             email (email address to send the mail)
             subject
@@ -31,7 +31,7 @@ class mailer{
         $mail_server_pass='ITB2019015';
         $mail_to=$info->email;
 
-        try {
+//        try {
             //Server settings
             $mail->SMTPDebug = 0;                      //Enable verbose debug output
             $mail->isSMTP();                                            //Send using SMTP
@@ -54,24 +54,24 @@ class mailer{
             }
             $mail->send();
             return true;
-        } catch (Exception $e) {
-            throw new MailerSendError();
-        }
+//        } catch (Exception $e) {
+//            throw new MailerSendError();
+//        }
     }
 }
 
 class mailer_info{ /* podria juntar amb mailer (hauria)*/
-    public $email=null;
-    public $subject=null;
-    public $body=null;
-    public $altbody=null;
-    public $token=null;
-    public $hostname=null;
+    public string $email='';
+    public string $subject='';
+    public string $body='';
+    public string $altbody='';
+    public string $token='';
+    public string $hostname;
 
     function __construct($h=null){
-        $this->hostname=$h;
+        $this->hostname=getenv('HOSTNAME', true);
     }
-    public function prepare_registration_email($hotashi) {
+    public function prepare_activation_email($hotashi) {
         $this->token = $hotashi->atoken;
         $this->email = $hotashi->umail;
 
@@ -93,6 +93,11 @@ class mailer_info{ /* podria juntar amb mailer (hauria)*/
         $this->subject = 'Thanks for contacting ArcadeShop!';
         $this->body = sprintf("<html><body><h2>Thanks for making contact with our company!</h2><p><span style='color: mediumpurple'>Soon we will send a reply from your message if there is any other issue please don't hesitate and send another message.</span></p><p style='color: #5f5f5f'>Content from the contact:</p><p><span style='color: darkred'>Name: </span>%s</p><p><span style='color: darkred'>Message left: </span>%s</p><p><small>This message is fully automated, please do not reply to this message</small></p></body></html>", htmlspecialchars($hotashi->fname),htmlspecialchars($hotashi->ftext));
         $this->altbody = sprintf("Thanks for making contact with our company!\nSoon we will send a reply from your message if there is any other issue please don't hesitate and send another message.\n\nContent from the contact:\n\nName:%s\n\nMessage left:%s\n\n(This message is fully automated, please do not reply to this message)", htmlspecialchars($hotashi->fname),htmlspecialchars($hotashi->ftext));
+    }
+    public function doomy_email($destination){
+        $this->email = $destination;
+        $this->subject = 'This is a doomy email!!';
+        $this->body='hiii';
     }
 
    /*
