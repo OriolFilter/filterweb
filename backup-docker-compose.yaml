@@ -6,10 +6,11 @@ services:
     image: tools/backup_client
     environment:
       SFTPPORT: ${SFTPPORT:-22}
-      SFTPUSER: ${SFTPUSER:-backup_user}
-      SFTPPASSWORD: ${SFTPPASSWORD:-backup_password}
-      SFTPHOST: ${SFTPHOST:-backup.server.lan}
-      SFTPREMOTE_DIR: ${SFTPREMOTE_DIR:-/backups}
+      SFTPUSER: ${SFTPUSER:-docker_backups}
+      SFTPPASSWORD: ${SFTPPASSWORD:-docker_backups}
+      SFTPORIGINFOLDER:
+      SFTPHOST: ${SFTPHOST}
+      SFTPREMOTE_DIR: ${SFTPREMOTE_DIR}
       SFTPFILE_TO_UPLOAD: ${SFTPFILE_TO_UPLOAD:-/backupfolder/backupfile}
     volumes:
       - ./backup_server/user_ssh_keys/docker_backups.key:/root/.ssh/id_rsa:ro
