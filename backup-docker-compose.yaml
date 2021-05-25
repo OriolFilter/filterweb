@@ -5,13 +5,18 @@ services:
       context: Dockerfiles/backup_client
     image: tools/backup_client
     environment:
-      SFTPPORT: ${SFTPPORT:-22}
-      SFTPUSER: ${SFTPUSER:-docker_backups}
-      SFTPPASSWORD: ${SFTPPASSWORD:-docker_backups}
-      SFTPORIGINFOLDER:
+      SFTPPORT: ${SFTPPORT}
+      SFTPUSER: ${SFTPUSER}
       SFTPHOST: ${SFTPHOST}
-      SFTPREMOTE_DIR: ${SFTPREMOTE_DIR}
-      SFTPFILE_TO_UPLOAD: ${SFTPFILE_TO_UPLOAD:-/backupfolder/backupfile}
+      SFTPDIR: ${SFTPDIR}
+      PREFIX: ${PREFIX}
+      VERBOSE: '' # Empty means false
     volumes:
       - ./backup_server/user_ssh_keys/docker_backups.key:/root/.ssh/id_rsa:ro
       - ./backup_server/user_ssh_keys/docker_backups.key.pub:/root/.ssh/id_rsa.pub:ro
+      - backup_volume:/master/:ro
+
+volumes:
+  backup_volume:
+    name: ${VOLUME_TO_BK}
+    external: true

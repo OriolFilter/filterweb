@@ -22,10 +22,11 @@ services:
 #     Backup postgres volume
 #    - postgres_shop_backups_volume:/home/docker_backups/backups/postgres:rw
     - type: volume
-      source: postgres_shop
-      target: /home/docker_backups/backups/postgres
+      source: backups_volume
+      target: /home/docker_backups/backups/
+
       volume:
         nocopy: true
 volumes:
-  postgres_shop:
+  backups_volume:
     external: false

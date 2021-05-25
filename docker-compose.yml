@@ -78,4 +78,4 @@ networks:
        gateway: 10.24.1.1
 volumes:
   shop_db_volume:
-   external: true
+   external: false
