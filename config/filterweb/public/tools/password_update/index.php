@@ -11,7 +11,7 @@ try {
     $page_vars->import_errors();
     $page_vars->import_mailer();
     $page_vars->scripts=$scripts;
-    $db_manager = new db_manager();
+    $db_manager = new shop_db_manager();
 
     $page_vars->title='Update password';
 

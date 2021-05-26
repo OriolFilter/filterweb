@@ -4,23 +4,26 @@
 // Date in the past
 
     /* Prevent Cache */
-    header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
-    header("Cache-Control: no-cache");
-    header("Pragma: no-cache");
+
+use JetBrains\PhpStorm\Pure;
+
+header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+header("Cache-Control: no-cache");
+header("Pragma: no-cache");
 
 
-    $project_dir='/var/www';
-    require_once $project_dir.'/private/libraries/error_codes.php';
+$project_dir='/var/www';
+//    require_once $project_dir.'/private/libraries/error_codes.php';
 
 //    /*functions*/
     /* Classes */
     /* Generate JSON */
     class json_response
     {
-        public string|null $status='';
-        public string|null $status_code='';
-        public array $data=[];
-        public array $error=[
+        public string|null $status;
+        public string|null $status_code;
+        public array|null $data=[];
+        public array|null $error=[
             "code"=>null,
             "message"=>null,
             "hint"=>null
@@ -48,8 +51,9 @@
 
         public function __construct(){
             $this->hostname=getenv('HOSTNAME', true);
+            $this->import_errors();
         }
-        public function return_header($hotahsi=null): string
+        public function return_header(hotashi $hotahsi=null): string
         {
             return ('<!DOCTYPE html>
                         <html lang="es">
@@ -63,7 +67,7 @@
                             <title>'.($this->title?:'ArcadeShop').
                 /* default scripts */
                 '</title><script src="/src/js/jquery.min.js"></script>'.
-                ((isset($hotahsi->uloged)&&$hotahsi->uloged)?'<script src="/src/js/utilities/logout.js"></script>':null).
+                ((isset($hotahsi->ulogged)&&$hotahsi->ulogged)?'<script src="/src/js/utilities/logout.js"></script>':null).
                 ($this->scripts??null).
                             '</head>
                         <body>
@@ -85,10 +89,13 @@
                             <div id="right-buttons">
                                 <ul>'.
                                 /* HEADER LINKS */
-                                ((isset($hotahsi->uloged)&&$hotahsi->uloged)?'<li><a href="/my_account">account</a></li><li><a href="#" id="logout_button" >Log Out</a></li>':'<li><a href="/login.php">Log in</a></li>').
+                                ((isset($hotahsi->ulogged)&&$hotahsi->ulogged)?
+                                    '<li><a href="/my_account">account</a></li><li><a href="#" id="logout_button" >Log Out</a></li>'
+                                        :
+                                    '<li><a href="/login.php">Log in</a></li>').
                                 '<li hidden><a href="#">Log out</a></li>'.
                                     '<li><a href="/cart.php">Shopping Cart'.
-                                            ((isset($_COOKIE['number_cart_items']) && isset($_COOKIE['loged'])) ?
+                                            ((isset($_COOKIE['number_cart_items']) && isset($hotahsi->ulogged)&&$hotahsi->ulogged) ?
                                                     '('.$_COOKIE['number_cart_items'].')'
                                                 :
                                                     null) // under construction
@@ -98,7 +105,8 @@
                         </header>
                         <main>');
         }
-        public function return_footer(){
+        public function return_footer(): string
+        {
             return '</main>
                                     <footer>
                                         <div id="info">
@@ -171,9 +179,15 @@ class hotashi {
       isset($_REQUEST['uname'])?$this->uname = $_REQUEST['uname']:throw new UsernameNotValidError();
       isset($_REQUEST['pass'])?$this->upass = $_REQUEST['pass']:throw new PasswordNotValidError();
     }
+
+    /**
+     * @throws PasswordNotValidError
+     * @throws UsernameNotValidError
+     * @throws EmailNotValidError
+     */
     public function get_registration_vars() {
       /* Get and validate vars  */
-      if (!(@preg_match("/^[a-zA-Z0-9_.-.+]{6,20}+$/", $_REQUEST['uname'], $uname))) {
+      if (!(@preg_match("/^[a-zA-Z0-9_.+]{6,20}+$/", $_REQUEST['uname'], $uname))) {
           throw new UsernameNotValidError();
       } else {
           $this->uname = $uname[0];
@@ -233,7 +247,7 @@ class hotashi {
         /* Get and validate vars  */
         isset($_COOKIE['session_token'])?$this->stoken = $_COOKIE['session_token']:throw new TokenNullOrEmptyError();
 
-        if (!(@preg_match("/^[a-zA- Z0-9_ ]{6,20}+$/", $_REQUEST['pmname'], $pmname))) {
+        if (!(@preg_match("/^[a-zA-Z0-9_ ]{6,20}+$/", $_REQUEST['pmname'], $pmname))) {
             throw new PaymentMethodNameNotValidError();
         } else {
             $this->pmname = $pmname[0];
@@ -289,12 +303,12 @@ class hotashi {
         } else {
             $this->sa_add1 = $sa_add1[0];
         }
-        if (!(@preg_match("/^[\w\W]{0,}$/", $_REQUEST['sa_add2'], $sa_add2))) {
+        if (!(@preg_match("/^[\w\W]+$/", $_REQUEST['sa_add2'], $sa_add2))) {
             throw new ShippingAddressLine2Error();
         } else {
             $this->sa_add2 = $sa_add2[0];
         }
-        if (!(@preg_match("/^[\w\W]{0,}$/", $_REQUEST['sa_add3'], $sa_add3))) {
+        if (!(@preg_match("/^[\w\W]+$/", $_REQUEST['sa_add3'], $sa_add3))) {
             throw new ShippingAddressLine3Error();
         } else {
             $this->sa_add3 = $sa_add3[0];
@@ -344,11 +358,11 @@ class hotashi {
     //            $this->stoken=$_COOKIE['session_token']??null;
     }
     public function login_from_stoken(){
-      $db_manager = new db_manager();
+      $shop_db_manager = new shop_db_manager();
       $this->get_login_cookies();
       if ($this->stoken) {
           try {
-              $db_manager->login_stoken($this);
+              $shop_db_manager->login_stoken($this);
               $this->fetch_cookies(); /* Rewrites cookies */
               $this->ulogged=true;
           }
@@ -382,242 +396,290 @@ class hotashi {
           $this->ftext = $text[0];
       }
     }
-  }
+}
 
-class db_manager {
-//    public static $dbconn;
-    private string $shop_db_location;
-    function __construct(){
-        $this->error_manager= new error_manager;
-        $this->shop_db_location=getenv('SHOP_DB_LOCATION', true);
+class db_user {
+    public string $databasetype; #postgres, mysql, etc
+    public string $host;
+    public string $dbname;
+    public string $port;
+    public string $username;
+    public string $password;
+    public function __construct() {
+        $this->databasetype="pgsql";
+        $this->port="5432";
+        $dblocation=getenv('SHOP_DB_LOCATION', true);
+        $this->host= $dblocation ?? "localhost";
+    }
+}
+
+class db_user_contact_manager extends db_user {
+    #[Pure] public function __construct(){
+        parent::__construct();
+        $this->dbname="contact_form";
+        $this->username="form_user";
+        $this->password="form_pass";
+    }
+}
+
+
+class db_user_shop_manager extends db_user {
+    #[Pure] public function __construct(){
+        parent::__construct();
+        $this->dbname="shop";
+        $this->username="test";
+        $this->password="test";
+    }
+}
+
+
+class db_manager
+{
+    public PDO $dbconn;
+    public error_manager $error_manager;
+    protected string $shop_db_location = "shop_db";
+
+    /**
+     * @throws DatabaseConnectionError
+     */
+    #[Pure] function __construct()
+    {
+        $this->error_manager = new error_manager();
     }
 
-    public function register_user(hotashi &$hotashi){
-            $dbconn = @pg_connect("host={$this->shop_db_location} port=5432 dbname=shop user=test password=test");
-            if ($dbconn && !pg_connection_busy($dbconn)) {
-                $result = pg_prepare($dbconn, "register_user_q", 'call register_user($1,$2,$3)');
-                $result = pg_send_execute($dbconn, "register_user_q", array($hotashi->uname, $hotashi->upass, $hotashi->umail));
-                $res = pg_get_result($dbconn);
-                $state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
-                $res = pg_get_result($dbconn);
-                $this->error_manager->pg_error_handler($state);
-                    /* token */
-                    $result = pg_prepare($dbconn, "get_activation_token", 'select func_return_activation_code($1);');;
-                    $result = pg_send_execute($dbconn, "get_activation_token", array($hotashi->uname));
-                    $res = pg_get_result($dbconn);
-                    $state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
-                    $this->error_manager->pg_error_handler($state);
-                    $hotashi->atoken = pg_fetch_result($res, 0, 0);
+//https://www.phptutorial.net/php-pdo/pdo-connecting-to-postgresql/
+
+    public function return_db_connection(db_user $user): PDO
+    {
+        try {
+            $dsn = "$user->databasetype:host=$user->host;port=$user->port;dbname=$user->dbname;";
+            $options = [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::ATTR_EMULATE_PREPARES => false,
+            ];
+            try {
+                return new PDO($dsn, $user->username, $user->password, $options);
+            } catch (PDOException $e) {
+                throw new PDOException($e->getMessage(), (int)$e->getCode());
             }
-            else {throw new DatabaseConnectionError();}
+        } catch (PDOException $e) {
+            die($e->getMessage());
+        }
+    }
+}
+class contact_db_manager extends db_manager {
+    /**
+     * @throws DatabaseConnectionError
+     */
+    function __construct(){
+        parent::__construct();
+//        $this->error_manager = new error_manager();
+        $this->dbconn = $this->return_db_connection(new db_user_contact_manager());
+    }
+    public function register_contact_form(hotashi $hotashi){
+        try {
+            $stmt = $this->dbconn->prepare('call insert_form(?,?,?)');
+            $stmt->execute(array($hotashi->fname, $hotashi->fmail, $hotashi->ftext));
+        }
+        catch (PDOException $e){
+            $this->error_manager->pg_error_handler($e->getCode());
+        }
+    }
+}
+class shop_db_manager extends db_manager {
+    /**
+     * @throws DatabaseConnectionError
+     */
+    function __construct(){
+        parent::__construct();
+        $this->dbconn = $this->return_db_connection(new db_user_shop_manager());
+    }
+
+    public function register_user(hotashi $hotashi){
+            try {
+                $stmt = $this->dbconn->prepare(query: 'call register_user(?,?,?);');
+                $stmt->execute(array($hotashi->uname, $hotashi->upass, $hotashi->umail));
+                $stmt = $this->dbconn->prepare(query: 'select * from func_return_activation_code(?);');
+                $stmt->execute(array($hotashi->uname));
+                $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                $hotashi->atoken=$result["token"];
+            }
+            catch (PDOException $e){
+                $this->error_manager->pg_error_handler($e->getCode());
+            }
+
+//            $dbconn = @pg_connect("host=$this->shop_db_location port=5432 dbname=shop user=test password=test");
+//            if ($dbconn && !pg_connection_busy($dbconn)) {
+//                $result = pg_prepare($dbconn, "register_user_q", '');
+//                $result = pg_send_execute($dbconn, "register_user_q", array($hotashi->uname, $hotashi->upass, $hotashi->umail));
+//                $res = pg_get_result($dbconn);
+//                $state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
+//                $res = pg_get_result($dbconn);
+//                $this->error_manager->pg_error_handler($state);
+//                    /* token */
+//                    $result = pg_prepare($dbconn, "get_activation_token", 'select func_return_activation_code($1);');;
+//                    $result = pg_send_execute($dbconn, "get_activation_token", array($hotashi->uname));
+//                    $res = pg_get_result($dbconn);
+//                    $state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
+//                    $this->error_manager->pg_error_handler($state);
+//                    $hotashi->atoken = pg_fetch_result($res, 0, 0);
+//            }
+//            else {throw new DatabaseConnectionError();}
         }
 
     public function check_change_password_token($hotashi){
-        ;$dbconn = @pg_connect("host=10.24.1.2 port=5432 dbname=shop user=test password=test");
-
-        if ($dbconn && !pg_connection_busy($dbconn)) {
-            $result = pg_prepare($dbconn, "check_cptoken_q", 'call proc_check_password_token_is_valid($1)');;
-            $result = pg_send_execute($dbconn, "check_cptoken_q", array($hotashi->cptoken));;
-            $res = pg_get_result($dbconn);
-            $state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
-            $this->error_manager->pg_error_handler($state);
+        try {
+            $stmt = $this->dbconn->prepare(query: 'call proc_check_password_token_is_valid(?);');
+            $stmt->execute(array($hotashi->cptoken));
         }
-        else {throw new DatabaseConnectionError();}
-      }
+        catch (PDOException $e){
+            $this->error_manager->pg_error_handler($e->getCode());
+        }
+  }
     public function change_account_password($hotashi){
-        $dbconn = @pg_connect("host=10.24.1.2 port=5432 dbname=shop user=test password=test");
-        if ($dbconn && !pg_connection_busy($dbconn)) {
-            $result = pg_prepare($dbconn, "register_user_q", 'call proc_change_password_user($1,$2)');;
-            $result = pg_send_execute($dbconn, "register_user_q", array($hotashi->cptoken, $hotashi->cppass));;
-            $res = pg_get_result($dbconn);
-            $state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
-            $this->error_manager->pg_error_handler($state);
-        }else {throw new DatabaseConnectionError();}
+        try {
+            $stmt = $this->dbconn->prepare(query: 'call proc_change_password_user(?,?);');
+            $stmt->execute(array($hotashi->cptoken, $hotashi->cppass));
+        }
+        catch (PDOException $e){
+            $this->error_manager->pg_error_handler($e->getCode());
+        }
     }
-    public function account_password_recovery_from_email(hotashi &$hotashi){
-        ;$dbconn = @pg_connect("host=10.24.1.2 port=5432 dbname=shop user=test password=test");
-        if ($dbconn && !pg_connection_busy($dbconn)) {
-            $result = pg_prepare($dbconn, "q_get_email_and_account_password_update_token", 'select * from func_return_password_code_and_username_from_email($1)');
-            $result = pg_send_execute($dbconn, "q_get_email_and_account_password_update_token", array($hotashi->umail));
-            $res = pg_get_result($dbconn);
-            $state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
-            $this->error_manager->pg_error_handler($state);
-            $hotashi->uname= pg_fetch_result($res,0,0);
-            $hotashi->cptoken= pg_fetch_result($res,0,1);
-        }else {throw new DatabaseConnectionError();}
+    public function account_password_recovery_from_email(hotashi $hotashi){
+        try {
+            $stmt = $this->dbconn->prepare(query: 'select * from func_return_password_code_and_username_from_email(?);');
+            $stmt->execute(array($hotashi->umail));
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            $hotashi->uname=$result["uname"];
+            $hotashi->cptoken=$result["token"];
+        }
+        catch (PDOException $e){
+            $this->error_manager->pg_error_handler($e->getCode());
+        }
     }
     public function activate_account($hotashi){
-        ;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=shop user=test password=test") or die('connection failed');
-        if (!pg_connection_busy($dbconn)) {
-            ;$result = pg_prepare($dbconn, "register_user_q", 'call proc_activate_account($1)');
-            ;$res=pg_get_result($dbconn);
-            ;$result = pg_send_execute($dbconn, "register_user_q",array($hotashi->atoken));
-            ;$err=pg_last_notice($dbconn);
-            ;$res=pg_get_result($dbconn);
-            ;$state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
-            $this->error_manager->pg_error_handler($state);
-        } else {throw new DatabaseConnectionError();}
-    }
-    public function register_contact_form($hotashi){
-        ;$dbconn = @pg_connect("host=10.24.1.2 port=5432 dbname=contact_forms_db user=form_user password=form_pass");
-        if ($dbconn && !pg_connection_busy($dbconn)) {
-            $result = pg_prepare($dbconn, "register_form", 'call insert_form($1,$2,$3)');
-            $result = pg_send_execute($dbconn, "register_form", array($hotashi->fname, $hotashi->fmail, $hotashi->ftext));
-            $res = pg_get_result($dbconn);
-            $state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
-            $this->error_manager->pg_error_handler($state);
-        } else {throw new DatabaseConnectionError();}
+        try {
+            $stmt = $this->dbconn->prepare(query: 'call proc_activate_account(?);');
+            $stmt->execute(array($hotashi->atoken));
+        }
+        catch (PDOException $e){
+            $this->error_manager->pg_error_handler($e->getCode());
+        }
     }
     /* Account activation */
-    public function get_activation_token_and_email_from_username(hotashi &$hotashi){
-        $dbconn = @pg_connect("host={$this->shop_db_location} port=5432 dbname=shop user=test password=test");
-        if ($dbconn && !pg_connection_busy($dbconn)) {
-            $result = pg_prepare($dbconn, "q_get_email_and_account_activation_token", 'select func_return_activation_code_and_email_from_username($1)');
-            $result = pg_send_execute($dbconn, "q_get_email_and_account_activation_token", array($hotashi->uname));
-            $res = pg_get_result($dbconn);
-            $state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
-            $this->error_manager->pg_error_handler($state);
-            $hotashi->umail = pg_fetch_result($res, 0);
-            $hotashi->atoken = pg_fetch_result($res, 1);
+    public function get_activation_token_and_email_from_username(hotashi $hotashi){
+        try {
+            $stmt = $this->dbconn->prepare(query: 'select * from func_return_activation_code_and_email_from_username(?);');
+            $stmt->execute(array($hotashi->uname));
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            $hotashi->umail=$result["email"];
+            $hotashi->atoken=$result["token"];
         }
-        else {throw new DatabaseConnectionError();}
+        catch (PDOException $e){
+            $this->error_manager->pg_error_handler($e->getCode());
+        }
     }
     /* Session*/
     public function login_stoken($hotashi) /* connection to db login using stoken (check token status)*/
     {
-        $dbconn= @pg_connect("host=10.24.1.2 port=5432 dbname=shop user=test password=test");
-        if ($dbconn && !pg_connection_busy($dbconn)) {
-            $result = pg_prepare($dbconn, "check_stoken_q2", 'call proc_login_session_token($1);');
-            $result = pg_send_execute($dbconn, "check_stoken_q2", array($hotashi->stoken));
-            $res = pg_get_result($dbconn);
-            $state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
-            $this->error_manager->pg_error_handler($state);
-        } else {
-            throw new DatabaseConnectionError();
-            }
+        try {
+            $stmt = $this->dbconn->prepare(query: 'call proc_login_session_token(?);');
+            $stmt->execute(array($hotashi->stoken));
+        }
+        catch (PDOException $e){
+            $this->error_manager->pg_error_handler($e->getCode());
+        }
     }
     public function logout(hotashi $hotashi){
         $hotashi->drop_cookies();
     }
-    public function login_from_credentials(hotashi &$hotashi)
+    public function login_from_credentials(hotashi $hotashi)
     {
-        /* $hotahsi->stoken = session token */;
-        $dbconn = @pg_connect("host=10.24.1.2 port=5432 dbname=shop user=test password=test");
-        if ($dbconn && !pg_connection_busy($dbconn)) {
-            $result = pg_prepare($dbconn, "get_stoken_q", 'select func_return_session_token_from_credentials($1,$2)');
-            $result = pg_send_execute($dbconn, "get_stoken_q", array($hotashi->uname,$hotashi->upass));;
-            $res = pg_get_result($dbconn);
-            $state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
-            $this->error_manager->pg_error_handler($state);
-            $hotashi->stoken = pg_fetch_result($res, 0, 0);
-        } else {
-            throw new DatabaseConnectionError();
+        try {
+            $stmt = $this->dbconn->prepare(query: 'select * from func_return_session_token_from_credentials(?,?) as token;');
+            $stmt->execute(array($hotashi->uname,$hotashi->upass));
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            $hotashi->stoken=$result["token"];
+        }
+        catch (PDOException $e){
+            $this->error_manager->pg_error_handler($e->getCode());
         }
     }
     /* Payment methods */
     public function add_payment_method(hotashi $hotashi){
-        ;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=shop user=test password=test") or die('connection failed');
-        if (!pg_connection_busy($dbconn)) {
-            ;$result = pg_prepare($dbconn, "add_payment_method_q", 'call proc_add_payment_method_from_stoken($1,$2)');
-            ;$res=pg_get_result($dbconn);
-            ;$result = pg_send_execute($dbconn, "add_payment_method_q",array($hotashi->stoken,$hotashi->pmname));
-            ;$err=pg_last_notice($dbconn);
-            ;$res=pg_get_result($dbconn);
-            ;$state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
-            $this->error_manager->pg_error_handler($state);
-        } else {throw new DatabaseConnectionError();}
+        try {
+            $stmt = $this->dbconn->prepare(query: 'call proc_add_payment_method_from_stoken(?,?);');
+            $stmt->execute(array($hotashi->stoken,$hotashi->pmname));
+        }
+        catch (PDOException $e){
+            $this->error_manager->pg_error_handler($e->getCode());
+        }
     }
     public function remove_payment_method(hotashi $hotashi){
-        ;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=shop user=test password=test") or die('connection failed');
-        if (!pg_connection_busy($dbconn)) {
-            ;$result = pg_prepare($dbconn, "del_payment_method_q", 'call proc_remove_payment_method_from_stoken($1,$2)');
-            ;$res=pg_get_result($dbconn);
-            ;$result = pg_send_execute($dbconn, "del_payment_method_q",array($hotashi->stoken,$hotashi->pmid));
-            ;$err=pg_last_notice($dbconn);
-            ;$res=pg_get_result($dbconn);
-            ;$state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
-            $this->error_manager->pg_error_handler($state);
-        } else {throw new DatabaseConnectionError();}
+
+        try {
+            $stmt = $this->dbconn->prepare(query: 'call proc_remove_payment_method_from_stoken(?,?);');
+            $stmt->execute(array($hotashi->stoken,$hotashi->pmid));
+        }
+        catch (PDOException $e){
+            $this->error_manager->pg_error_handler($e->getCode());
+        }
     }
-    public function get_payment_methods(hotashi $hotashi,$train){
-        ;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=shop user=test password=test") or die('connection failed');
-        if (!pg_connection_busy($dbconn)) {
-            ;$result = pg_prepare($dbconn, "sel_payment_method_q", 'select payment_method_row_number,payment_method_name from func_return_payment_methods_from_stoken($1);');
-            ;$res=pg_get_result($dbconn);
-            ;$result = pg_send_execute($dbconn, "sel_payment_method_q",array($hotashi->stoken));
-            ;$err=pg_last_notice($dbconn);
-            ;$res=pg_get_result($dbconn);
-            ;$state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
-            $this->error_manager->pg_error_handler($state);
-//            ;$payment_obj = new  payment_methods();
-            $data_n = pg_fetch_all_columns($res,0); //number
-            $data_s = pg_fetch_all_columns($res,1); //string
-            foreach ($data_s as $key => $value) {
-                $train->payment_methods_obj_array[$data_n[$key]]=$value;
-                unset($value);
-                unset($key);
+    public function get_payment_methods(hotashi $hotashi,train $train){
+        try {
+            $stmt = $this->dbconn->prepare(query: 'select payment_method_row_number,payment_method_name from func_return_payment_methods_from_stoken(?);');
+            $stmt->execute(array($hotashi->stoken));
+            while($result = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $obj = new payment_method_obj();
+                $obj->number=$result["payment_method_row_number"];
+                $obj->number=$result["payment_method_name"];
+                array_push($train->payment_methods_obj_array,$obj);
             }
-        } else {throw new DatabaseConnectionError();}
+        }
+        catch (PDOException $e){
+            echo $e;
+            $this->error_manager->pg_error_handler($e->getCode());
+        }
     }
     /* Shipping address */
     public function add_shipping_address(hotashi $hotashi){
-        ;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=shop user=test password=test") or die('connection failed');
-        if (!pg_connection_busy($dbconn)) {
-            ;$result = pg_prepare($dbconn, "add_shipping_address_q", 'call proc_add_shipping_address_from_stoken($1,$2,$3,$4,$5,$6,$7);');
-            ;$res=pg_get_result($dbconn);
-            ;$result = pg_send_execute($dbconn, "add_shipping_address_q",array($hotashi->stoken,$hotashi->sa_country,$hotashi->sa_city,$hotashi->sa_pcode,$hotashi->sa_add1,$hotashi->sa_add2,$hotashi->sa_add3));
-            ;$err=pg_last_notice($dbconn);
-            ;$res=pg_get_result($dbconn);
-            ;$state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
-            $this->error_manager->pg_error_handler($state);
-        } else {throw new DatabaseConnectionError();}
+        try {
+            $stmt = $this->dbconn->prepare(query: 'call proc_add_shipping_address_from_stoken(?,?,?,?,?,?,?);');
+            $stmt->execute(array($hotashi->stoken,$hotashi->sa_country,$hotashi->sa_city,$hotashi->sa_pcode,$hotashi->sa_add1,$hotashi->sa_add2,$hotashi->sa_add3));
+        }
+        catch (PDOException $e){
+            $this->error_manager->pg_error_handler($e->getCode());
+        }
     }
     public function remove_shipping_address(hotashi $hotashi){
-        ;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=shop user=test password=test") or die('connection failed');
-        if (!pg_connection_busy($dbconn)) {
-            ;$result = pg_prepare($dbconn, "del_shipping_address_q", 'call proc_remove_shipping_address_from_stoken($1,$2)');
-
-            ;$res=pg_get_result($dbconn);
-            ;$result = pg_send_execute($dbconn, "del_shipping_address_q",array($hotashi->stoken,$hotashi->sa_id));
-            ;$err=pg_last_notice($dbconn);
-            ;$res=pg_get_result($dbconn);
-            ;$state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
-            $this->error_manager->pg_error_handler($state);
-        } else {throw new DatabaseConnectionError();}
+        try {
+            $stmt = $this->dbconn->prepare(query: 'call proc_remove_shipping_address_from_stoken(?,?)');
+            $stmt->execute(array($hotashi->stoken,$hotashi->sa_id));
+        }
+        catch (PDOException $e){
+            $this->error_manager->pg_error_handler($e->getCode());
+        }
     }
-    public function get_shipping_address(hotashi $hotashi, $train){
-        ;$dbconn = pg_connect("host=10.24.1.2 port=5432 dbname=shop user=test password=test") or die('connection failed');
-        if (!pg_connection_busy($dbconn)) {
-            ;$result = pg_prepare($dbconn, "sel_shipping_address_q", 'select sa_row_number ,sa_country ,sa_city  , sa_postal_code ,sa_line1 ,sa_line2  ,sa_line3 from func_return_shipping_address_from_stoken($1);');
-//
-            ;$res=pg_get_result($dbconn);
-            ;$result = pg_send_execute($dbconn, "sel_shipping_address_q",array($hotashi->stoken));
-            ;$err=pg_last_notice($dbconn);
-            ;$res=pg_get_result($dbconn);
-            ;$state = pg_result_error_field($res, PGSQL_DIAG_SQLSTATE);
-            $this->error_manager->pg_error_handler($state);
-//            ;$payment_obj = new  payment_methods();
-            $row = pg_fetch_all_columns($res,0); //number
-            $country = pg_fetch_all_columns($res,1); //string
-            $city = pg_fetch_all_columns($res,2); //string
-            $p_code = pg_fetch_all_columns($res,3); //string
-            $line1 = pg_fetch_all_columns($res,4); //string
-            $line2 = pg_fetch_all_columns($res,5); //string
-            $line3 = pg_fetch_all_columns($res,6); //string
-            foreach ($country as $key=>$value) {
+    public function get_shipping_address(hotashi $hotashi,train $train){
+        try {
+            $stmt = $this->dbconn->prepare(query: 'select sa_row_number ,sa_country ,sa_city  , sa_postal_code ,sa_line1 ,sa_line2  ,sa_line3 from func_return_shipping_address_from_stoken(?);');
+            $stmt->execute(array($hotashi->stoken));
+            while($result = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $obj=new shipping_address_obj();
-                $obj->sa_row=$row[$key];
-                $obj->sa_country=$country[$key];
-                $obj->sa_city=$city[$key];
-                $obj->sa_pcode=$p_code[$key];
-                $obj->sa_add1=$line1[$key];
-                $obj->sa_add2=$line2[$key];
-                $obj->sa_add3=$line3[$key];
-                unset($key);
-                unset($value);
+                $obj->sa_row=$result["sa_country"];
+                $obj->sa_country=$result["sa_country"];
+                $obj->sa_city=$result["sa_city"];
+                $obj->sa_pcode=$result["sa_postal_code"];
+                $obj->sa_add1=$result["sa_line1"];
+                $obj->sa_add2=$result["sa_line2"];
+                $obj->sa_add3=$result["sa_line3"];
                 array_push($train->shipping_address_obj_array,$obj);
             }
-        } else {throw new DatabaseConnectionError();
+        }
+        catch (PDOException $e){
+            echo $e;
+            $this->error_manager->pg_error_handler($e->getCode());
         }
     }
 
@@ -625,10 +687,10 @@ class db_manager {
     class train {
         /* get arrays of objects to later print/manage the content */
         public array $payment_methods_obj_array=[];
-        public array $shipping_address_obj_array=[]; /* ATM IS A DICTIONARY NOT AN ARRAY OF OBJECTS*/
+        public array $shipping_address_obj_array=[];
     }
 
-    class payment_methods { /* Unused */
+    class payment_method_obj { /* Unused */
         public string $name='';
         public string $number='';
     }
@@ -645,29 +707,27 @@ class db_manager {
 
     class builder {
 
-        public function return_payment_info_list_content(train $train_info)
+        public function return_payment_info_list_content(train|array $train_info): string
         {
             /* For form_oobj */
             $list = '';
-            foreach ($train_info as $key => $value) {
+            /* @var $value payment_method_obj */
+            foreach ($train_info as $value) {
                 $element =
                     "<li class='labelListElementBox'>
                         <div class='pmContentBox'>
                             <div class='labelListContentBox'>
-                                <p class='pmname'><span class='user_info'>" . htmlspecialchars($value) . "</span></p>
+                                <p class='pmname'><span class='user_info'>" . htmlspecialchars($value->name) . "</span></p>
                                 <p class='pminfo'><span class='user_info'>0123 4567 8222?</span></p>
                             </div>
-                            <span class='remove_payment' id='$key'>&times;</span>
+                            <span class='remove_payment' id='$value->number'>&times;</span>
                         </div>
                   </li>";
                 $list = $list . $element;
-                unset($value);
-                unset($element);
-                unset($key);
             }
             return $list;
         }
-    public function return_shipping_address_list_content(train $train_info): string
+    public function return_shipping_address_list_content(train|array $train_info): string
             {
         /* For form_obj */
         $list = '';

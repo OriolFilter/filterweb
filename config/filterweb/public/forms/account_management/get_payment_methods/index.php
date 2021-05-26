@@ -22,7 +22,7 @@ try {
     $page_vars->import_errors();
 
     /* DB*/
-    $db_manager = new db_manager();
+    $db_manager = new shop_db_manager();
     /* Json */
     $hotashi = new hotashi();
     $json_obj = new json_response();
@@ -35,8 +35,7 @@ try {
 //        $hotashi->login_from_stoken();
         /* Database connection*/
         $db_manager->get_payment_methods($hotashi,$train);
-        $json_obj->data['payment_methods']=$train->payment_methods_obj_array;
-
+        $json_obj->data['payment_method']=$train->payment_methods_obj_array;
 
         /* success */
         $json_obj->status='success';

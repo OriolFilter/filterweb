@@ -22,7 +22,7 @@ try {
     $page_vars->import_errors();
     $hotashi = new hotashi();
     $json_obj = new json_response();
-    $db_manager = new db_manager();
+    $db_manager = new shop_db_manager();
 
     $mailer = new mailer();
     $mailer_info = new mailer_info($page_vars->hostname);

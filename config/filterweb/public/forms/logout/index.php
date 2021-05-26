@@ -9,7 +9,7 @@ try {
     $page_vars->import_errors();
 
     /* DB*/
-    $db_manager = new db_manager();
+    $db_manager = new shop_db_manager();
     /* Json */
     $hotashi = new hotashi();
     $json_obj = new json_response();

@@ -6,7 +6,7 @@
 ```yaml
 PHP & JS:
   Registration:
-    username: "^[a-zA-Z0-9_.-.+]{6,20}$"
+    username: "^[a-zA-Z0-9_.+]{6,20}$"
     password: "^[a-zA-Z0-9$%.,?!@+_=-]{6,20}$"
     email:    "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z10-9-]+\.+[a-zA-Z0-9-]+$"
     
@@ -26,7 +26,7 @@ PHP & JS:
     id: '/^[0-9]+$/'
     postal code & city: '/^[\w\W]+$/' # Checks not empty
     address line 1: '/^[\w\W]{5,200}$/'
-    address line 2 & 3 : "/^[\w\W]{0,}$/" # A lie, doesn't checks nothing
+    address line 2 & 3 : "/^[\w\W]+$/" # A lie, doesn't checks nothing
     
     
 POSTGRESQL:
