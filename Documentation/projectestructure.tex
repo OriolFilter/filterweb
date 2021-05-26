@@ -174,11 +174,38 @@
 
         \url{https://w3techs.com/technologies/overview/programming_language}
 
+        Regarding the docker decision, there wasn't much to think about, since docker is a modern technology which I
+        already knew the bases, making it easier to pick up and start working earlier.
+
+        Meanwhile the web language was picked based on its global usage, I personally already have experience with
+        Oracle, MySQL, MariaDB and MongoDB, so in order to try a different technology, I decided to use PostgreSQL,
+        since it suited my needs while also learning a new database, yet, its position among the ranking, made the
+        decision easier to take.
+
+        \begin{tikzpicture}
+            \begin{axis}[title  = Database global ranking (May 2021),
+            xbar,
+            y axis line style = { opacity = 0 },
+            axis x line       = none,
+            tickwidth         = 0pt,
+            ytick             = data,
+            enlarge y limits  = 0.2,
+            enlarge x limits  = 0.02,
+            symbolic y coords = {IBM Db2, MongoDB, PostgreSQL, Microsoft SQL Server, MySQL,  Oracle},
+            nodes near coords,
+            ]
+            \addplot coordinates { (1269.94,Oracle)         (1236.38,MySQL)
+            (992.66 ,Microsoft SQL Server)  (559.25,PostgreSQL) (481.01,MongoDB) (166.66,IBM Db2) };
+            \legend{Topics, Posts}
+            \end{axis}
+         \end{tikzpicture}
+
+        \url{https://db-engines.com/en/ranking}
 
 
     \newpage
 %    Project structure
-%    \subsection{Project structure}\label{subsec:ProjectStructure}
+    \section{Project structure}\label{sec:projectstructure}
 
     This is the docker network distribution:
     \begin{center}
