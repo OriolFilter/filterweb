@@ -9,7 +9,7 @@ try {
     $mailer = new mailer();
     $mailer_info = new mailer_info($page_vars->hostname);
     /* DB*/
-    $db_manager = new db_manager();
+    $db_manager = new contact_db_manager();
     /* Json */
     $hotashi = new hotashi();
     $json_obj = new json_response();
@@ -35,6 +35,7 @@ catch (DefinedErrors $e ) {
     $e->formatJson($json_obj);
 }
 catch (Exception $e) {
+    echo $e;
     $json_obj->status = 'failed';
     $json_obj->error['code'] = 0;
     $json_obj->error['message'] = 'Unknown error';

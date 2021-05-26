@@ -6,7 +6,7 @@
     $json_obj = new json_response();
     $page_vars= new page_vars;
     $page_vars->import_errors();
-    $db_manager = new db_manager();
+    $db_manager = new shop_db_manager();
 
     $page_vars->title='Activate Account';
 

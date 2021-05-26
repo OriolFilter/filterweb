@@ -8,7 +8,7 @@ try {
     $page_vars->import_errors();
 
     /* DB*/
-    $db_manager = new db_manager();
+    $db_manager = new shop_db_manager();
     /* Json */
     $hotashi = new hotashi();
     $json_obj = new json_response();
@@ -38,7 +38,7 @@ catch (DefinedErrors $e ) {
         $mailer = new mailer();
         $mailer_info = new mailer_info($page_vars->hostname);
         /* Import DB*/
-        $db_manager = new db_manager();
+        $db_manager = new shop_db_manager();
         /* Get email and token */
         $db_manager->get_activation_token_and_email_from_username($hotashi);
         /* Prepare and send mail */

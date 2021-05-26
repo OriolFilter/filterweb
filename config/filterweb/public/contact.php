@@ -3,7 +3,7 @@
 ;
 include "../private/global_vars.php";
 ;$scripts= "<script src='/src/js/jquery.min.js'></script>
-           </script><script src='IdeaProjects/filterweb/config/filterweb/public/src/js/forms/contact_form.js'></script>";
+           </script><script src='/src/js/forms/contact_form.js'></script>";
 ;$page_vars = new page_vars();
 ;$hotashi = new hotashi;
 ;$page_vars->scripts=$scripts;

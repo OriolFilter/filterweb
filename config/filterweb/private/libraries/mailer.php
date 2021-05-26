@@ -18,7 +18,11 @@ require_once $src_folder.'/SMTP.php';
 
 class mailer{
 //    public function send_body(string  $email,string $subject,string $body, string $altbody){
-    public function send_body(mailer_info $info){
+    /**
+     * @throws MailerSendError
+     */
+    public function send_body(mailer_info $info): bool
+    {
         /* $info
             email (email address to send the mail)
             subject
