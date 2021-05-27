@@ -12,59 +12,100 @@
 \end{itemize}
 
 \subsubsection{Git installation}
-\paragraph{apt} \begin{lstlisting}[language=bash,label={lst:apt-git}]
+\paragraph{apt}
+\begin{flushleft}
+\begin{lstlisting}[language=bash,label={lst:apt-git}]
 sudo apt-get update && sudo apt-get install git
 \end{lstlisting}
-\paragraph{pacman} \begin{lstlisting}[language=bash,label={lst:pacman-git}]
+\end{flushleft}
+
+\paragraph{pacman}
+\begin{flushleft}
+\begin{lstlisting}[language=bash,label={lst:pacman-git}]
 sudo pacman -Syu && sudo pacman -S git
 \end{lstlisting}
-\paragraph{apk} \begin{lstlisting}[language=bash,label={lst:apk-git}]
+\end{flushleft}
+
+\paragraph{apk}
+\begin{flushleft}
+\begin{lstlisting}[language=bash,label={lst:apk-git}]
 sudo apk update && sudo apk add --no-cache git
 \end{lstlisting}
+\end{flushleft}
 
 
 \subsubsection{Docker installation}
-\paragraph{apt} \begin{lstlisting}[language=bash,label={lst:apt-docker}]
+
+\paragraph{apt}
+\begin{flushleft}
+\begin{lstlisting}[language=bash,label={lst:apt-docker}]
 sudo apt-get update && sudo apt-get install docker-ce docker-ce-cli containerd.io
 \end{lstlisting}
-\paragraph{pacman} \begin{lstlisting}[language=bash,label={lst:pacman-docker}]
+\end{flushleft}
+
+\paragraph{pacman}
+\begin{flushleft}
+\begin{lstlisting}[language=bash,label={lst:pacman-docker}]
 sudo pacman -Ss && sudo pacman -S docker
 \end{lstlisting}
-\paragraph{apk} \begin{lstlisting}[language=bash,label={lst:apk-docker}]
+\end{flushleft}
+
+\paragraph{apk}
+\begin{flushleft}
+\begin{lstlisting}[language=bash,label={lst:apk-docker}]
 sudo apk update && sudo  apk add --no-cache docker
 \end{lstlisting}
+\end{flushleft}
 
 \subsubsection{Docker configuration - allow user to use docker}
 \begin{lstlisting}[language=bash,label={lst:add-group-docker}]
 sudo usermod -a -G docker your_user
 \end{lstlisting}
 
-\subsubsection{Docker configuration - enable doocker on boot}
-\paragraph{service} \begin{lstlisting}[language=bash,label={lst:service-docker}]
+\subsubsection{Docker configuration - enable docker on boot}
+\paragraph{service}
+\begin{flushleft}
+\begin{lstlisting}[language=bash,label={lst:service-docker}]
 sudo service enable docker
 \end{lstlisting}
-\paragraph{systemctl} \begin{lstlisting}[language=bash,label={lst:systemctl-docker}]
-sudo systemctl start docker
-\end{lstlisting}
-\paragraph{apk} \begin{lstlisting}[language=bash,label={lst:rc-docker}]
-sudo run rc-update add docker boot
+\end{flushleft}
+
+\paragraph{systemctl}
+\begin{lstlisting}[language=bash,label={lst:systemctl-docker}]
+sudo systemctl start
 \end{lstlisting}
 
+\paragraph{rc-update}
+\begin{flushleft}
+\begin{lstlisting}[language=bash,label={lst:rc-docker}]
+sudo run rc-update add docker boot
+\end{lstlisting}
+\end{flushleft}
+
 \subsubsection{Docker-Compose installation}
-\paragraph{apt} \begin{lstlisting}[language=bash,label={lst:apt-compose}]
+\paragraph{apt}
+\begin{flushleft}
+\begin{lstlisting}[language=bash,label={lst:apt-compose}]
 sudo apt-get update && sudo apt-get install python3
 sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 \end{lstlisting}
+\end{flushleft}
 
-\paragraph{pacman} \begin{lstlisting}[language=bash,label={lst:pacman-compose}]
+\paragraph{pacman}
+\begin{flushleft}
+\begin{lstlisting}[language=bash,label={lst:pacman-compose}]
 sudo pacman -Ss && sudo pacman -S python3
 sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 \end{lstlisting}
+\end{flushleft}
 
-\paragraph{apk} \begin{lstlisting}[language=bash,label={lst:apk-compose}]
+\paragraph{apk}
+\begin{flushleft}
+\begin{lstlisting}[language=bash,label={lst:apk-compose}]
 sudo apk update && sudo  apk add --no-cache py-pip python3-dev libffi-dev openssl-dev gcc libc-dev rust cargo make
 sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 \end{lstlisting}
+\end{flushleft}
