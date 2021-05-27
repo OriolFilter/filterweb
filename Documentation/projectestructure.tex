@@ -135,12 +135,20 @@
             \item Automatic error management among the web-database relation limiting the occurrence of errors.
         \end{itemize}
 
-    \newpage
 %    Motivation
     \subsection{Motivation}\label{subsec:Motivation}
 
         The motivation behind this project, was mainly finding an excuse in order to use different technologies and
         try to combine them, doing something that gives me a deeper understanding of the technologies and tools used.
+
+%    Keywords
+    \subsection{Keywords}\label{subsec:Keyords}
+
+    PHP, PDO, Docker, Docker-compose, Dockerfile, Network, Api, Security, Infrastructure, Web, Nginx, Server, Portainer,
+    Deploy, Swarm, LaTeX, Yaml, JSON, SSL, Certificates, SSH, Key, Users, Passwords, PostgreSQL, Stack, Groups, Shop,
+    Online, Environment, Backups, Motorisation, Script, Bash, Shell, Git, Markdown, HTML, JavaScript, AJAX, Regex,
+    Automation, Postgres, Database, HTTP, HTTPS, Client, Server, Crontab.
+
 
     \newpage
 %    Main objective
@@ -218,7 +226,6 @@
             already knew the bases, making it easier to pick up and start working earlier.
         \end{flushleft}
 
-        \newpage
         \subsubsection[Docker-compose]{DockerCompose}
 
         \begin{center}
@@ -228,6 +235,18 @@
         \begin{flushleft}
             This tool facilitates deploying services on a server, while also being able to scalate the services or
             deploy them in a swarm, so there was no excuse to avoid its usage.
+        \end{flushleft}
+
+        \newpage
+        \subsubsection[Portainer]{Portainer}
+
+        \begin{center}
+            \includegraphics[scale=0.2]{logo_docker_portainer}
+        \end{center}
+
+        \begin{flushleft}
+            Taking a look at different monitoring tools, decided to use docker portainer mainly by it's fast set-up.
+            While still being up to the tasks demanded, which consist in monitoring and managing.
         \end{flushleft}
 
         \subsubsection[GitHub]{GitHub}
@@ -240,6 +259,7 @@
             On the other hand, I decided to use GitHub to store the project mainly due having a basic understanding of how
             the tools work, since there are multiple tools that suits the same function, felt like that was the right decision.
         \end{flushleft}
+
 
 
         \newpage
@@ -306,15 +326,13 @@
             \url{https://w3techs.com/technologies/comparison/ws-apache,ws-microsoftiis,ws-nginx}
         \end{flushleft}
 
-        \newpage
-
     \newpage
 %    Project structure
     \section{Docker Network Scheme}\label{sec:DockerNetworkScheme}
     \subsection{Docker Network Scheme}\label{subsec:ProjectNetworkScheme}
 %    \textbf{\textit{Docker network scheme:}}
     \begin{center}
-    \includegraphics[scale=1]{NetworkDistribution}
+    \includegraphics[scale=0.8]{NetworkDistribution}
     \end{center}
     \newpage
 
@@ -328,11 +346,12 @@
 
     \begin{flushleft}
         Taking a look in the main server, we can see that the docker machines are mainly distributed among a common network,
-        while there still a docker image hanging by himself, that's why this docker machine is used to generate backups
-        periodically, so doesn't need to have access to another docker networks (unless we wanted to specifically upload
-        the backups inside a docker-machine that resides inside a docker network, but we didn't had the need
+        while there still an \textbf{docker} machine hanging by himself, that's because this \textbf{docker} machine is
+        used to generate backups periodically, so doesn't need to have access to another docker networks (unless we wanted to specifically upload
+        the backups inside a docker-machine that resides inside a docker network, but we didn't have the need
         to publish the ports in the main server, which is not the actual scenario, nor likely to happen).
     \end{flushleft}
+
 
     \subsubsection[Nginx]{Nginx}
     \begin{flushleft}
@@ -363,8 +382,10 @@
         The active configuration allows you access the service using the port 8080.
     \end{flushleft}
 
+    \subsubsection[Portainer]{Portainer}
     \begin{flushleft}
-        \textit{This configuration is ready to launch, but uncommented since to deploy it, it isn't necessary.}
+        To provide easy access to monitor and control the docker volumes, have decided to implement \textbf{Portainer}
+        to the docker network, allowing the users to access to it using the port 9000.
     \end{flushleft}
 
     \subsubsection[Backup\_dealer]{BackupDealer}
