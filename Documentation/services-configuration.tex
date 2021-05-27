@@ -7,7 +7,7 @@
     \end{itemize}
     As a security feature, the login either by local or remote host, have enabled "SCRAM-SHA-256".
 \end{flushleft}
-\subsubsection[Contact database]{Contact database}
+\subsubsection[Contact database structure]{Contact database structure}
 \begin{flushleft}
     As the name hints, this database is used to store the contact forms received using the contact page from the website.
     Yet, the database consists of one table.
@@ -40,11 +40,14 @@
 
 
 \newpage
-\subsubsection[Shop database]{Shop database}
+\subsubsection[Shop database structure]{Shop database structure}
 \begin{center}
 %    \includegraphics[scale=0.6]{DB_Table_Schema_ShopV1}
-    \includegraphics[scale=0.6]{DB_Table_Schema_ShopV3}
+    \includegraphics[scale=0.6]{DB_Table_Schema_ShopV4}
 \end{center}
 \begin{flushleft}
-    Taking a look at the graph we can see how
+    Taking a look at the graph we can see how all the tables has a relation with the users table, bind by its user id.
+    If we took a look at the queries used to create the tables, we could see how all would get deleted on cascade in case
+    that the user was deleted.
+    \url{https://github.com/OriolFilter/filterweb/blob/master/Dockerfiles/postgresql/sources/shop_skel.sql}
 \end{flushleft}

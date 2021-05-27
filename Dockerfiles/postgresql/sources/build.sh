@@ -82,7 +82,7 @@ do
 done
 # Good Ending
 printf "${COLOR_GREEN}[!SUCCESS]${COLOR_DEFAULT} ${COLOR_YELLOW}[$(date +%H:%m:%S)]${COLOR_DEFAULT} ${COLOR_BLUE}Proceeding to delete all the files in the folder ${WORKDIR} ${COLOR_DEFAULT}\n"
-rm -v "${WORKDIR/*}"
+rm -v "${WORKDIR}/*"
 printf "${COLOR_GREEN}[!SUCCESS]${COLOR_DEFAULT} ${COLOR_YELLOW}[$(date +%H:%m:%S)]${COLOR_DEFAULT} ${COLOR_BLUE}Finished postgresql initialization${COLOR_DEFAULT}\n"
 
 
