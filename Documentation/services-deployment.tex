@@ -1,0 +1,70 @@
+\subsection{System requirements}\label{subsec:system-requirements}
+\begin{flushleft}
+    To install and configure the packages, a user with root access might be required, in case your system doesn't have the package
+    "\textbf{sudo}", and your user be configured with it, consider swapping to the Root user.
+\end{flushleft}
+
+\begin{itemize}
+    \item Access to internet
+    \item Git
+    \item Docker
+    \item Docker-compose
+\end{itemize}
+
+\subsubsection{Git installation}
+\paragraph{apt} \begin{lstlisting}[language=bash,label={lst:apt-git}]
+sudo apt-get update && sudo apt-get install git
+\end{lstlisting}
+\paragraph{pacman} \begin{lstlisting}[language=bash,label={lst:pacman-git}]
+sudo pacman -Syu && sudo pacman -S git
+\end{lstlisting}
+\paragraph{apk} \begin{lstlisting}[language=bash,label={lst:apk-git}]
+sudo apk update && sudo apk add --no-cache git
+\end{lstlisting}
+
+
+\subsubsection{Docker installation}
+\paragraph{apt} \begin{lstlisting}[language=bash,label={lst:apt-docker}]
+sudo apt-get update && sudo apt-get install docker-ce docker-ce-cli containerd.io
+\end{lstlisting}
+\paragraph{pacman} \begin{lstlisting}[language=bash,label={lst:pacman-docker}]
+sudo pacman -Ss && sudo pacman -S docker
+\end{lstlisting}
+\paragraph{apk} \begin{lstlisting}[language=bash,label={lst:apk-docker}]
+sudo apk update && sudo  apk add --no-cache docker
+\end{lstlisting}
+
+\subsubsection{Docker configuration - allow user to use docker}
+\begin{lstlisting}[language=bash,label={lst:add-group-docker}]
+sudo usermod -a -G docker your_user
+\end{lstlisting}
+
+\subsubsection{Docker configuration - enable doocker on boot}
+\paragraph{service} \begin{lstlisting}[language=bash,label={lst:service-docker}]
+sudo service enable docker
+\end{lstlisting}
+\paragraph{systemctl} \begin{lstlisting}[language=bash,label={lst:systemctl-docker}]
+sudo systemctl start docker
+\end{lstlisting}
+\paragraph{apk} \begin{lstlisting}[language=bash,label={lst:rc-docker}]
+sudo run rc-update add docker boot
+\end{lstlisting}
+
+\subsubsection{Docker-Compose installation}
+\paragraph{apt} \begin{lstlisting}[language=bash,label={lst:apt-compose}]
+sudo apt-get update && sudo apt-get install python3
+sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+\end{lstlisting}
+
+\paragraph{pacman} \begin{lstlisting}[language=bash,label={lst:pacman-compose}]
+sudo pacman -Ss && sudo pacman -S python3
+sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+\end{lstlisting}
+
+\paragraph{apk} \begin{lstlisting}[language=bash,label={lst:apk-compose}]
+sudo apk update && sudo  apk add --no-cache py-pip python3-dev libffi-dev openssl-dev gcc libc-dev rust cargo make
+sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+\end{lstlisting}

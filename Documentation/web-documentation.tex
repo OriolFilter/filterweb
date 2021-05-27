@@ -175,12 +175,11 @@ catch (PDOException $e){
                 \end{lstlisting}
             \end{flushleft}
         \end{itemize}
-        \item
     \end{itemize}
     \begin{itemize}
         \item error\_manager
         \begin{itemize}
-            \item Used to store a function called \"\textbf{db\_error\_handler}", which depending on of the database
+            \item Used to store a function called "\textbf{db\_error\_handler}", which depending on of the database
             code given, will raise an error, which afterwards will be caught and mostly format the json\_object to
             return a message to the client.
         \end{itemize}
@@ -188,7 +187,7 @@ catch (PDOException $e){
     \begin{itemize}
         \item CustomError
         \begin{itemize}
-            \item Used as a template to extend other errors, providing a function called \"\textbf{format\_json}", that
+            \item Used as a template to extend other errors, providing a function called "\textbf{format\_json}", that
             will format the json\_object with its inner values, consistently generating error messages for the client.
         \end{itemize}
     \end{itemize}
