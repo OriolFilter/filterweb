@@ -1,100 +1,96 @@
 version: '3.8'
 services:
-           nginx_pub:
-            image: nginx
-            ports:
-             - "80:80"
-             - "443:443"
-            volumes:
-             - "./config/nginx/web.conf:/etc/nginx/conf.d/web.conf:ro"
-             - "./config/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro"
-             - "${LOCAL_PUBLIC_WEB_PATH}:/var/www:ro"
-             - "./config/cert_ssl:/shared/ssl"
-            deploy:
-             replicas: 1
-             restart_policy:
-              condition: on-failure
-            restart: on-failure
-            depends_on:
-              - php
-            networks:
-             - shop_net
+  nginx_pub:
+   image: nginx
+   ports:
+    - "80:80"
+    - "443:443"
+   volumes:
+    - "./config/nginx/web.conf:/etc/nginx/conf.d/web.conf:ro"
+    - "./config/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro"
+    - "${LOCAL_PUBLIC_WEB_PATH}:/var/www:ro"
+    - "./config/cert_ssl:/shared/ssl"
+   deploy:
 
-           php:
-            build:
-             context: Dockerfiles
-             dockerfile: php
-            deploy:
-             replicas: 1
-             restart_policy:
-              condition: on-failure
-            configs:
-             - uid="${UID:-1000}"
-             - gid="${GID:-1000}"
-            image: filtershop/php
-            volumes:
-             - "${LOCAL_PUBLIC_WEB_PATH}:/var/www:rw"
-            environment:
-             SHOP_DB_LOCATION: "${SHOP_DB_LOCATION:-shop_db}"
-             HOSTNAME: "${HOSTNAME:-localhost}"
-            links:
-             - "${SHOP_DB_LOCATION:-shop_db}"
-            networks:
-             - shop_net
+    restart_policy:
+     condition: on-failure
+   restart: on-failure
+   depends_on:
+     - php
+   networks:
+    - shop_net
 
-           shop_db:
-            build:
-             context: Dockerfiles/postgresql
-            image: filtershop/postgresql
-            deploy:
-             replicas: 1
-             restart_policy:
-              condition: on-failure
-            restart: on-failure
-            environment:
-             POSTGRES_USER: "${SHOP_DATABASE_USER}"
-             POSTGRES_PASSWORD: "${SHOP_DATABASE_PASSWORD}"
-             POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256 --auth-local=scram-sha-256"
-             BUILD_DATABASE_LIST: "${BUILD_DATABASE_LIST}"
-            volumes:
-             - type: volume
-               source: shop_db_volume
-               target: /var/lib/postgresql/data
-               volume:
-                nocopy: false
-            networks:
-             - shop_net
+  php:
+   build:
+    context: Dockerfiles
+    dockerfile: php
+   deploy:
+    restart_policy:
+     condition: on-failure
+   configs:
+    - uid="${UID:-1000}"
+    - gid="${GID:-1000}"
+   image: filtershop/php
+   volumes:
+    - "${LOCAL_PUBLIC_WEB_PATH}:/var/www:rw"
+   environment:
+    SHOP_DB_LOCATION: "${SHOP_DB_LOCATION:-shop_db}"
+    HOSTNAME: "${HOSTNAME:-localhost}"
+   links:
+    - "${SHOP_DB_LOCATION:-shop_db}"
+   networks:
+    - shop_net
 
-           portainer:
-            image: portainer/portainer-ce
-            ports:
-             - "9000:9000"
-            volumes:
-             - portainer_data:/data
-             - "/var/run/docker.sock:/var/run/docker.sock"
-            networks:
-             - agent_network
-            deploy:
-             mode: replicated
-             replicas: 1
-             placement:
-              constraints: [node.role == manager]
+  shop_db:
+   build:
+    context: Dockerfiles/postgresql
+   image: filtershop/postgresql
+   deploy:
+    restart_policy:
+     condition: on-failure
+   restart: on-failure
+   environment:
+    POSTGRES_USER: "${SHOP_DATABASE_USER}"
+    POSTGRES_PASSWORD: "${SHOP_DATABASE_PASSWORD}"
+    POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256 --auth-local=scram-sha-256"
+    BUILD_DATABASE_LIST: "${BUILD_DATABASE_LIST}"
+   volumes:
+    - type: volume
+      source: shop_db_volume
+      target: /var/lib/postgresql/data
+      volume:
+       nocopy: true
+   networks:
+    - shop_net
 
-           adminer:
-            image: adminer
-            deploy:
-             replicas: 1
-             restart_policy:
-              condition: on-failure
-            restart: on-failure
-            ports:
-             - 8080:8080
-            links:
-             - "${SHOP_DB_LOCATION:-shop_db}"
-            environment:
-             ADMINER_DEFAULT_SERVER: "${SHOP_DB_LOCATION:-shop_db}"
-            networks:
-             - shop_net
+  portainer:
+   image: portainer/portainer-ce
+   ports:
+    - "9000:9000"
+   volumes:
+    - portainer_data:/data
+    - "/var/run/docker.sock:/var/run/docker.sock"
+   networks:
+    - agent_network
+   deploy:
+    mode: replicated
+    placement:
+     constraints: [node.role == manager]
+
+  adminer:
+   image: adminer
+   deploy:
+    restart_policy:
+     condition: on-failure
+   restart: on-failure
+   ports:
+    - 8080:8080
+   links:
+    - "${SHOP_DB_LOCATION:-shop_db}"
+   environment:
+    ADMINER_DEFAULT_SERVER: "${SHOP_DB_LOCATION:-shop_db}"
+   networks:
+    - shop_net
 
 networks:
   agent_network:
