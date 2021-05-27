@@ -26,7 +26,7 @@ PHP & JS:
     id: '/^[0-9]+$/'
     postal code & city: '/^[\w\W]+$/' # Checks not empty
     address line 1: '/^[\w\W]{5,200}$/'
-    address line 2 & 3 : "/^[\w\W]+$/" # A lie, doesn't checks nothing
+    address line 2 & 3 : "/^[\w\W]*$/" # A lie, doesn't checks nothing
     
     
 POSTGRESQL:

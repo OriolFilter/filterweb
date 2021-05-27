@@ -303,12 +303,12 @@ class hotashi {
         } else {
             $this->sa_add1 = $sa_add1[0];
         }
-        if (!(@preg_match("/^[\w\W]+$/", $_REQUEST['sa_add2'], $sa_add2))) {
+        if (!(@preg_match("/^[\w\W]*$/", $_REQUEST['sa_add2'], $sa_add2))) {
             throw new ShippingAddressLine2Error();
         } else {
             $this->sa_add2 = $sa_add2[0];
         }
-        if (!(@preg_match("/^[\w\W]+$/", $_REQUEST['sa_add3'], $sa_add3))) {
+        if (!(@preg_match("/^[\w\W]*$/", $_REQUEST['sa_add3'], $sa_add3))) {
             throw new ShippingAddressLine3Error();
         } else {
             $this->sa_add3 = $sa_add3[0];
@@ -615,7 +615,7 @@ class shop_db_manager extends db_manager {
             while($result = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $obj = new payment_method_obj();
                 $obj->number=$result["payment_method_row_number"];
-                $obj->number=$result["payment_method_name"];
+                $obj->name=$result["payment_method_name"];
                 array_push($train->payment_methods_obj_array,$obj);
             }
         }
@@ -648,7 +648,7 @@ class shop_db_manager extends db_manager {
             $stmt->execute(array($hotashi->stoken));
             while($result = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $obj=new shipping_address_obj();
-                $obj->sa_row=$result["sa_country"];
+                $obj->sa_row=$result["sa_row_number"];
                 $obj->sa_country=$result["sa_country"];
                 $obj->sa_city=$result["sa_city"];
                 $obj->sa_pcode=$result["sa_postal_code"];
@@ -711,6 +711,7 @@ class shop_db_manager extends db_manager {
             {
         /* For form_obj */
         $list = '';
+        /* @var $value shipping_address_obj */
         foreach ($train_info as $key => $value) {
             $element =
                 "<li class='labelListElementBox'>
