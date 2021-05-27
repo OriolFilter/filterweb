@@ -75,8 +75,41 @@
     \subsubsection[Main Server Docker-Compose]{Main Server DockerCompose}
     \lstinputlisting[language=Yaml,label={lst:MainDockerCompose}]{../docker-compose.yml}
     \paragraph{docker-compose.yml} that contains the services for the main server.
+    \newpage
+    \begin{flushleft}
+        The main things worth to mention, besides the open ports which are already commented (yet again will be listed here),
+        it's the restart policies and pointing out which services need to be build instead of using a raw image.
+    \end{flushleft}
+    \begin{enumerate}
+        \item Networks:
+            \begin{itemize}
+                \item shop\_net:
+                \begin{itemize}
+                    \item nginx
+                    \item php
+                    \item adminer
+                    \item shop\_db
+                \end{itemize}
+                \item agent\_network:
+                \begin{itemize}
+                    \item portainer
+                \end{itemize}
+            \end{itemize}
+        \item Volumes
+            \begin{itemize}
+                \item shop\_db\_volume:
+                \begin{itemize}
+                      \item shop\_db
+                \end{itemize}
+                \item portainer\_data:
+                \begin{itemize}
+                      \item portainer
+                \end{itemize}
+            \end{itemize}
+
+    \end{enumerate}
 
     \begin{flushleft}
-        The main things worth to mention, besides the open ports
+        All the dockers have been configured to restart in case of failure, which means that unless they are stopped manually,
+        they will always restart.
     \end{flushleft}
-

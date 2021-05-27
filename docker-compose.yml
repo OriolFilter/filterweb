@@ -1,7 +1,7 @@
 #docker-compose.yml
 version: '3.8'
 services:
-  nginx_pub:
+  nginx:
    image: nginx
    ports:
     - "80:80"
