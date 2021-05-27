@@ -4,7 +4,7 @@
     \end{center}
     \newpage
 
-    \subsection{Docker Network Distribution Explanation}\label{subsec:dockernetworkdistribution-explanation}
+    \subsection{Docker Distribution Explanation}\label{subsec:dockernetworkexplanation}
     \begin{flushleft}
         As mentioned previously, the services are distributed in two servers, yet, the second one (the backup server),
         could be removed and store the backups locally, moving the \textbf{sftp} service to the main server, or, through
@@ -27,6 +27,9 @@
         the connections fo that port, that way in case of having an HTTP petition the client is forced to use a "secure"
         connection, or at least, a connection that uses SSL encrypting.
     \end{flushleft}
+    \begin{flushleft}
+        Also does use of a docker volume to store the logs.
+    \end{flushleft}
 
     \subsubsection[PHP]{SFTP}
     \begin{flushleft}
@@ -39,6 +42,9 @@
         PostgreSQL uses by default the port 5432 to connect to the databases, and while there could be some reasons to
         have it exposed, but since in this scenario we aren't making use of it, it's better to keep it closed, that way
         the connections are limited to the docker machines themselves.
+    \end{flushleft}
+    \begin{flushleft}
+        The container does use of a volume so store its data.
     \end{flushleft}
     \newpage
     \subsubsection[Adminer]{Adminer}
@@ -78,6 +84,7 @@
     \lstinputlisting[language=Docker-compose,label={lst:MainDockerCompose}]{../docker-compose.yml}
     \paragraph{docker-compose.yml} that contains the services for the main server.
     \newpage
+    \newpage
     \begin{flushleft}
         The main things worth to mention, besides the open ports which are already commented (yet again will be listed here),
         it's the restart policies and pointing out which services need to be build instead of using a raw image.
@@ -106,6 +113,10 @@
                 \item portainer\_data:
                 \begin{itemize}
                       \item portainer
+                \end{itemize}
+                \item nginx_logs
+                \begin{itemize}
+                    \item nginx
                 \end{itemize}
             \end{itemize}
 

@@ -1,7 +1,23 @@
 \subsection{Portainer Configuration}\label{subsec:portainer-configuration}
+
+\begin{flushleft}
+    As mentioned in the Docker documentation, this container will make use of a volume named "portainer\_data", which
+    will store the portainer data.
+\end{flushleft}
+\begin{flushleft}
+    Also, to provide this container access to the docker management, we need to bind the file "/var/wun/docker.sock"
+    to the docker container.
+\end{flushleft}
+
 \subsection{Adminer Configuration}\label{subsec:adminer-configuration}
+\begin{flushleft}
+    There is no configuration done to this package.
+\end{flushleft}
+\subsection{PHP Configuration}\label{subsec:PHH-configuration}
+\begin{flushleft}
+    As mentioned in the docker documentation, this container has been configured to have the PDO extension enabled.
+\end{flushleft}
 \subsection{Nginx Configuration}\label{subsec:nginx-configuration}
-\subsection{PHP Configuration}\label{subsec:php-configuration}
 
 \subsection{PostgreSQL Configuration}\label{subsec:postgresql-configuration}
 \begin{flushleft}
