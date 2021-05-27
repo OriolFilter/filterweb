@@ -65,19 +65,58 @@ CREATE EXTENSION if not exists pgcrypto;
 \subsubsection[Data structure]{Data structure}
 \begin{flushleft}
     \begin{itemize}
-        \item Serial data
+        \item Serial data (\_id values)
         \begin{itemize}
             \item Used to store data avoiding collisions while providing an identification point for the entry (used as a Primary Key).
         \end{itemize}
         \item Username
+            \begin{itemize}
+                \item Varchar of 20 length, still, it could be any length, even text, since how postgresql reserves memory,
+                but in order to avoid issues during interactions with other applications, or, to facilitate upgrading to
+                another Database System in the future (if it's needed), it's better to keep it sort of short.
+                \begin{flushleft}
+                    Usernames are checked by the next function: "function\_check\_user\_exists" returning a boolean, or
+                    procedure "proc\_check\_user\_exists" raising an error in case the username already exists.
+                \end{flushleft}
+            \end{itemize}
+        \item Password
         \begin{itemize}
-            \item Varchar of 20 length, still, it could be any length, even text, since how postgresql reserves memory,
-            but in order to avoid issues during interactions with other applications, or, to facilitate upgrading to
-            another Database System in the future (if it's needed), it's better to keep it sort of short.
+            \item Varchar of 60 length since it's the length of a hashed value.
             \begin{flushleft}
-                Usernames are checked by the next function: "function\_check\_user\_exists" returning a boolean, or
-                procedure "proc\_check\_user\_exists" raising an error in case the username already exists.
+                Passwords are hashed and use salt 6, while not providing any word to salt the value, being this one "randomized".
             \end{flushleft}
+        \end{itemize}
+        \item Email
+        \begin{itemize}
+            \item Varchar of 255 length since according to the next post, emails are actually unable to overcome that length.
+            If in the future that changed, it could be easily modified.
+            \begin{flushleft}
+                \url{https://stackoverflow.com/questions/386294/what-is-the-maximum-length-of-a-valid-email-address}
+            \end{flushleft}
+        \end{itemize}
+        \item created\_on - updated\_on - last\_login
+        \begin{itemize}
+            \item Stores a time stamp.
+        \end{itemize}
+        \item expires\_on
+        \begin{itemize}
+
+            \item Also stores a time stamp, but this one will also be used to check if the token for something (its function
+            might depend on of which table is stored).
+            By default  it's +30 minutes from its creation.
+            \begin{flushleft}
+            Used to check:
+                \begin{itemize}
+                    \item Login session is valid
+                    \item Activate account token is valid
+                    \item Update/Change password token is valid
+                \end{itemize}
+            \end{flushleft}
+        \end{itemize}
+        \item \_token values / varchar (200)
+        \begin{itemize}
+            \item Used to store randomized tokens.
+            Like in the username or email fields, the value could ve easily modified if it was needed in the future.
         \end{itemize}
     \end{itemize}
 \end{flushleft}
@@ -90,7 +129,11 @@ CREATE EXTENSION if not exists pgcrypto;
 \subsubsection[PHP]{PHP}
 
 \subsection{Error Thread}\label{subsec:error-thread}
-
+\subsubsection{Notes}\label{subsubsec:notes}
+\begin{flushleft}
+    The errors are supposed to be handled by something, but not by postgresql (unless it's something specific), since
+    there is no need of rollback/commit, due postgresql nature, that controls this automatically.
+\end{flushleft}
 
 \subsubsection{Error Codes}\label{subsubsec:error-codes}
 \begin{lstlisting}[language=yaml,label={lst:errorListing}]
