@@ -83,7 +83,7 @@ CREATE EXTENSION if not exists pgcrypto;
         \begin{itemize}
             \item Varchar of 60 length since it's the length of a hashed value.
             \begin{flushleft}
-                Passwords are hashed and use salt 6, while not providing any word to salt the value, being this one "randomized".
+                Passwords are hashed and use salt 8, while not providing any word to salt the value, being this one "randomized".
             \end{flushleft}
         \end{itemize}
         \item Email
@@ -130,13 +130,61 @@ CREATE EXTENSION if not exists pgcrypto;
 \begin{flushleft}
     Like posteriorly will be shown with the error codes, postgresql it's intended to "break" (generate an error), in
     case something goes wrong.
-    So it's mainly formed by sequences instead of functions, unless it's specifically required.
+    So it's mainly formed by procedures instead of functions, unless it's specifically required.
+
+    \begin{itemize}
+        \item  function return\_crypted\_pass(v\_txt varchar)
+        \begin{itemize}
+            \item Returns the hashed + salted (8) password using the function "crypt" (module "pgcrypto").
+        \end{itemize}
+        \item  procedure register\_user
+        \begin{itemize}
+            \item Registers the user with the values given, before inserting the values, checks that the values are valid.
+        \end{itemize}
+        \item  proc\_login\_session\_token
+        \begin{itemize}
+            \item Checks the given session token is valid, in case of being valid will enlarge its session 30 minutes from the moment,
+            its used when the user loads a page.
+        \end{itemize}
+    \end{itemize}
 \end{flushleft}
 
 
 \newpage
 \subsection{Data Validation}\label{subsec:data-validation}
 \subsubsection[Regex]{Regex}
+
+\begin{lstlisting}[language=yaml,label={lst:regexListing}]
+PHP & JS:
+    Registration:
+        username: "^[a-zA-Z0-9_.+]{6,20}$"
+        password: "^[a-zA-Z0-9$%.,?!@+_=-]{6,20}$"
+        email:    "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z10-9-]+\.+[a-zA-Z0-9-]+$"
+
+    Contact form:
+        name:  "^[\w0-9 ]{4,40}$"
+        email: "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z10-9-]+\.+[a-zA-Z0-9-]+$"
+        text:  "^[\w\W]{20,255}$"
+
+    Change password form:
+        token: "^[a-zA-Z0-9]{60}$"
+
+    Payment methods:
+        name: '^[a-zA-Z0-9 ]{6,20}$'
+        id: '^[0-9]+$'
+    Shipping adress:
+        Country code: '/^[a-zA-Z]{2}$/'
+        id: '/^[0-9]+$/'
+        postal code & city: '/^[\w\W]+$/' # Checks not empty
+        address line 1: '/^[\w\W]{5,200}$/'
+        address line 2 & 3 : "/^[\w\W]*$/" # A lie, doesn't checks nothing
+
+POSTGRESQL:
+    Contact form:
+        name:  "^[\w0-9 ]{4,40}$"
+        email: "^[a-zA-Z0-9.!#$%&'*+=?^_`{|}~-]+@[a-zA-Z10-9-]+\.[a-zA-Z0-9-]+$"
+\end{lstlisting}
+
 \subsubsection[Javascript]{Javascript}
 \subsubsection[PostgreSQL]{PostgreSQL}
 \subsubsection[PHP]{PHP}
