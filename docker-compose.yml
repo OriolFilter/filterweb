@@ -1,3 +1,4 @@
+#docker-compose.yml
 version: '3.8'
 services:
   nginx_pub:
@@ -11,7 +12,6 @@ services:
     - "${LOCAL_PUBLIC_WEB_PATH}:/var/www:ro"
     - "./config/cert_ssl:/shared/ssl"
    deploy:
-
     restart_policy:
      condition: on-failure
    restart: on-failure
@@ -84,7 +84,7 @@ services:
      condition: on-failure
    restart: on-failure
    ports:
-    - 8080:8080
+    - "8080:8080"
    links:
     - "${SHOP_DB_LOCATION:-shop_db}"
    environment:
@@ -93,13 +93,11 @@ services:
     - shop_net
 
 networks:
+  shop_net:
+   driver: bridge
   agent_network:
    driver: overlay
    attachable: true
-  shop_net:
-   driver: bridge
-   ipam:
-    driver: default
 volumes:
   shop_db_volume:
    external: false

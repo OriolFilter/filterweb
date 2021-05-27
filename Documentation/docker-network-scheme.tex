@@ -1,5 +1,4 @@
     \subsection{Docker Network Scheme}\label{subsec:ProjectNetworkScheme}
-%    \textbf{\textit{Docker network scheme:}}
     \begin{center}
     \includegraphics[scale=0.8]{NetworkDistribution}
     \end{center}
@@ -48,7 +47,7 @@
         access to them, this can be arranged by using the adminer docker, which provides a web-database management,
         and since it's in the same docker network than the postgresql database, we can have access to it without having
         to expose the ports.
-        The active configuration allows you access the service using the port 8080.
+        The active configuration allows you to access the service using the port 8080.
     \end{flushleft}
 
     \subsubsection[Portainer]{Portainer}
@@ -56,6 +55,7 @@
         To provide easy access to monitor and control the docker volumes, have decided to implement \textbf{Portainer}
         to the docker network, allowing the users to access to it using the port 9000.
     \end{flushleft}
+
 
     \subsubsection[Backup\_dealer]{BackupDealer}
     \begin{flushleft}
@@ -69,3 +69,14 @@
         Observing the schema, we can see that the port 22 is being forwarded to the port 23, and publishing it, that's
         to avoid a port overlap with the default SSH port configuration.
     \end{flushleft}
+
+    \newpage
+    \subsection[Main Server Docker Configuration]{MainServerDockerConfiguration}\label{subsec:mainserverdockerconfiguration}
+    \subsubsection[Main Server Docker-Compose]{Main Server DockerCompose}
+    \lstinputlisting[language=Yaml,label={lst:MainDockerCompose}]{../docker-compose.yml}
+    \paragraph{docker-compose.yml} that contains the services for the main server.
+
+    \begin{flushleft}
+        The main things worth to mention, besides the open ports
+    \end{flushleft}
+

@@ -117,16 +117,6 @@
 \newcommand\ProcessThreeDashes{\llap{\color{cyan}\mdseries-{-}-}}
 
 
-
-
-
-
-
-
-
-
-
-
 \lstset{style=mystyle}
 
 \pagestyle{fancy}
@@ -170,29 +160,14 @@
     \section{Introduction}\label{sec:introduction}
     \input{introduction}
 
-    \section{Docker Network Scheme}\label{sec:DockerNetworkScheme}
+    \section{Docker Configuration}\label{sec:DockerConfiguration}
     \input{docker-network-scheme}
 
 
     \newpage
 %    Service Configuration
-    \section{Services Configuration}\label{sec:ServicesConfiguration}
 %    Docker Config
-    \subsection[Docker Configuration]{DockerConfiguration}\label{subsec:dockerconfiguration}
-    \subsubsection[Main Server Docker Configuration]{MainServerDockerConfiguration}
-    \
-    \lstinputlisting[language=Yaml,label={lst:MainDockerCompose}]{../docker-compose.yml}
-
-
-
-
-
-
-
-
-
-
-
+    \section{Services Configuration}\label{sec:ServicesConfiguration}
 
     \section{Services Deployment}\label{sec:ServiceDeployment}
 \end{document}
