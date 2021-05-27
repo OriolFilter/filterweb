@@ -127,7 +127,11 @@ CREATE EXTENSION if not exists pgcrypto;
 
 \newpage
 \subsubsection[Main functions]{Main functions}
-
+\begin{flushleft}
+    Like posteriorly will be shown with the error codes, postgresql it's intended to "break" (generate an error), in
+    case something goes wrong.
+    So it's mainly formed by sequences instead of functions, unless it's specifically required.
+\end{flushleft}
 
 
 \newpage
@@ -142,6 +146,9 @@ CREATE EXTENSION if not exists pgcrypto;
 \begin{flushleft}
     The errors are supposed to be handled by something, but not by postgresql (unless it's something specific), since
     there is no need of rollback/commit, due postgresql nature, that controls this automatically.
+\end{flushleft}
+\begin{flushleft}
+    PHP and JavaScript uses these errors to format responses for the client based in the code received.
 \end{flushleft}
 
 \subsubsection{Error Codes}\label{subsubsec:error-codes}
