@@ -360,18 +360,20 @@
         access to them, this can be arranged by using the adminer docker, which provides a web-database management,
         and since it's in the same docker network than the postgresql database, we can have access to it without having
         to expose the ports.
+        The active configuration let's u access the service using the port 8080.
         \textit{This configuration is ready to launch, but uncommented since to deploy it, it isn't necessary.}
     \end{flushleft}
 
     \subsubsection[Backup\_dealer]{BackupDealer}
     \begin{flushleft}
-
-       This configuration is ready to launch, but uncommented since to deploy it, it isn't necessary.
+       Like mentioned previously, this machine is used to periodically do backups of the desired volumes or directories,
+       to a local volume or directory, or to a remote server.
+       There isn't much to talk about it, since it doesn't provide a service by himself.
     \end{flushleft}
 
     \subsubsection[sftp]{sftp}
     \begin{flushleft}
-
+        Observing the schema, we can see that the port 22 is being forwarded to the port 23, and publishing it, that's
+        to avoid a overlap with the default SSH port configuration.
     \end{flushleft}
-
 \end{document}
