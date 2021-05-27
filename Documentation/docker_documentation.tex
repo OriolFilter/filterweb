@@ -34,7 +34,7 @@
     \subsubsection[PHP]{SFTP}
     \begin{flushleft}
         While this container doesn't do nothing by himself, either has ports exposed, it's linked to the nginx server, providing php support
-        to that container.
+        to that container, where all will store the backups.
     \end{flushleft}
 
     \subsubsection[Postgresql]{Postgresql}
@@ -67,16 +67,14 @@
     \begin{flushleft}
        Like mentioned previously, this machine is used to periodically do backups of the desired volumes or directories,
        to a local volume or directory, or to a remote server.
-       There isn't much to talk about it, since it doesn't provide a service by himself.
     \end{flushleft}
 
     \subsubsection[SFTP]{SFTP}
     \begin{flushleft}
         Observing the schema, we can see that the port 22 is being forwarded to the port 23, and publishing it, that's
         to avoid a port overlap with the default SSH port configuration.
+        This container stores the backups in a volume named "backups\_volume".
     \end{flushleft}
-
-
 
     \newpage
     \subsection[Main Server Docker Configuration]{MainServerDockerConfiguration}\label{subsec:mainserverdockerconfiguration}
@@ -114,7 +112,7 @@
                 \begin{itemize}
                       \item portainer
                 \end{itemize}
-                \item nginx_logs
+                \item nginx\_logs
                 \begin{itemize}
                     \item nginx
                 \end{itemize}
