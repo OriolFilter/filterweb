@@ -47,6 +47,34 @@
 \usepackage{bchart}
 
 \usepackage{pgfplots}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
+
+\lstset{style=mystyle}
 
 \pagestyle{fancy}
 \fancyhf{}
@@ -189,6 +217,31 @@
             Regarding the docker decision, there wasn't much to think about, since docker is a modern technology which I
             already knew the bases, making it easier to pick up and start working earlier.
         \end{flushleft}
+
+        \newpage
+        \subsubsection[Docker-compose]{DockerCompose}
+
+        \begin{center}
+            \includegraphics[scale=0.4]{logo_docker_compose}
+        \end{center}
+
+        \begin{flushleft}
+            This tool facilitates deploying services on a server, while also being able to scalate the services or
+            deploy them in a swarm, so there was no excuse to avoid its usage.
+        \end{flushleft}
+
+        \subsubsection[GitHub]{GitHub}
+
+        \begin{center}
+            \includegraphics[scale=0.045]{logo_github}
+        \end{center}
+
+        \begin{flushleft}
+            On the other hand, I decided to use GitHub to store the project mainly due having a basic understanding of how
+            the tools work, since there are multiple tools that suits the same function, felt like that was the right decision.
+        \end{flushleft}
+
+
         \newpage
         \subsubsection[PostgreSQL]{PostgresSQL}
 
@@ -228,8 +281,9 @@
             \includegraphics[scale=0.3]{logo_nginx}
         \end{center}
         \begin{flushleft}
-                On the other hand, decided to use GitHub to store the project mainly due having a basic understanding of how
-                the tools work, since there are multiple tools that suits the same function, felt like that was the right decision.
+            So far, being the main two options Apache and Nginx, I was quite limited when it came to variety,
+            and yet, both suit its job very well, yet, due its minor differences, decided to use Nginx instead of Apache,
+            since its less resource hungry while being more configurable-wise.
         \end{flushleft}
 
         \begin{tikzpicture}
@@ -253,26 +307,67 @@
         \end{flushleft}
 
         \newpage
-        \subsubsection[GitHub]{GitHub}
-
-        \begin{center}
-            \includegraphics[scale=0.045]{logo_github}
-        \end{center}
-
-        \begin{flushleft}
-            On the other hand, decided to use GitHub to store the project mainly due having a basic understanding of how
-            the tools work, since there are multiple tools that suits the same function, felt like that was the right decision.
-        \end{flushleft}
-
 
     \newpage
 %    Project structure
-    \section{Project structure}\label{sec:projectstructure}
-
-    This is the docker network distribution:
+    \section{Docker Network Scheme}\label{sec:DockerNetworkScheme}
+    \subsection{Docker Network Scheme}\label{subsec:ProjectNetworkScheme}
+%    \textbf{\textit{Docker network scheme:}}
     \begin{center}
-    \includegraphics[scale=1]{NetworkDistribution}
+    \includegraphics[scale=0.9]{NetworkDistribution}
     \end{center}
+    \newpage
 
+    \subsection{Docker Network Distribution Explanation}\label{subsec:dockernetworkdistribution-explanation}
+    \begin{flushleft}
+        As mentioned previously, the services are distributed in two servers, yet, the second one (the backup server),
+        could be removed and store the backups locally, moving the \textbf{sftp} service to the main server, or, through
+        \textbf{docker} using a volume or directory binding, but even if it's possible, it's recommended to do the backups in a
+        different server as a security measure in case the main server get compromised.
+    \end{flushleft}
+
+    \begin{flushleft}
+        Taking a look in the main server, we can see that the docker machines are mainly distributed among a common network, while there still a       .
+    \end{flushleft}
+
+    \subsubsection[Nginx]{nginx}
+    \begin{flushleft}
+        Having the ports 80 and 443 exposed in the server, its configuration forces the use of the port 443, redirecting
+        the connections fo that port, that way in case of having an HTTP petition the client is forced to use a "secure"
+        connection, or at least, a connection that uses SSL encrypting.
+    \end{flushleft}
+
+    \subsubsection[PHP]{php}
+    \begin{flushleft}
+        While this container doesn't do nothing by themself, either has ports exposed, it's linked to the nginx server, providing php support
+        to that container.
+    \end{flushleft}
+
+    \subsubsection[Postgresql]{Postgresql}
+    \begin{flushleft}
+        PostgreSQL uses by default the port 5432 to connect to the databases, and while there could be some reasons to
+        have it exposed, but since in this scenario we aren't making use of it, it's better to keep it closed, that way
+        the connections are limited to the docker machines themselves.
+    \end{flushleft}
+
+    \subsubsection[Adminer]{adminer}
+    \begin{flushleft}
+        Like previously mentioned, the ports from the database are not exposed, but, in case of needing a simple GUI
+        access to them, this can be arranged by using the adminer docker, which provides a web-database management,
+        and since it's in the same docker network than the postgresql database, we can have access to it without having
+        to expose the ports.
+        \textit{This configuration is ready to launch, but uncommented since to deploy it, it isn't necessary.}
+    \end{flushleft}
+
+    \subsubsection[Backup\_dealer]{BackupDealer}
+    \begin{flushleft}
+
+       This configuration is ready to launch, but uncommented since to deploy it, it isn't necessary.
+    \end{flushleft}
+
+    \subsubsection[sftp]{sftp}
+    \begin{flushleft}
+
+    \end{flushleft}
 
 \end{document}

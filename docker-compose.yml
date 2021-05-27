@@ -75,9 +75,6 @@ networks:
    driver: bridge
    ipam:
     driver: default
-    config:
-     - subnet: 10.24.1.0/24
-       gateway: 10.24.1.1
 volumes:
   shop_db_volume:
    external: false
