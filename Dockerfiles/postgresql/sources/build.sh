@@ -55,6 +55,7 @@ do
     # Formatting database:
     # Execute every file that can find using the keys in $FORMAT_ARR it it's own database
     # Ej: ${WORKDIR}/${database}${FORMAT_ARR[$key]}.sql -> /sources/shop_skel.sql
+    # Once the file been executed, it will be removed from the machine to avoid security flaws.
 
     for key in "${!FORMAT_ARR[@]}"
     do
@@ -64,6 +65,7 @@ do
         printf "${COLOR_YELLOW}[!INFO]${COLOR_DEFAULT} ${COLOR_YELLOW}[$(date +%H:%m:%S)]${COLOR_DEFAULT} ${COLOR_BLUE}Proceeding to execute: ${sqlfile}${COLOR_DEFAULT}\n"
         if psql -U "$POSTGRES_USER" -d $database -f "${sqlfile}" > /dev/null; then
           printf "${COLOR_GREEN}[!SUCCESS]${COLOR_DEFAULT} ${COLOR_YELLOW}[$(date +%H:%m:%S)]${COLOR_DEFAULT} ${COLOR_BLUE}FINISHED EXECUTING SQL FILE: ${sqlfile}${COLOR_DEFAULT}\n"
+          rm -v "${sqlfile}"
         else
           printf "${COLOR_RED}[!ERROR]${COLOR_DEFAULT} ${COLOR_YELLOW}[$(date +%H:%m:%S)]${COLOR_DEFAULT} ${COLOR_BLUE}COULDN'T FINISHED EXECUTING SQL FILE: ${sqlfile}${COLOR_DEFAULT}\n"
         fi
