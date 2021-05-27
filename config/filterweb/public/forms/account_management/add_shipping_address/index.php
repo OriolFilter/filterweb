@@ -1,19 +1,5 @@
 <?php
-;/*Add shipping address*/
-/* Exceptions */
-
-/* Function */
-
-
-/* JSON EXAMPLE*/
-//{
-//    "status":null,
-//   "code":0,
-//   "error":[{
-//    "code":null
-//   }]
-//}
-
+#/public/forms/account_management/add_shipping_address/index.php
 /* Global try catch */
 try {
     require_once '/var/www/private/global_vars.php';
@@ -29,14 +15,13 @@ try {
 
     /* Main */
 
-        /* Get Vars */
-        $hotashi->get_add_shipping_address_vars();
-        /* Database connection*/
-        $db_manager->add_shipping_address($hotashi);
-
-        /* success */
-        $json_obj->status='success';
-        $json_obj->status_code=1;
+    /* Get Vars */
+    $hotashi->get_add_shipping_address_vars();
+    /* Database connection*/
+    $db_manager->add_shipping_address($hotashi);
+    /* success */
+    $json_obj->status='success';
+    $json_obj->status_code=1;
 }
 catch (DefinedErrors $e ) {
     $e->formatJson($json_obj);
@@ -50,5 +35,4 @@ catch (Exception $e) {
 finally {
     echo json_encode($json_obj);
 }
-
 ?>

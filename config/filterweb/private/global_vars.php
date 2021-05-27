@@ -439,8 +439,6 @@ class db_manager
 {
     public PDO $dbconn;
     public error_manager $error_manager;
-    protected string $shop_db_location = "shop_db";
-
     /**
      * @throws DatabaseConnectionError
      */
