@@ -51,3 +51,154 @@
     that the user was deleted.
     \url{https://github.com/OriolFilter/filterweb/blob/master/Dockerfiles/postgresql/sources/shop_skel.sql}
 \end{flushleft}
+
+
+\subsubsection[Plugins enabled]{Plugins enabled}
+\begin{lstlisting}[language=SQL,label={lst:pgcrypto_enabling}]
+CREATE EXTENSION if not exists pgcrypto;
+\end{lstlisting}
+\begin{flushleft}
+    Pgcrypto was enabled in order to hash and salt the passwords, so the use critical information can be stored "securely".
+\end{flushleft}
+
+\newpage
+\subsubsection[Data structure]{Data structure}
+\begin{flushleft}
+    \begin{itemize}
+        \item Serial data
+        \begin{itemize}
+            \item Used to store data avoiding collisions while providing an identification point for the entry (used as a Primary Key).
+        \end{itemize}
+        \item Username
+        \begin{itemize}
+            \item Varchar of 20 length, still, it could be any length, even text, since how postgresql reserves memory,
+            but in order to avoid issues during interactions with other applications, or, to facilitate upgrading to
+            another Database System in the future (if it's needed), it's better to keep it sort of short.
+            \begin{flushleft}
+                Usernames are checked by the next function: "function\_check\_user\_exists" returning a boolean, or
+                procedure "proc\_check\_user\_exists" raising an error in case the username already exists.
+            \end{flushleft}
+        \end{itemize}
+    \end{itemize}
+\end{flushleft}
+
+\newpage
+\subsection{Data Validation}\label{subsec:data-validation}
+\subsubsection[Regex]{Regex}
+\subsubsection[Javascript]{Javascript}
+\subsubsection[PostgreSQL]{PostgreSQL}
+\subsubsection[PHP]{PHP}
+
+\subsection{Error Thread}\label{subsec:error-thread}
+
+
+\subsubsection{Error Codes}\label{subsubsec:error-codes}
+\begin{lstlisting}[language=yaml,label={lst:errorListing}]
+php & js:
+    '0': 'Unknown error',
+
+    '1': 'Success',
+
+    '2': 'Missing field(s)',
+    '2.1': 'Username field is missing',
+    '2.2': 'Password field is missing',
+    '2.3': 'Email field is missing',
+    '2.4': 'Repeat password field is missing',
+    '2.5': 'Repeat email field is missing',
+    '2.6': 'Name field is missing',
+    '2.7': 'Text field is missing',
+    '2.8': 'Payment method name field is missing',
+    '2.9': 'Payment method info field is missing',
+    '2.10': 'Payment method id field is missing',
+    '2.11': 'Shipping address fields topic',
+    '2.11.1': 'Shipping address country field is missing',
+    '2.11.2': 'Shipping address city field is missing',
+    '2.11.3': 'Shipping address postal code field is missing',
+    '2.11.4': 'Shipping address line 1 field is missing',
+    '2.11.5': 'Shipping address id field is missing',
+
+    '3': 'Requirements not achieved',
+    '3.1': 'Username does not meet the requirements',
+    '3.2': 'Password does not meet the requirements',
+    '3.3': 'Email does not meet the requirements',
+    '3.4': 'Name does not meet the requirements',
+    '3.5': 'Text does not meet the requirements',
+    '3.6': 'Payment method name does not meet the requirements',
+    '3.7': 'Payment method info does not meet the requirements',
+    '3.8': 'Payment method id does not meet the requirements', # It's a numeric value only
+    '3.9': 'Shipping address fields topic',
+    '3.9.1': 'Shipping address country field does not meet the requirements',
+    '3.9.2': 'Shipping address city field does not meet the requirements',
+    '3.9.3': 'Shipping address postal code field does not meet the requirements',
+    '3.9.4': 'Shipping address line 1 field does not meet the requirements',
+    '3.9.5': 'Shipping address line 2 field does not meet the requirements',
+    '3.9.6': 'Shipping address line 3 field does not meet the requirements',
+    '3.9.7': 'Shipping address id does not meet the requirements', # It's a numeric value only
+
+    '4': 'Field matching',
+    '4.1': 'Passwords don\'t match',
+    '4.2': 'Emails don\'t match',
+
+    '5': 'Client-Server errors',
+    '5.1': 'There was a unknown error sending the data, please, try again bit later, if this error is consistent please contact an administrator.',
+    '5.2': 'Server under maintenance, please, try again bit later.'
+
+    '6': 'Database side error'
+    '6.1': 'Data Insert errors',
+    '6.1.1': 'Username is already exists',
+    '6.1.2': 'Email is already exists',
+
+    '6.2': 'Data Select errors',
+    '6.2.1': 'Username not found',
+    '6.2.2': 'User_id not found',
+    '6.2.3': 'Email not found',
+    '6.2.4': 'Token not found',
+    '6.2.5': 'Payment method not found',
+    '6.2.6': 'Shipping address not found',
+
+    '6.3': 'Tokens',
+    '6.3.1': 'Token not valid',
+    '6.3.2': 'Token already used',
+    '6.3.3': 'Token expired',
+    '6.3.4': 'Token is null or empty',
+
+    '6.4': 'Database connection error',
+    '6.4.1': 'Error communicating to database',
+    '6.4.2': 'Wrong credentials connecting to database',
+    '6.4.3': 'The user don\'t has permission for the requested action(s)',
+
+    '6.5': 'Functions error',
+    '6.5.1': 'Error generating token',
+
+
+    '7': 'Account related issues',
+    '7.1': 'The account is not activated',
+    '7.2': 'The account is already activated',
+    '7.3': 'The account been banned',
+
+    '8': 'PHP mailer issues',
+    '8.1': 'Email couldn\'t be send',
+    '8.2': 'Email address is missing',
+    '8.3': 'Body is missing',
+    '8.4': 'Subject is missing',
+
+    '9': 'Invalid Credentials',
+
+    '10': 'Product stuff',
+
+    '11': 'User conf stuff',
+
+    '11.2': 'Not valid payment method data'
+
+    '12': 'Order Stuff'
+postgresql:
+  - 'Due postgresql not being able to use the same syntax as php and since the error codes seems easy to read using the syntax already done, it's been decided to leave the php and js codes as they, while using a similar (but valid) syntax for postgresql.'
+  - 'P0000'
+  - 'P + first number + second number +  last number'
+  examples:
+    - '7     :P7000'
+    - '8.3   :P8300'
+    - '6.4.4 :P6404'
+    - '2.1   :P2100'
+    - '2.10  :P2010'
+\end{lstlisting}
