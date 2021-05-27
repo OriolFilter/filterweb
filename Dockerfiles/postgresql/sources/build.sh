@@ -66,7 +66,6 @@ do
         printf "${COLOR_YELLOW}[!INFO]${COLOR_DEFAULT} ${COLOR_YELLOW}[$(date +%H:%m:%S)]${COLOR_DEFAULT} ${COLOR_BLUE}Proceeding to execute: ${sqlfile}${COLOR_DEFAULT}\n"
         if psql -U "$POSTGRES_USER" -d "$database" -f "${sqlfile}" > /dev/null; then
           printf "${COLOR_GREEN}[!SUCCESS]${COLOR_DEFAULT} ${COLOR_YELLOW}[$(date +%H:%m:%S)]${COLOR_DEFAULT} ${COLOR_BLUE}FINISHED EXECUTING SQL FILE: ${sqlfile}${COLOR_DEFAULT}\n"
-          rm -v "${sqlfile}"
         else
           printf "${COLOR_RED}[!ERROR]${COLOR_DEFAULT} ${COLOR_YELLOW}[$(date +%H:%m:%S)]${COLOR_DEFAULT} ${COLOR_BLUE}COULDN'T FINISHED EXECUTING SQL FILE: ${sqlfile}${COLOR_DEFAULT}\n"
         fi
@@ -82,7 +81,9 @@ do
   database=''
 done
 # Good Ending
-printf "${COLOR_GREEN}[!SUCCESS]${COLOR_DEFAULT} ${COLOR_YELLOW}[$(date +%H:%m:%S)]${COLOR_DEFAULT} ${COLOR_BLUE}Finished postgresql initialitzation${COLOR_DEFAULT}\n"
+printf "${COLOR_GREEN}[!SUCCESS]${COLOR_DEFAULT} ${COLOR_YELLOW}[$(date +%H:%m:%S)]${COLOR_DEFAULT} ${COLOR_BLUE}Proceeding to delete all the files in the folder ${WORKDIR} ${COLOR_DEFAULT}\n"
+rm -v "${WORKDIR/*}"
+printf "${COLOR_GREEN}[!SUCCESS]${COLOR_DEFAULT} ${COLOR_YELLOW}[$(date +%H:%m:%S)]${COLOR_DEFAULT} ${COLOR_BLUE}Finished postgresql initialization${COLOR_DEFAULT}\n"
 
 
 

@@ -128,5 +128,7 @@
     \subsubsection[Postgresql Dockerfile]{Postgresql Dockerfile}
     \lstinputlisting[language=Docker,label={lst:PostgresqlDockerfile}]{../Dockerfiles/postgresql/Dockerfile}
     \begin{flushleft}
-        This Dockerfile, instead of installing new packages to the image, it adds a script that will be called during the
+        This Dockerfile, instead of installing new packages to the image, it adds a script that will be called in case
+        of not having data in the postgres folder, and also adds an SQL files that once executed, will be deleted
+        from the machine in order to avoid security flaws.
     \end{flushleft}
