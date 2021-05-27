@@ -353,7 +353,7 @@
         have it exposed, but since in this scenario we aren't making use of it, it's better to keep it closed, that way
         the connections are limited to the docker machines themselves.
     \end{flushleft}
-
+    \newpage
     \subsubsection[Adminer]{adminer}
     \begin{flushleft}
         Like previously mentioned, the ports from the database are not exposed, but, in case of needing a simple GUI
@@ -374,6 +374,6 @@
     \subsubsection[sftp]{sftp}
     \begin{flushleft}
         Observing the schema, we can see that the port 22 is being forwarded to the port 23, and publishing it, that's
-        to avoid a overlap with the default SSH port configuration.
+        to avoid a port overlap with the default SSH port configuration.
     \end{flushleft}
 \end{document}
