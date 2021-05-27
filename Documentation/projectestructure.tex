@@ -314,7 +314,7 @@
     \subsection{Docker Network Scheme}\label{subsec:ProjectNetworkScheme}
 %    \textbf{\textit{Docker network scheme:}}
     \begin{center}
-    \includegraphics[scale=0.9]{NetworkDistribution}
+    \includegraphics[scale=1]{NetworkDistribution}
     \end{center}
     \newpage
 
@@ -327,7 +327,11 @@
     \end{flushleft}
 
     \begin{flushleft}
-        Taking a look in the main server, we can see that the docker machines are mainly distributed among a common network, while there still a       .
+        Taking a look in the main server, we can see that the docker machines are mainly distributed among a common network,
+        while there still a docker image hanging by himself, that's why this docker machine is used to generate backups
+        periodically, so doesn't need to have access to another docker networks (unless we wanted to specifically upload
+        the backups inside a docker-machine that resides inside a docker network, but we didn't had the need
+        to publish the ports in the main server, which is not the actual scenario, nor likely to happen).
     \end{flushleft}
 
     \subsubsection[Nginx]{nginx}
