@@ -58,6 +58,8 @@ $project_dir='/var/www';
             return ('<!DOCTYPE html>
                         <html lang="es">
                         <head>
+                            <link rel="icon" type="image/png" href="/scr/favicon.ico"/>
+                            <link rel="shortcut icon" type="image/x-icon" href="/src/favicon.ico" />
                             <link rel="stylesheet" href="/src/css/main.css"/>
                         <!--    <link rel="stylesheet" href="css/main_old.css"/>-->
                             <link rel="stylesheet" media="screen and (max-width: 750px)" href="/src/css/small.css" type="text/css">
