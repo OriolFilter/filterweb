@@ -350,7 +350,7 @@ class error_manager {
      * @throws MissingPaymentMethodNameFieldError
      * @throws ShippingAddressCityError
      */
-    function pg_error_handler (string $c=''){
+    function db_error_handler (string $c=''){
             if ($c == null or $c == '' or !isset($c) ) {
                 return;
             }

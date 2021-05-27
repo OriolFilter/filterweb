@@ -170,7 +170,7 @@ try {
 }
 catch (PDOException $e){
     $this->error_manager->pg_error_handler($e->getCode());
-}
+    }
 }
                 \end{lstlisting}
             \end{flushleft}
@@ -178,9 +178,25 @@ catch (PDOException $e){
         \item
     \end{itemize}
     \begin{itemize}
-        \item a
+        \item error\_manager
         \begin{itemize}
-            \item
+            \item Used to store a function called \"\textbf{db\_error\_handler}", which depending on of the database
+            code given, will raise an error, which afterwards will be caught and mostly format the json\_object to
+            return a message to the client.
+        \end{itemize}
+    \end{itemize}
+    \begin{itemize}
+        \item CustomError
+        \begin{itemize}
+            \item Used as a template to extend other errors, providing a function called \"\textbf{format\_json}", that
+            will format the json\_object with its inner values, consistently generating error messages for the client.
+        \end{itemize}
+    \end{itemize}
+    \begin{itemize}
+        \item Interface DefinedErrors
+        \begin{itemize}
+            \item Used to group all the created errors, in order to catch them together and improve consistency and
+            reliability, making simple generating error messages to the user among working around errors.
         \end{itemize}
     \end{itemize}
 \end{flushleft}

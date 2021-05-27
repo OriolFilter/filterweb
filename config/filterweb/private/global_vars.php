@@ -483,7 +483,7 @@ class contact_db_manager extends db_manager {
             $stmt->execute(array($hotashi->fname, $hotashi->fmail, $hotashi->ftext));
         }
         catch (PDOException $e){
-            $this->error_manager->pg_error_handler($e->getCode());
+            $this->error_manager->db_error_handler($e->getCode());
         }
     }
 }
@@ -506,7 +506,7 @@ class shop_db_manager extends db_manager {
                 $hotashi->atoken=$result["token"];
             }
             catch (PDOException $e){
-                $this->error_manager->pg_error_handler($e->getCode());
+                $this->error_manager->db_error_handler($e->getCode());
             }
         }
 
@@ -516,7 +516,7 @@ class shop_db_manager extends db_manager {
             $stmt->execute(array($hotashi->cptoken));
         }
         catch (PDOException $e){
-            $this->error_manager->pg_error_handler($e->getCode());
+            $this->error_manager->db_error_handler($e->getCode());
         }
   }
     public function change_account_password($hotashi){
@@ -525,7 +525,7 @@ class shop_db_manager extends db_manager {
             $stmt->execute(array($hotashi->cptoken, $hotashi->cppass));
         }
         catch (PDOException $e){
-            $this->error_manager->pg_error_handler($e->getCode());
+            $this->error_manager->db_error_handler($e->getCode());
         }
     }
     public function account_password_recovery_from_email(hotashi &$hotashi){
@@ -537,7 +537,7 @@ class shop_db_manager extends db_manager {
             $hotashi->cptoken=$result["token"];
         }
         catch (PDOException $e){
-            $this->error_manager->pg_error_handler($e->getCode());
+            $this->error_manager->db_error_handler($e->getCode());
         }
     }
     public function activate_account($hotashi){
@@ -546,7 +546,7 @@ class shop_db_manager extends db_manager {
             $stmt->execute(array($hotashi->atoken));
         }
         catch (PDOException $e){
-            $this->error_manager->pg_error_handler($e->getCode());
+            $this->error_manager->db_error_handler($e->getCode());
         }
     }
     /* Account activation */
@@ -559,7 +559,7 @@ class shop_db_manager extends db_manager {
             $hotashi->atoken=$result["token"];
         }
         catch (PDOException $e){
-            $this->error_manager->pg_error_handler($e->getCode());
+            $this->error_manager->db_error_handler($e->getCode());
         }
     }
     /* Session*/
@@ -570,7 +570,7 @@ class shop_db_manager extends db_manager {
             $stmt->execute(array($hotashi->stoken));
         }
         catch (PDOException $e){
-            $this->error_manager->pg_error_handler($e->getCode());
+            $this->error_manager->db_error_handler($e->getCode());
         }
     }
     public function logout(hotashi $hotashi){
@@ -585,7 +585,7 @@ class shop_db_manager extends db_manager {
             $hotashi->stoken=$result["token"];
         }
         catch (PDOException $e){
-            $this->error_manager->pg_error_handler($e->getCode());
+            $this->error_manager->db_error_handler($e->getCode());
         }
     }
     /* Payment methods */
@@ -595,7 +595,7 @@ class shop_db_manager extends db_manager {
             $stmt->execute(array($hotashi->stoken,$hotashi->pmname));
         }
         catch (PDOException $e){
-            $this->error_manager->pg_error_handler($e->getCode());
+            $this->error_manager->db_error_handler($e->getCode());
         }
     }
     public function remove_payment_method(hotashi $hotashi){
@@ -605,7 +605,7 @@ class shop_db_manager extends db_manager {
             $stmt->execute(array($hotashi->stoken,$hotashi->pmid));
         }
         catch (PDOException $e){
-            $this->error_manager->pg_error_handler($e->getCode());
+            $this->error_manager->db_error_handler($e->getCode());
         }
     }
     public function get_payment_methods(hotashi $hotashi,train $train){
@@ -620,7 +620,7 @@ class shop_db_manager extends db_manager {
             }
         }
         catch (PDOException $e){
-            $this->error_manager->pg_error_handler($e->getCode());
+            $this->error_manager->db_error_handler($e->getCode());
         }
     }
     /* Shipping address */
@@ -630,7 +630,7 @@ class shop_db_manager extends db_manager {
             $stmt->execute(array($hotashi->stoken,$hotashi->sa_country,$hotashi->sa_city,$hotashi->sa_pcode,$hotashi->sa_add1,$hotashi->sa_add2,$hotashi->sa_add3));
         }
         catch (PDOException $e){
-            $this->error_manager->pg_error_handler($e->getCode());
+            $this->error_manager->db_error_handler($e->getCode());
         }
     }
     public function remove_shipping_address(hotashi $hotashi){
@@ -639,7 +639,7 @@ class shop_db_manager extends db_manager {
             $stmt->execute(array($hotashi->stoken,$hotashi->sa_id));
         }
         catch (PDOException $e){
-            $this->error_manager->pg_error_handler($e->getCode());
+            $this->error_manager->db_error_handler($e->getCode());
         }
     }
     public function get_shipping_address(hotashi $hotashi,train &$train){
@@ -659,7 +659,7 @@ class shop_db_manager extends db_manager {
             }
         }
         catch (PDOException $e){
-            $this->error_manager->pg_error_handler($e->getCode());
+            $this->error_manager->db_error_handler($e->getCode());
         }
     }
 
