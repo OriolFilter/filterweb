@@ -334,14 +334,14 @@
         to publish the ports in the main server, which is not the actual scenario, nor likely to happen).
     \end{flushleft}
 
-    \subsubsection[Nginx]{nginx}
+    \subsubsection[Nginx]{Nginx}
     \begin{flushleft}
         Having the ports 80 and 443 exposed in the server, its configuration forces the use of the port 443, redirecting
         the connections fo that port, that way in case of having an HTTP petition the client is forced to use a "secure"
         connection, or at least, a connection that uses SSL encrypting.
     \end{flushleft}
 
-    \subsubsection[PHP]{php}
+    \subsubsection[PHP]{SFTP}
     \begin{flushleft}
         While this container doesn't do nothing by themself, either has ports exposed, it's linked to the nginx server, providing php support
         to that container.
@@ -354,13 +354,16 @@
         the connections are limited to the docker machines themselves.
     \end{flushleft}
     \newpage
-    \subsubsection[Adminer]{adminer}
+    \subsubsection[Adminer]{Adminer}
     \begin{flushleft}
         Like previously mentioned, the ports from the database are not exposed, but, in case of needing a simple GUI
         access to them, this can be arranged by using the adminer docker, which provides a web-database management,
         and since it's in the same docker network than the postgresql database, we can have access to it without having
         to expose the ports.
-        The active configuration let's u access the service using the port 8080.
+        The active configuration allows you access the service using the port 8080.
+    \end{flushleft}
+
+    \begin{flushleft}
         \textit{This configuration is ready to launch, but uncommented since to deploy it, it isn't necessary.}
     \end{flushleft}
 
@@ -371,7 +374,7 @@
        There isn't much to talk about it, since it doesn't provide a service by himself.
     \end{flushleft}
 
-    \subsubsection[sftp]{sftp}
+    \subsubsection[SFTP]{SFTP}
     \begin{flushleft}
         Observing the schema, we can see that the port 22 is being forwarded to the port 23, and publishing it, that's
         to avoid a port overlap with the default SSH port configuration.
