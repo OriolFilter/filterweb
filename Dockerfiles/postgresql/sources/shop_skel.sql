@@ -62,7 +62,7 @@ CREATE TABLE if not exists session_tokens (
 -- User Payment methods
 
 CREATE TABLE if not exists user_payment_methods (
-    user_payment_method_id serial,
+    user_payment_method_id serial PRIMARY KEY ,
     user_payment_method_name varchar (40) NOT NULL, /*Varchar only */
     user_id integer NOT NULL,
     CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
@@ -71,7 +71,7 @@ CREATE TABLE if not exists user_payment_methods (
 -- Shipping address
 
 CREATE TABLE if not exists shipping_address (
-    shipping_address_id serial,
+    shipping_address_id serial PRIMARY KEY ,
     shipping_address_country varchar (2) NOT NULL, /* ES, CA, FR */
     shipping_address_city varchar NOT NULL,
     shipping_address_postal_code varchar NOT NULL, /* https://en.wikipedia.org/wiki/Postal_code */

@@ -27,20 +27,24 @@
 \begin{flushleft}
     It also contains a procedure called "insert\_form", which given the next information "\textit{(p\_name varchar,
     p\_email varchar, p\_text text)}", checks if the values are valid and in case of not being valid, will rise an error
-    (more information in the REGEX and Error threads).
+    (more information in the Regex and Error List threads).
 \end{flushleft}
 \begin{flushleft}
     As a security measure, there been a user implemented using the next query:
-    \begin{lstlisting}[language=SQL,label={lst:lstlisting}]
-REVOKE ALL ON DATABASE contact_form FROM PUBLIC;
-CREATE USER form_user with password 'form_pass';
-GRANT CONNECT ON DATABASE contact_form to form_user;
-GRANT EXECUTE on procedure insert_form to form_user;
-GRANT USAGE on SEQUENCE contact_form.public.forms_table_form_id_seq to form_user;
-GRANT INSERT on TABLE forms_table to form_user;
-    \end{lstlisting}
+    \lstinputlisting[language=SQL,label={lst:lstlisting}]{../Dockerfiles/postgresql/sources/contact_form_users.sql}
 \end{flushleft}
 \begin{flushleft}
     Taking a look at the query, we can observe that the first step is to revoke all the permissions in the database,
     that way we can ensure that all the users are limited to the options that we specifically gave.
+\end{flushleft}
+
+
+\newpage
+\subsubsection[Shop database]{Shop database}
+\begin{center}
+%    \includegraphics[scale=0.6]{DB_Table_Schema_ShopV1}
+    \includegraphics[scale=0.6]{DB_Table_Schema_ShopV3}
+\end{center}
+\begin{flushleft}
+    Taking a look at the graph we can see how
 \end{flushleft}
