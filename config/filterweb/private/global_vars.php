@@ -408,7 +408,7 @@ class db_user {
     public function __construct() {
         $this->databasetype="pgsql";
         $this->port="5432";
-        $dblocation=getenv('SHOP_DB_LOCATION', true);
+        $dblocation=getenv('DB_LOCATION', true);
         $this->host= $dblocation ?? "localhost";
     }
 }

@@ -70,6 +70,8 @@
         to avoid a port overlap with the default SSH port configuration.
     \end{flushleft}
 
+
+
     \newpage
     \subsection[Main Server Docker Configuration]{MainServerDockerConfiguration}\label{subsec:mainserverdockerconfiguration}
     \subsubsection[Main Server Docker-Compose]{Main Server DockerCompose}
@@ -88,7 +90,7 @@
                     \item nginx
                     \item php
                     \item adminer
-                    \item shop\_db
+                    \item postgresql
                 \end{itemize}
                 \item agent\_network:
                 \begin{itemize}
@@ -97,9 +99,9 @@
             \end{itemize}
         \item Volumes
             \begin{itemize}
-                \item shop\_db\_volume:
+                \item postgresql\_volume:
                 \begin{itemize}
-                      \item shop\_db
+                      \item postgresql
                 \end{itemize}
                 \item portainer\_data:
                 \begin{itemize}
@@ -113,3 +115,9 @@
         All the dockers have been configured to restart in case of failure, which means that unless they are stopped manually,
         they will always restart.
     \end{flushleft}
+    \begin{flushleft}
+        Also, as will be explained in the next section, the services PHP and PostgreSQL, are being built fromm
+    \end{flushleft}
+
+    \subsubsection[PHP Dockerfile]{PHP Dockerfile}
+    \lstinputlisting[language=Yaml,label={lst:BackupDealer}]{../Dockerfiles/php}

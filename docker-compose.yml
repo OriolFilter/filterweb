@@ -24,24 +24,24 @@ services:
    build:
     context: Dockerfiles
     dockerfile: php
+   image: filtershop/php
    deploy:
     restart_policy:
      condition: on-failure
    configs:
     - uid="${UID:-1000}"
     - gid="${GID:-1000}"
-   image: filtershop/php
    volumes:
     - "${LOCAL_PUBLIC_WEB_PATH}:/var/www:rw"
    environment:
-    SHOP_DB_LOCATION: "${SHOP_DB_LOCATION:-shop_db}"
+    DB_LOCATION: "${DB_LOCATION:-postgresql}"
     HOSTNAME: "${HOSTNAME:-localhost}"
    links:
-    - "${SHOP_DB_LOCATION:-shop_db}"
+    - "${DB_LOCATION:-postgresql}"
    networks:
     - shop_net
 
-  shop_db:
+  postgresql:
    build:
     context: Dockerfiles/postgresql
    image: filtershop/postgresql
@@ -50,14 +50,14 @@ services:
      condition: on-failure
    restart: on-failure
    environment:
-    POSTGRES_USER: "${SHOP_DATABASE_USER}"
-    POSTGRES_PASSWORD: "${SHOP_DATABASE_PASSWORD}"
+    POSTGRES_USER: "${DATABASE_USER}"
+    POSTGRES_PASSWORD: "${DATABASE_PASSWORD}"
     POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256 --auth-local=scram-sha-256"
     BUILD_DATABASE_LIST: "${BUILD_DATABASE_LIST}"
    volumes:
     - type: volume
-      source: shop_db_volume
-      target: /var/lib/postgresql/data
+      source: "postgresql_volume"
+      target: "/var/lib/postgresql/data"
       volume:
        nocopy: true
    networks:
@@ -68,7 +68,7 @@ services:
    ports:
     - "9000:9000"
    volumes:
-    - portainer_data:/data
+    - "portainer_data:/data"
     - "/var/run/docker.sock:/var/run/docker.sock"
    networks:
     - agent_network
@@ -86,9 +86,9 @@ services:
    ports:
     - "8080:8080"
    links:
-    - "${SHOP_DB_LOCATION:-shop_db}"
+    - "${postgresql_LOCATION:-postgresql}"
    environment:
-    ADMINER_DEFAULT_SERVER: "${SHOP_DB_LOCATION:-shop_db}"
+    ADMINER_DEFAULT_SERVER: "${DB_LOCATION:-postgresql}"
    networks:
     - shop_net
 
@@ -99,6 +99,6 @@ networks:
    driver: overlay
    attachable: true
 volumes:
-  shop_db_volume:
+  postgresql_volume:
    external: false
   portainer_data:
