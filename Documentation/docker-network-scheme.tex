@@ -132,3 +132,39 @@
         of not having data in the postgres folder, and also adds an SQL files that once executed, will be deleted
         from the machine in order to avoid security flaws.
     \end{flushleft}
+
+    \newpage
+    \newpage
+    \subsubsection[Backup Dealer Dockerfile]{Backup Dealer Dockerfile}
+    \lstinputlisting[language=Docker,label={lst:BackupDealerlDockerfile}]{../Dockerfiles/backup_client/Dockerfile}
+    \begin{flushleft}
+        In comparison with the other 2 Dockerfiles which just fulfill one function, this one is more complex.
+    \end{flushleft}
+    \begin{flushleft}
+        At the first Part it adds \textbf{Build} arguments and afterwards assign those arguments to environment variables
+        to store its value in order to preserve it in future instances.
+
+        Also initializes some variables with an empty value, which will require the user to specify them when using this docker.
+    \end{flushleft}
+    \begin{flushleft}
+        Once the variables are set up, the Docker will install the packages required in order to accomplish its functions, which in this case the packages required are:
+        \begin{itemize}
+            \item : \textbf{Rsync} to generate backups from directories while keeping the permissions from the files.
+            \item : \textbf{Tar} to compress the backups generated in order to reduce the size usage on the servers.
+            \item : \textbf{Openssh} in order to be able to connect at the desired sftp server, so the backups can be
+            item stored in a remote server.
+            \item : \textbf{Keychain} so the backups can be fully automatized using certificates.
+        \end{itemize}
+    \end{flushleft}
+
+    \begin{flushleft}
+        Afterwards creates the default folders (based in the arguments given by the user, or using its default values),
+        once it's done proceeds to add the file ".bashrc" with the content that will allow us to use a keychain avoiding the
+        requirement of a password.
+    \end{flushleft}
+    \begin{flushleft}
+        Finally, adds the "scripts" folder to the server.
+    \end{flushleft}
+
+
+
