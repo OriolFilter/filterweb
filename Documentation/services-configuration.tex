@@ -19,6 +19,24 @@
 \end{flushleft}
 \subsection{Nginx Configuration}\label{subsec:nginx-configuration}
 
+\begin{flushleft}
+    To improve the security and having a better image through the client, this page uses SSL connections.
+\end{flushleft}
+
+\begin{flushleft}
+    Since we have SSL connections, instead of restrict the access to the port 80, we made a simple forward from port 80
+    to port 443, that wat we force the client to use the SSL protocol
+\end{flushleft}
+\lstinputlisting[language=C,label={lst:defaultConfigNginx}]{../config/nginx/default.conf}
+\begin{flushleft}
+    To improve the performance, we have enabled HTTP2.
+    As mentioned before, we are using an SSL connection, so we needed to specify the certificate path.
+    Also, to as a security measure, the logs been enabled, which we will store in a docker volume.
+    Finally, since we are using a container without PHP itself, we need to enable a connection, so the Nginx server sends
+    the connections to the PHP container in order to be executed.
+\end{flushleft}
+\lstinputlisting[language=C,label={lst:defaultWebNginx}]{../config/nginx/web.conf}
+
 \subsection{PostgreSQL Configuration}\label{subsec:postgresql-configuration}
 \begin{flushleft}
     Currently, the database contains 2 databases.
