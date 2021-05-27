@@ -1,0 +1,71 @@
+    \subsection{Docker Network Scheme}\label{subsec:ProjectNetworkScheme}
+%    \textbf{\textit{Docker network scheme:}}
+    \begin{center}
+    \includegraphics[scale=0.8]{NetworkDistribution}
+    \end{center}
+    \newpage
+
+    \subsection{Docker Network Distribution Explanation}\label{subsec:dockernetworkdistribution-explanation}
+    \begin{flushleft}
+        As mentioned previously, the services are distributed in two servers, yet, the second one (the backup server),
+        could be removed and store the backups locally, moving the \textbf{sftp} service to the main server, or, through
+        \textbf{docker} using a volume or directory binding, but even if it's possible, it's recommended to do the backups in a
+        different server as a security measure in case the main server get compromised.
+    \end{flushleft}
+
+    \begin{flushleft}
+        Taking a look in the main server, we can see that the docker machines are mainly distributed among a common network,
+        while there still an \textbf{docker} machine hanging by himself, that's because this \textbf{docker} machine is
+        used to generate backups periodically, so doesn't need to have access to another docker networks (unless we wanted to specifically upload
+        the backups inside a docker-machine that resides inside a docker network, but we didn't have the need
+        to publish the ports in the main server, which is not the actual scenario, nor likely to happen).
+    \end{flushleft}
+
+
+    \subsubsection[Nginx]{Nginx}
+    \begin{flushleft}
+        Having the ports 80 and 443 exposed in the server, its configuration forces the use of the port 443, redirecting
+        the connections fo that port, that way in case of having an HTTP petition the client is forced to use a "secure"
+        connection, or at least, a connection that uses SSL encrypting.
+    \end{flushleft}
+
+    \subsubsection[PHP]{SFTP}
+    \begin{flushleft}
+        While this container doesn't do nothing by themself, either has ports exposed, it's linked to the nginx server, providing php support
+        to that container.
+    \end{flushleft}
+
+    \subsubsection[Postgresql]{Postgresql}
+    \begin{flushleft}
+        PostgreSQL uses by default the port 5432 to connect to the databases, and while there could be some reasons to
+        have it exposed, but since in this scenario we aren't making use of it, it's better to keep it closed, that way
+        the connections are limited to the docker machines themselves.
+    \end{flushleft}
+    \newpage
+    \subsubsection[Adminer]{Adminer}
+    \begin{flushleft}
+        Like previously mentioned, the ports from the database are not exposed, but, in case of needing a simple GUI
+        access to them, this can be arranged by using the adminer docker, which provides a web-database management,
+        and since it's in the same docker network than the postgresql database, we can have access to it without having
+        to expose the ports.
+        The active configuration allows you access the service using the port 8080.
+    \end{flushleft}
+
+    \subsubsection[Portainer]{Portainer}
+    \begin{flushleft}
+        To provide easy access to monitor and control the docker volumes, have decided to implement \textbf{Portainer}
+        to the docker network, allowing the users to access to it using the port 9000.
+    \end{flushleft}
+
+    \subsubsection[Backup\_dealer]{BackupDealer}
+    \begin{flushleft}
+       Like mentioned previously, this machine is used to periodically do backups of the desired volumes or directories,
+       to a local volume or directory, or to a remote server.
+       There isn't much to talk about it, since it doesn't provide a service by himself.
+    \end{flushleft}
+
+    \subsubsection[SFTP]{SFTP}
+    \begin{flushleft}
+        Observing the schema, we can see that the port 22 is being forwarded to the port 23, and publishing it, that's
+        to avoid a port overlap with the default SSH port configuration.
+    \end{flushleft}
