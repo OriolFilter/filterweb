@@ -118,8 +118,17 @@ CREATE EXTENSION if not exists pgcrypto;
             \item Used to store randomized tokens.
             Like in the username or email fields, the value could ve easily modified if it was needed in the future.
         \end{itemize}
+        \item shipping / payment methods data
+        \begin{itemize}
+            \item Mainly stored as a varchar, the length might vary depending on of the needs.
+        \end{itemize}
     \end{itemize}
 \end{flushleft}
+
+\newpage
+\subsubsection[Main functions]{Main functions}
+
+
 
 \newpage
 \subsection{Data Validation}\label{subsec:data-validation}
