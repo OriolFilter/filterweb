@@ -37,7 +37,8 @@ export PGPASSWORD="$POSTGRES_PASSWORD"
 # https://stackoverflow.com/questions/10586153/how-to-split-a-string-into-an-array-in-bash
 
 # DOESNT SUPPORT HAVING SPACES OR COMAS IN THE NAME, SINCE WILL USE THOSE CHARACTERS TO SPLIT INTO AN ARRAY
-declare -a DATABASE_ARR=( $( awk '{ gsub(","," "); gsub("  "," "); gsub(" ","\n"); print}' <<< $BUILD_DATABASE_LIST ) );
+# shellcheck disable=SC2207
+declare -a DATABASE_ARR=( $( awk '{ gsub(","," "); gsub("  "," "); gsub(" ","\n"); print}' <<< "$BUILD_DATABASE_LIST" ) );
 
 ########
 # MAIN #
@@ -50,7 +51,7 @@ for database in "${DATABASE_ARR[@]}"
 do
   printf "${COLOR_YELLOW}[!INFO]${COLOR_DEFAULT} ${COLOR_YELLOW}[$(date +%H:%m:%S)]${COLOR_DEFAULT} ${COLOR_BLUE}CREATING DATABASE ${database}${COLOR_DEFAULT}\n"
   if psql -U "$POSTGRES_USER" -d postgres -c "CREATE DATABASE $database" > /dev/null; then
-    printf "${COLOR_GREEN}[!SUCCESS]${COLOR_DEFAULT} ${COLOR_YELLOW}[$(date +%H:%m:%S)]${COLOR_DEFAULT} ${COLOR_BLUE}SUCCEFULLY CREATED DATABASE ${database}${COLOR_DEFAULT}\n"
+    printf "${COLOR_GREEN}[!SUCCESS]${COLOR_DEFAULT} ${COLOR_YELLOW}[$(date +%H:%m:%S)]${COLOR_DEFAULT} ${COLOR_BLUE}SUCCESSFULLY CREATED DATABASE ${database}${COLOR_DEFAULT}\n"
 
     # Formatting database:
     # Execute every file that can find using the keys in $FORMAT_ARR it it's own database
@@ -63,7 +64,7 @@ do
       if [ -f "${sqlfile}" ]; then
         printf "${COLOR_YELLOW}[!INFO]${COLOR_DEFAULT} ${COLOR_YELLOW}[$(date +%H:%m:%S)]${COLOR_DEFAULT} ${COLOR_BLUE}FOUND SQL FILE!: ${sqlfile}${COLOR_DEFAULT}\n"
         printf "${COLOR_YELLOW}[!INFO]${COLOR_DEFAULT} ${COLOR_YELLOW}[$(date +%H:%m:%S)]${COLOR_DEFAULT} ${COLOR_BLUE}Proceeding to execute: ${sqlfile}${COLOR_DEFAULT}\n"
-        if psql -U "$POSTGRES_USER" -d $database -f "${sqlfile}" > /dev/null; then
+        if psql -U "$POSTGRES_USER" -d "$database" -f "${sqlfile}" > /dev/null; then
           printf "${COLOR_GREEN}[!SUCCESS]${COLOR_DEFAULT} ${COLOR_YELLOW}[$(date +%H:%m:%S)]${COLOR_DEFAULT} ${COLOR_BLUE}FINISHED EXECUTING SQL FILE: ${sqlfile}${COLOR_DEFAULT}\n"
           rm -v "${sqlfile}"
         else
@@ -71,7 +72,7 @@ do
         fi
 
       else
-        printf "${COLOR_RED}[!ERROR]${COLOR_DEFAULT} ${COLOR_YELLOW}[$(date +%H:%m:%S)]${COLOR_DEFAULT} ${COLOR_BLUE}Couldn'f find file: ${sqlfile}${COLOR_DEFAULT}\n"
+        printf "${COLOR_RED}[!ERROR]${COLOR_DEFAULT} ${COLOR_YELLOW}[$(date +%H:%m:%S)]${COLOR_DEFAULT} ${COLOR_BLUE}Couldn't find file: ${sqlfile}${COLOR_DEFAULT}\n"
       fi
       sqlfile=''
     done
