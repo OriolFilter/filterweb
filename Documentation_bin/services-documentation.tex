@@ -1,4 +1,4 @@
-\subsection{Portainer Configuration}\label{subsec:portainer-configuration}
+\subsection{Portainer Documentation}\label{subsec:portainer-documentation}
 
 \begin{flushleft}
     As mentioned in the Docker documentation, this container will make use of a volume named "portainer\_data", which
@@ -9,15 +9,11 @@
     to the docker container.
 \end{flushleft}
 
-\subsection{Adminer Configuration}\label{subsec:adminer-configuration}
-\begin{flushleft}
-    There is no configuration done to this package.
-\end{flushleft}
-\subsection{PHP Configuration}\label{subsec:PHH-configuration}
+\subsection{PHP Documentation}\label{subsec:PHH-documentation}
 \begin{flushleft}
     As mentioned in the docker documentation, this container has been configured to have the PDO extension enabled.
 \end{flushleft}
-\subsection{Nginx Configuration}\label{subsec:nginx-configuration}
+\subsection{Nginx Documentation}\label{subsec:nginx-documentation}
 
 \begin{flushleft}
     To improve the security and having a better image through the client, this page uses SSL connections.
@@ -37,7 +33,7 @@
 \end{flushleft}
 \lstinputlisting[language=C,label={lst:defaultWebNginx}]{../config/nginx/web.conf}
 
-\subsection{PostgreSQL Configuration}\label{subsec:postgresql-configuration}
+\subsection{PostgreSQL Documentation}\label{subsec:postgresql-documentation}
 \begin{flushleft}
     Currently, the database contains 2 databases.
     \begin{itemize}
@@ -65,7 +61,7 @@
 \end{flushleft}
 \begin{flushleft}
     It also contains a procedure called "insert\_form", which given the next information "\textit{(p\_name varchar,
-    p\_email varchar, p\_text text)}", checks if the values are valid and in case of not being valid, will rise an error
+        p\_email varchar, p\_text text)}", checks if the values are valid and in case of not being valid, will rise an error
     (more information in the Regex and Error List threads).
 \end{flushleft}
 \begin{flushleft}
@@ -77,6 +73,9 @@
     that way we can ensure that all the users are limited to the options that we specifically gave.
 \end{flushleft}
 
+\paragraph[Contact database List of Relations Listing]{Contact database Relations Listing}
+\input{db_contact_relations}
+\newpage
 
 \newpage
 \subsubsection[Shop database structure]{Shop database structure}
@@ -90,7 +89,9 @@
     that the user was deleted.
     \url{\repoURL blob/master/Dockerfiles/postgresql/sources/shop_skel.sql}
 \end{flushleft}
-
+\newpage
+\paragraph[Shop database List of Relations Listing]{Shop database Relations Listing}
+\input{db_shop_relations.tex}
 
 \subsubsection[Plugins enabled]{Plugins enabled}
 \begin{lstlisting}[language=SQL,label={lst:pgcrypto_enabling}]
@@ -109,15 +110,15 @@ CREATE EXTENSION if not exists pgcrypto;
             \item Used to store data avoiding collisions while providing an identification point for the entry (used as a Primary Key).
         \end{itemize}
         \item Username
-            \begin{itemize}
-                \item Varchar of 20 length, still, it could be any length, even text, since how postgresql reserves memory,
-                but in order to avoid issues during interactions with other applications, or, to facilitate upgrading to
-                another Database System in the future (if it's needed), it's better to keep it sort of short.
-                \begin{flushleft}
-                    Usernames are checked by the next function: "function\_check\_user\_exists" returning a boolean, or
-                    procedure "proc\_check\_user\_exists" raising an error in case the username already exists.
-                \end{flushleft}
-            \end{itemize}
+        \begin{itemize}
+            \item Varchar of 20 length, still, it could be any length, even text, since how postgresql reserves memory,
+            but in order to avoid issues during interactions with other applications, or, to facilitate upgrading to
+            another Database System in the future (if it's needed), it's better to keep it sort of short.
+            \begin{flushleft}
+                Usernames are checked by the next function: "function\_check\_user\_exists" returning a boolean, or
+                procedure "proc\_check\_user\_exists" raising an error in case the username already exists.
+            \end{flushleft}
+        \end{itemize}
         \item Password
         \begin{itemize}
             \item Varchar of 60 length since it's the length of a hashed value.
@@ -144,7 +145,7 @@ CREATE EXTENSION if not exists pgcrypto;
             might depend on of which table is stored).
             By default  it's +30 minutes from its creation.
             \begin{flushleft}
-            Used to check:
+                Used to check:
                 \begin{itemize}
                     \item Login session is valid
                     \item Activate account token is valid
@@ -229,6 +230,9 @@ POSTGRESQL:
 \begin{flushleft}
     Uses Regex and default java functions in order to check if the fields are valid, yet it doesn't really look at specific stuff.
 \end{flushleft}
+\begin{flushleft}
+    Once the values been validated, will proceed to use the library of \textbf{AJAX} and send the POST petition to our server corresponding \textbf{API} key.
+\end{flushleft}
 
 \begin{flushleft}
     Uses Ajax when receiving a response from the server, so can format a response for the user.
@@ -256,6 +260,7 @@ POSTGRESQL:
     PHP and JavaScript uses these errors to format responses for the client based in the code received.
 \end{flushleft}
 
+\newpage
 \subsubsection{Error Codes}\label{subsubsec:error-codes}
 \begin{lstlisting}[language=yaml,label={lst:errorListing}]
 php & js:

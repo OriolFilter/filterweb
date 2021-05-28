@@ -46,6 +46,7 @@
 \usepackage{tikz}
 \usetikzlibrary{patterns}
 \usepackage{bchart}
+\usepackage{wasysym}
 
 
 %Includes
@@ -63,6 +64,7 @@
 %\lfoot{\email}
 
 
+\setcounter{tocdepth}{5}
 
 % Document
 \makeindex
@@ -91,13 +93,13 @@
 
     \newpage
 %    Docker configuration
-    \section{Docker Configuration}\label{sec:DockerConfiguration}
+    \section{Docker Documentation}\label{sec:DockerDocumentation}
     \input{docker_documentation}
 
     \newpage
 %    Service Configuration
-    \section{Services Configuration}\label{sec:ServicesConfiguration}
-    \input{services-configuration}
+    \section{Services Documentation}\label{sec:ServicesDocumentation}
+    \input{services-documentation}
 
     \newpage
 %    Webpage Configuration
@@ -109,4 +111,18 @@
     \section{Services Deployment}\label{sec:ServiceDeployment}
     \input{services-deployment}
 
+    \newpage
+%    Service deployment
+    \section{Possible improvements}\label{sec:Possible improvements}
+    \input{improvements}
+
+    \newpage
+%    Webgraphy
+    \section{Webgraphy}\label{sec:Webgraphy}
+    \input{webgraphy}
+
+    \newpage
+%    Webgraphy
+    \section{Conclusion}\label{sec:Conclusion}
+    \input{conclusion}
 \end{document}

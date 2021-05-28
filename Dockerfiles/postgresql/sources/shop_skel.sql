@@ -539,8 +539,6 @@ begin
             using errcode = 'P6201',
                 message = 'Username not found';
     end if;
-
-
 end;
 $$ LANGUAGE plpgsql;
 
@@ -793,7 +791,7 @@ BEGIN
 --     insert into users(username, password, email) values (p_username,crypt(p_passwd, gen_salt('bf',8)),cast(encode(cast(p_email as bytea),'hex') as bytea));
     insert into users(username, password, email) values (p_username,return_crypted_pass(p_passwd),p_email);
     select into v_uid user_id from users where lower(username)=lower(p_username);
-    insert into activated_accounts(user_id) values (v_uid); /* Canviar a trigger */
+    insert into activated_accounts(user_id) values (v_uid);
 
 END;
 
