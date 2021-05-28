@@ -15,22 +15,19 @@
 \paragraph{apt}
 \begin{flushleft}
 \begin{lstlisting}[language=bash,label={lst:apt-git}]
-sudo apt-get update && sudo apt-get install git
-\end{lstlisting}
+sudo apt-get update && sudo apt-get install git\end{lstlisting}
 \end{flushleft}
 
 \paragraph{pacman}
 \begin{flushleft}
 \begin{lstlisting}[language=bash,label={lst:pacman-git}]
-sudo pacman -Syu && sudo pacman -S git
-\end{lstlisting}
+sudo pacman -Syu && sudo pacman -S git\end{lstlisting}
 \end{flushleft}
 
 \paragraph{apk}
 \begin{flushleft}
 \begin{lstlisting}[language=bash,label={lst:apk-git}]
-sudo apk update && sudo apk add --no-cache git
-\end{lstlisting}
+sudo apk update && sudo apk add --no-cache git\end{lstlisting}
 \end{flushleft}
 
 
@@ -39,50 +36,43 @@ sudo apk update && sudo apk add --no-cache git
 \paragraph{apt}
 \begin{flushleft}
 \begin{lstlisting}[language=bash,label={lst:apt-docker}]
-sudo apt-get update && sudo apt-get install docker-ce docker-ce-cli containerd.io
-\end{lstlisting}
+sudo apt-get update && sudo apt-get install docker-ce docker-ce-cli containerd.io\end{lstlisting}
 \end{flushleft}
 
 \paragraph{pacman}
 \begin{flushleft}
 \begin{lstlisting}[language=bash,label={lst:pacman-docker}]
-sudo pacman -Ss && sudo pacman -S docker
-\end{lstlisting}
+sudo pacman -Ss && sudo pacman -S docker\end{lstlisting}
 \end{flushleft}
 
 \paragraph{apk}
 \begin{flushleft}
 \begin{lstlisting}[language=bash,label={lst:apk-docker}]
-sudo apk update && sudo  apk add --no-cache docker
-\end{lstlisting}
+sudo apk update && sudo  apk add --no-cache docker\end{lstlisting}
 \end{flushleft}
 
 \subsubsection{Docker configuration - allow user to use docker}
 \begin{lstlisting}[language=bash,label={lst:add-group-docker}]
-sudo usermod -a -G docker your_user
-\end{lstlisting}
+sudo usermod -a -G docker your_user\end{lstlisting}
 
 \subsubsection{Docker configuration - enable docker on boot}
 \paragraph{service}
 \begin{flushleft}
 \begin{lstlisting}[language=bash,label={lst:service-docker}]
-sudo service enable docker
-\end{lstlisting}
+sudo service enable docker\end{lstlisting}
 \end{flushleft}
 
 \paragraph{systemctl}
 
 \begin{flushleft}
 \begin{lstlisting}[language=bash,label={lst:systemctl-docker}]
-sudo systemctl start
-\end{lstlisting}
+sudo systemctl start\end{lstlisting}
 \end{flushleft}
 
 \paragraph{rc-update}
 \begin{flushleft}
 \begin{lstlisting}[language=bash,label={lst:rc-docker}]
-sudo run rc-update add docker boot
-\end{lstlisting}
+sudo run rc-update add docker boot\end{lstlisting}
 \end{flushleft}
 
 \subsubsection{Docker-Compose installation}
@@ -91,8 +81,7 @@ sudo run rc-update add docker boot
 \begin{lstlisting}[language=bash,label={lst:apt-compose}]
 sudo apt-get update && sudo apt-get install python3
 sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
-\end{lstlisting}
+sudo chmod +x /usr/local/bin/docker-compose\end{lstlisting}
 \end{flushleft}
 
 \paragraph{pacman}
@@ -100,8 +89,7 @@ sudo chmod +x /usr/local/bin/docker-compose
 \begin{lstlisting}[language=bash,label={lst:pacman-compose}]
 sudo pacman -Ss && sudo pacman -S python3
 sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
-\end{lstlisting}
+sudo chmod +x /usr/local/bin/docker-compose\end{lstlisting}
 \end{flushleft}
 
 \paragraph{apk}
@@ -109,8 +97,7 @@ sudo chmod +x /usr/local/bin/docker-compose
 \begin{lstlisting}[language=bash,label={lst:apk-compose}]
 sudo apk update && sudo  apk add --no-cache py-pip python3-dev libffi-dev openssl-dev gcc libc-dev rust cargo make
 sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
-\end{lstlisting}
+sudo chmod +x /usr/local/bin/docker-compose\end{lstlisting}
 \end{flushleft}
 
 
@@ -153,8 +140,7 @@ sudo chmod +x /usr/local/bin/docker-compose
     adding the volume or directory that we want to use, in this example we will use the directory \textbf{/mnt/backups}
     \begin{lstlisting}[language=yaml,label={lst:local_backups_dir}]
 volumes:
-    "/mnt/backups:/mnt/slave:rw"
-    \end{lstlisting}
+    "/mnt/backups:/mnt/slave:rw"\end{lstlisting}
 \end{flushleft}
 
 \subsubsection[Cron periodical backups minimal customization]{Cron periodical backups minimal customization}
@@ -163,8 +149,7 @@ volumes:
     a backup every day.
     \begin{lstlisting}[language=bash,label={lst:insert_to_cron}]
 echo "* * */1 * * $USER docker-compose -f $(pwd)/backup_dealer-compose.yml --env-file $(pwd)/bkcli_env_folder/.env_bk_pg up" | sudo tee -a  /etc/cron.d/docker_backups
-echo "* * */1 * * $USER docker-compose -f $(pwd)/backup_dealer-compose.yml --env-file $(pwd)/bkcli_env_folder/.env_bk_ng_logs up"  | sudo tee -a  /etc/cron.d/docker_backups
-    \end{lstlisting}
+echo "* * */1 * * $USER docker-compose -f $(pwd)/backup_dealer-compose.yml --env-file $(pwd)/bkcli_env_folder/.env_bk_ng_logs up"  | sudo tee -a  /etc/cron.d/docker_backups\end{lstlisting}
 \end{flushleft}
 
 \newpage
@@ -179,29 +164,25 @@ echo "* * */1 * * $USER docker-compose -f $(pwd)/backup_dealer-compose.yml --env
 
     To copy the folder to a remote server we can use the command:
 \begin{lstlisting}[language=bash,label={lst:scp}]
-scp -r ./backup_server <user>@<host>:~
-\end{lstlisting}
+scp -r ./backup_server <user>@<host>:~\end{lstlisting}
 \end{flushleft}
 
 \subsection{Repository deployment booting services}\label{subsec:repository-deployment-booting-services}
 \subsubsection[Main Server Service Booting]{Main Server Service Booting}
 This can simply be done by executing the next command:
 \begin{lstlisting}[language=bash,label={lst:compose-up}]
-docker-compose build && docker-compose up
-\end{lstlisting}
+docker-compose build && docker-compose up\end{lstlisting}
 
 \subsubsection[Backup (Remote) Server Service Booting]{Backup (Remote) Server Service Booting}
 \textit{Reminder that the server needs to fulfill the requirements.}
 This can simply be done by executing the next command:
 \begin{lstlisting}[language=bash,label={lst:compose-up-bk-remote}]
-ssh <user>@<host> docker-compose -f backup_server/docker-compose.yml up -d
-\end{lstlisting}
+ssh <user>@<host> docker-compose -f backup_server/docker-compose.yml up -d\end{lstlisting}
 
 \subsubsection[Backup (Local) Server Service Booting]{Backup (Local) Server Service Booting}
 This can simply be done by executing the next command:
 \begin{lstlisting}[language=bash,label={lst:compose-up-bk-Local}]
-docker-compose -f backup_server/docker-compose.yml up -d
-\end{lstlisting}
+docker-compose -f backup_server/docker-compose.yml up -d\end{lstlisting}
 
 
 \subsubsection[Use your own email sender]{Use your own email sender}
@@ -211,17 +192,14 @@ docker-compose -f backup_server/docker-compose.yml up -d
     \textit{If you are using a Gmail account, access from untrusted applications needs to be enabled}
     \begin{lstlisting}[language=php,label={lst:mail_accounts}]
         $mail_server='filter.web.asix@gmail.com';
-        $mail_server_pass='ITB2019015';
-    \end{lstlisting}
+        $mail_server_pass='ITB2019015';\end{lstlisting}
     In case you don't use gmail, you might need to modify:
     \begin{lstlisting}[language=php,label={lst:mail_accounts2}]
         $mail->Host       = 'smtp.gmail.com';
-        $mail->Port       = 587;
-    \end{lstlisting}
+        $mail->Port       = 587;\end{lstlisting}
     And finally, to not keep being sending messages as "Arcade Shop", replace this with ur desired name:
     \begin{lstlisting}[language=php,label={lst:mail_accounts3}]
-        $mail->setFrom($mail_server, 'Arcade Shop');
-    \end{lstlisting}
+        $mail->setFrom($mail_server, 'Arcade Shop');\end{lstlisting}
 \end{flushleft}
 
 
@@ -242,8 +220,7 @@ docker-compose -f backup_server/docker-compose.yml up -d
     Once the requirements are fulfilled.
     We can proceed to generate the keychains.
     \begin{lstlisting}[label={lst:generating_keychain,language=bash}]
-ssh-keygen -t rsa -b 2048 -f ./id_rsa
-    \end{lstlisting}
+ssh-keygen -t rsa -b 2048 -f ./id_rsa\end{lstlisting}
 \end{flushleft}
 \begin{flushleft}
     Once we have created the keys, it's time to replace them, remember that the files need to be replaced in the local
@@ -263,12 +240,10 @@ ssh-keygen -t rsa -b 2048 -f ./id_rsa
     The file structure is:
 
 \begin{lstlisting}[language=bash,label={lst:users.conf_hash_structure}]
-USER:hashed_password:e:UID:GUID:folder_list
-\end{lstlisting}
+USER:hashed_password:e:UID:GUID:folder_list\end{lstlisting}
     In our case, since we don't need the user to have a password, since we are using keychains, we can just skip that field.
     \begin{lstlisting}[language=bash,label={lst:users.conf_structure}]
-USER::UID:GUID:folder_list
-    \end{lstlisting}
+USER::UID:GUID:folder_list\end{lstlisting}
 \end{flushleft}
 
 \subsubsection[Deploying Custom Databases]{Deploying Custom Databases}
@@ -282,8 +257,7 @@ USER::UID:GUID:folder_list
     This lines determine which files will search for:
     \begin{lstlisting}[language=bash,label={lst:declare_array}]
 declare -a FORMAT_ARR=('_skel' '_users' '_val')
-declare -a DATABASE_ARR=( $( awk '{ gsub(","," "); gsub("  "," "); gsub(" ","\n"); print}' <<< "$BUILD_DATABASE_LIST" ) );
-    \end{lstlisting}
+declare -a DATABASE_ARR=( $( awk '{ gsub(","," "); gsub("  "," "); gsub(" ","\n"); print}' <<< "$BUILD_DATABASE_LIST" ) );\end{lstlisting}
     First we have an array declared with 3 values, this are the suffix that will be looked for when searching the SQL files.
     In the second line, we receive the variable \textbf{BUILD\_DATABASE\_LIST}, which will be normalized, first, comas transform
     in spaces,afterwards, double spaces transformed in single spaces, and finally the spaces left will be transformed in newlines,
@@ -297,8 +271,7 @@ declare -a DATABASE_ARR=( $( awk '{ gsub(","," "); gsub("  "," "); gsub(" ","\n"
     \begin{lstlisting}[language=bash,label={lst:for_array}]
 for key in "${!FORMAT_ARR[@]}"
 do
-    sqlfile="${WORKDIR}/${database}${FORMAT_ARR[$key]}.sql"
-    \end{lstlisting}
+    sqlfile="${WORKDIR}/${database}${FORMAT_ARR[$key]}.sql"\end{lstlisting}
     Basically, will try to find an element that match the name \textbf{GIVEN\_DATABASE\_NAME}+\textbf{SUFFIX} from the array,
     which means that for every entry in the \textbf{DATABASE\_ARR}, will search a "\textbf{DATABASE\_ARR}\_skel",
     "\textbf{DATABASE\_ARR}\_users", "\textbf{DATABASE\_ARR}\_val", executed in this order, that's very important to
