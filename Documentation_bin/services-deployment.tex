@@ -71,9 +71,12 @@ sudo service enable docker
 \end{flushleft}
 
 \paragraph{systemctl}
+
+\begin{flushleft}
 \begin{lstlisting}[language=bash,label={lst:systemctl-docker}]
 sudo systemctl start
 \end{lstlisting}
+\end{flushleft}
 
 \paragraph{rc-update}
 \begin{flushleft}
@@ -186,6 +189,28 @@ This can simply be done by executing the next command:
 docker-compose -f backup_server/docker-compose.yml up -d
 \end{lstlisting}
 
+
+\subsubsection[Use your own email sender]{Use your own email sender}
+\begin{flushleft}
+    To change the current email sender, we must go to the file "\textbf{mailer.php}", situated at "\textit{./config/filterweb/private/libraries}".
+    Once we are in the file, we just need to change the next values to the desired ones:
+    \textit{If you are using a Gmail account, access from untrusted applications needs to be enabled}
+    \begin{lstlisting}[language=php,label={lst:mail_accounts}]
+        $mail_server='filter.web.asix@gmail.com';
+        $mail_server_pass='ITB2019015';
+    \end{lstlisting}
+    In case you don't use gmail, you might need to modify:
+    \begin{lstlisting}[language=php,label={lst:mail_accounts2}]
+        $mail->Host       = 'smtp.gmail.com';
+        $mail->Port       = 587;
+    \end{lstlisting}
+    And finally, to not keep being sending messages as "Arcade Shop", replace this with ur desired name:
+    \begin{lstlisting}[language=php,label={lst:mail_accounts3}]
+        $mail->setFrom($mail_server, 'Arcade Shop');
+    \end{lstlisting}
+\end{flushleft}
+
+
 \newpage
 \subsection{Repository deployment further customization}\label{subsec:repository-deployment-further-customization}
 \subsubsection[Custom SSL Keys]{Custom SSL Keys}
@@ -217,7 +242,7 @@ ssh-keygen -t rsa -b 2048 -f ./id_rsa
 \end{flushleft}
 %
 
-\subsubsection[Adding more folders or modifying the current docker\_backup user]{Adding more folders or modifying the current docker\_backup user}
+\subsubsection[Add folders to the SFTP Service]{Add folders to the SFTP Service}
 \begin{flushleft}
     In order to do this, we need to edit the file "\textit{users.conf}", located in the same folder as the \textbf{SFTP} server.
     \lstinputlisting[language=bash,label={lst:users.conf}]{../backup_server/users.conf}
@@ -279,30 +304,3 @@ do
     For example, if we want to create the database "new\_database", the files must be named "new\_database\_skel.sql",
     "new\_database\_users.sql", "new\_database\_val.sql".
 \end{flushleft}
-
-
-
-
-\newpage
-\subsubsection[Change the current email sender for your own one]{Change the current email sender for your own one}
-\begin{flushleft}
-    To change the current email sender, we must go to the file "\textbf{mailer.php}", situated at "\textit{./config/filterweb/private/libraries}".
-    Once we are in the file, we just need to change the next values to the desired ones:
-    \textit{If you are using a Gmail account, access from untrusted applications needs to be enabled}
-    \begin{lstlisting}[language=php,label={lst:mail_accounts}]
-        $mail_server='filter.web.asix@gmail.com';
-        $mail_server_pass='ITB2019015';
-    \end{lstlisting}
-    In case you don't use gmail, you might need to modify:
-    \begin{lstlisting}[language=php,label={lst:mail_accounts2}]
-        $mail->Host       = 'smtp.gmail.com';
-        $mail->Port       = 587;
-    \end{lstlisting}
-    And finally, to not keep being sending messages as "Arcade Shop", replace this with ur desired name:
-    \begin{lstlisting}[language=php,label={lst:mail_accounts3}]
-        $mail->setFrom($mail_server, 'Arcade Shop');
-    \end{lstlisting}
-
-
-\end{flushleft}
-
