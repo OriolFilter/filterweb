@@ -122,6 +122,39 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 
 
-\subsection{Repository customization}\label{subsec:repo-customization}
-\subsubsection[Main server customization]{Main server customization}
+\subsection{Repository deployment minimal customization}\label{subsec:repo-customization}
+\subsubsection[Main server deployment minimal customization]{Main server deployment minimal customization}
 \lstinputlisting[language=bash, label={lst:main_env_file}]{../.env}
+\begin{flushleft}
+    The only to edit it's the \textbf{hostname}, since we need to replace it for our public/local \textbf{IP}
+    or our \textbf{Domain Name}, in case we just wanted to test it, we could use "\textbf{localhost}".
+\end{flushleft}
+
+\subsubsection[Backups client deployment minimal customization]{Backups client deployment minimal customization}
+\begin{flushleft}
+    \lstinputlisting[language=bash,label={lst:env_bk_pg}]{../bkcli_env_folder/.env_bk_pg}
+    \lstinputlisting[language=bash,label={lst:env_bk_nx}]{../bkcli_env_folder/.env_bk_nx_logs}
+    First we need to specify the \textbf{SFTHOST} for the \textbf{SFTP} server address, either the \textbf{IP} or the
+    \textbf{Domain Name}, in this case, we can't use "localhost", in case we hosted the \textbf{SFTP} server in the same machine
+    than the \textbf{bakcup\_dealer}, we need to specify our local \textbf{IP}.
+\end{flushleft}
+
+\subsubsection[Cron periodical backups minimal customization]{Cron periodical backups minimal customization}
+\begin{flushleft}
+    Once we have modified both \textbf{.env\_bk\_pg} and \textbf{.env\_bk.\_nx\_logs}, we need to execute the next command in order to do
+    a backup every day.
+    \begin{lstlisting}[language=bash,label={lst:insert_to_cron}]
+echo "* * */1 * * $USER docker-compose -f $(pwd)/backup_dealer-compose.yml --env-file $(pwd)/bkcli_env_folder/.env_bk_pg up"
+echo "* * */1 * * $USER docker-compose -f $(pwd)/backup_dealer-compose.yml --env-file $(pwd)/bkcli_env_folder/.env_bk_ng_logs up"
+    \end{lstlisting}
+\end{flushleft}
+
+\subsubsection[Backups server deployment minimal customization]{Main server customization}
+\begin{flushleft}
+    The next step is to
+    \lstinputlisting[label={lst:users_conf}]{../backup_server/users.conf}
+\end{flushleft}
+
+
+%docker-compose -f backup_dealer-compose.yml --env-file ./bkcli_env_folder/.env_bk_nx_logs up
+%docker-compose -f backup_dealer-compose.yml --env-file ./bkcli_env_folder/.env_bk_pg up
