@@ -9,22 +9,20 @@ services:
       mode: host
   volumes:
     # SSH connection keys
-    - ./ssh_keys/ssh_host_rsa_key.pub:/etc/ssh/ssh_host_rsa_key.pub:ro
-    - ./ssh_keys/ssh_host_rsa_key:/etc/ssh/ssh_host_rsa_key:ro
-    - ./ssh_keys/ssh_host_ed25519_key:/etc/ssh/ssh_host_ed25519_key:ro
-    - ./ssh_keys/ssh_host_ed25519_key.pub:/etc/ssh/ssh_host_ed25519_key.pub:ro
+    - "./ssh_keys/ssh_host_rsa_key.pub:/etc/ssh/ssh_host_rsa_key.pub:ro"
+    - "./ssh_keys/ssh_host_rsa_key:/etc/ssh/ssh_host_rsa_key:ro"
+    - "./ssh_keys/ssh_host_ed25519_key:/etc/ssh/ssh_host_ed25519_key:ro"
+    - "./ssh_keys/ssh_host_ed25519_key.pub:/etc/ssh/ssh_host_ed25519_key.pub:ro"
 
     # USERS
     # User_list
-    - ./users.conf:/etc/sftp/users.conf:ro
+    - "./users.conf:/etc/sftp/users.conf:ro"
     # SSH authentication keys
-    - ./user_ssh_keys/docker_backups.key.pub:/home/docker_backups/.ssh/authorized_keys:ro
+    - "./user_ssh_keys/docker_backups.key.pub:/home/docker_backups/.ssh/authorized_keys:ro"
 #     Backup postgres volume
-#    - postgres_shop_backups_volume:/home/docker_backups/backups/postgres:rw
     - type: volume
       source: backups_volume
       target: /home/docker_backups/backups/
-
       volume:
         nocopy: true
 volumes:

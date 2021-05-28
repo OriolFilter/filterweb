@@ -1,0 +1,112 @@
+% Author = warrior
+% Date = 26/5/21
+
+% Definitionsprojectestructure
+
+%\documentclass{article}
+
+% Links
+% https://latex-tutorial.com/tutorials/
+% https://robjhyndman.com/hyndsight/indexing-in-latex/
+% https://es.overleaf.com/learn/latex/Headers_and_footers
+% https://www.overleaf.com/learn/latex/Sections_and_chapters
+% https://es.overleaf.com/learn/latex/Headers_and_footers
+
+% Examples
+% http://diposit.ub.edu/dspace/bitstream/2445/66890/2/memoria.pdf
+
+% Vars
+
+\newcommand\email{filter.oriol@gmail.com}
+%\newcommand\projectname{Online Shop Structure}
+\newcommand\projectname{Online Shop Template}
+\newcommand\repoURL{https://github.com/OriolFilter/filterweb/}
+
+
+%\title{Online Shop Structure}
+\title{\projectname}
+%\date{26/05/2021}
+\date{\today}
+\author{Oriol Filter Anson\\\email}
+
+% Preamble
+\documentclass[11pt]{article}
+%\makeindex
+
+% Packages
+\usepackage{amsmath}
+\usepackage{lipsum}
+\usepackage{graphicx}
+\graphicspath{ {./images/} }
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{lastpage}
+\usepackage{tikz}
+\usetikzlibrary{patterns}
+\usepackage{bchart}
+
+
+%Includes
+\include{style_header}
+\include{docker_latex_style}
+
+
+%conf 1
+\rfoot{Page \thepage \hspace{1pt} of~\pageref{LastPage}}
+\lhead{\projectname}
+\rhead{\email}
+
+%conf 2
+%\rhead{Page \thepage \hspace{1pt} of \pageref{LastPage}}
+%\lfoot{\email}
+
+
+
+% Document
+\makeindex
+\begin{document}
+%    Tittle
+    \clearpage
+    \maketitle
+    \includegraphics[scale=1.5]{favicon}
+    \thispagestyle{empty}
+
+    \newpage
+%    Index
+    \tableofcontents{}
+    \thispagestyle{empty}
+
+    \newpage
+%    Introduction
+    \setcounter{page}{1}
+    \section{Introduction}\label{sec:introduction}
+    \input{introduction}
+
+    \newpage
+%    Demo
+    \section{Demo}\label{sec:Demo}
+    \input{demo}
+
+    \newpage
+%    Docker configuration
+    \section{Docker Configuration}\label{sec:DockerConfiguration}
+    \input{docker_documentation}
+
+    \newpage
+%    Service Configuration
+    \section{Services Configuration}\label{sec:ServicesConfiguration}
+    \input{services-configuration}
+
+    \newpage
+%    Webpage Configuration
+    \section{Web Page Documentation}\label{sec:Web Page Documentation}
+    \input{web-documentation.tex}
+
+    \newpage
+%    Service deployment
+    \section{Services Deployment}\label{sec:ServiceDeployment}
+    \input{services-deployment}
+
+\end{document}

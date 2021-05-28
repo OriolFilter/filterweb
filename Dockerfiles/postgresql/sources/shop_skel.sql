@@ -12,14 +12,10 @@ CREATE TABLE if not exists users (
     username VARCHAR ( 20 ) UNIQUE NOT NULL, /* instead of searching by lower(username) create index of all lower(usernames) with all passwords to check login credentials, or index of just lower(usernames) or lower(email) to check if username or email already exists*/
     password VARCHAR ( 60 ) NOT NULL, /* encrypted and salted, returns 60 length */
     email VARCHAR ( 255 ) UNIQUE NOT NULL /* https://stackoverflow.com/questions/386294/what-is-the-maximum-length-of-a-valid-email-address */,
-    --       email bytea UNIQUE NOT NULL, /* PD, no al final no */ /* al final si es guarda en hexa perque estalvies espais i no importen les majuscules*/
-    --                          role_id serial NOT NULL,
     created_on TIMESTAMP DEFAULT now() NOT NULL,
     updated_on TIMESTAMP DEFAULT now() NOT NULL,
     last_login TIMESTAMP DEFAULT now() NOT NULL,
-    --                          last_login TIMESTAMP,
     PRIMARY KEY (user_id)
-    --                          CONSTRAINT fk_role FOREIGN KEY (role_id) REFERENCES role (role_id)  ON DELETE CASCADE;
 );
 
 -- Activate account tokens
@@ -66,7 +62,7 @@ CREATE TABLE if not exists session_tokens (
 -- User Payment methods
 
 CREATE TABLE if not exists user_payment_methods (
-    user_payment_method_id serial,
+    user_payment_method_id serial PRIMARY KEY ,
     user_payment_method_name varchar (40) NOT NULL, /*Varchar only */
     user_id integer NOT NULL,
     CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
@@ -75,7 +71,7 @@ CREATE TABLE if not exists user_payment_methods (
 -- Shipping address
 
 CREATE TABLE if not exists shipping_address (
-    shipping_address_id serial,
+    shipping_address_id serial PRIMARY KEY ,
     shipping_address_country varchar (2) NOT NULL, /* ES, CA, FR */
     shipping_address_city varchar NOT NULL,
     shipping_address_postal_code varchar NOT NULL, /* https://en.wikipedia.org/wiki/Postal_code */
@@ -86,196 +82,9 @@ CREATE TABLE if not exists shipping_address (
     CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
 );
 
-/*
-
--- Products Related
-CREATE TABLE if not exists products (
-                                        product_id serial PRIMARY KEY,
-                                        product_code varchar unique not null ,
-                                        available_bool bool
-);
-
-CREATE TABLE if not exists product_models (
-                                        model_id serial PRIMARY KEY,
-                                        model_name varchar unique not null,
-                                        model_base_price decimal (10,2), /* Allow null price*/
-                                        model_description text
-
-
-);
--- Categories table
-CREATE TABLE if not exists categories (
-                                          category_id serial PRIMARY KEY,
-                                          category_name VARCHAR (50) NOT NULL, /* lowercase */
-                                          description TEXT default ''
-);
-
--- Brands table
-CREATE TABLE if not exists brands (
-                                      brand_id serial PRIMARY KEY,
-                                      brand_name VARCHAR (50) NOT NULL /* lowercase */
-);
-
-CREATE TABLE if not exists categories_binds (
-    categories_binds_id serial PRIMARY KEY,
-    category_id serial NOT NULL,
-    model_id serial NOT NULL,
-    CONSTRAINT category_id FOREIGN KEY (category_id) REFERENCES categories (category_id) ON DELETE CASCADE,
-    CONSTRAINT model_id FOREIGN KEY (model_id) REFERENCES product_models (model_id) ON DELETE CASCADE
-
-);
-*/
-
-
-
-/*
--- Product table
-CREATE TABLE if not exists products (
-        product_id serial,
-        product_name VARCHAR ( 70 ) UNIQUE NOT NULL,
-        product_category_id integer,
-        product_brand_id integer,
-        --                           price decimal (10,2), -- euros.  si no te preu es que no esta disponible encara (falta sortir el producte), Now models has the price
-        description TEXT, -- Description of the product to be inserted in the database., no text, now models has the decription
-        --                           limit_per_order integer, -- Limit per command
-        /* Father product*/
-        created_on TIMESTAMP DEFAULT now(),
-        PRIMARY KEY (product_id),
-        CONSTRAINT product_brand_id FOREIGN KEY (product_brand_id) REFERENCES brands (brand_id),
-        CONSTRAINT product_category_id FOREIGN KEY (product_category_id) REFERENCES categories (category_id)
-);
-
--- Additional_models table
-
--- La idea dels models es per diferents colors, pero els colors poden tindre ofertes o preus diferents, per exemple el blanc o el negre son mes barats que els altres
-CREATE TABLE if not exists prod_models (
-        model_id serial PRIMARY KEY,
-        product_id integer,
-        model_name VARCHAR ( 70 ) UNIQUE NOT NULL,
-        --                                         model_category_id serial, # ?
-        --                                         product_brand_id serial,
-        price decimal (10,2), -- euros.  si no te preu es que no esta disponible encara (falta sortir el producte)
-        description TEXT, -- Description of the product to be inserted in the database.
-        limit_per_order integer, -- Limit per order
-        created_on TIMESTAMP DEFAULT now(),
-        CONSTRAINT product_id FOREIGN KEY (product_id) REFERENCES products (product_id),
-        PRIMARY KEY (model_id)
-);
-
-CREATE TABLE if not exists cart (
-        cart_id serial PRIMARY KEY,
-        quantity integer NOT NULL,
-        model_id integer NOT NULL,
-        user_id integer NOT NULL,
-        CONSTRAINT model_id FOREIGN KEY (model_id) REFERENCES prod_models (model_id) ON DELETE CASCADE,
-        CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
-);
-
--- model_image table
-CREATE TABLE if not exists model_images (
-        model_image_id serial PRIMARY KEY,
-        model_id integer NOT NULL,
-        image_file_name VARCHAR(100), -- 100 Caracters hauria destar sobrat.
-        created_on TIMESTAMP DEFAULT now(),
-        CONSTRAINT model_id FOREIGN KEY (model_id) REFERENCES prod_models (model_id) ON DELETE CASCADE,
-        PRIMARY KEY (model_image_id)
-);
-
-
--- Supply table
-CREATE TABLE if not exists supplies (
-        supply_id serial PRIMARY KEY,
-        model_id integer NOT NULL,
-        quantity integer NOT NULL,
-        updated_on TIMESTAMP DEFAULT now(),
-        CONSTRAINT model_id FOREIGN KEY (model_id) REFERENCES prod_models (model_id) ON DELETE CASCADE,
-        PRIMARY KEY (supply_id)
-);
-
--- Sales table
-CREATE TABLE if not exists sales (
-        sale_id serial PRIMARY KEY,
-        --                        product_id serial NOT NULL,
-        model_id serial NOT NULL,
-        sale NUMERIC (3,2) NOT NULL, -- Guardar ofertes com a descompte del 20% -> 0.20
-        product_brand_id VARCHAR ( 255 ) NOT NULL,
-        sale_start DATE NOT NULL,
-        sale_ends DATE NOT NULL,
-        created_on TIMESTAMP NOT NULL
-);
-
-
-
-
--- Orders Related
-
--- Orders table
-CREATE TABLE if not exists orders (
-    order_id serial PRIMARY KEY,
-    payment_id integer NOT NULL,
-    oder_date TIMESTAMP DEFAULT now(),
-    CONSTRAINT payment_id FOREIGN KEY (payment_id) REFERENCES payment_methods (payment_id),
-    PRIMARY KEY (order_id)
-);
-
--- Payments table
-CREATE TABLE if not exists payment_methods (
-    payment_id serial PRIMARY KEY,
-    user_id integer NOT NULL,
-    method_name varchar(60) NOT NULL,
-    CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
-);
-/*
--- Payments_memthods table
--- edit later
--- CREATE TABLE if not exists payment_methods (
---         payment_method_id serial PRIMARY KEY,
---         random_thing_to_store VARCHAR (20),
---         CONSTRAINT payment_id FOREIGN KEY (payment_id) REFERENCES payments (payment_id)
--- );
-*/
--- Address table
-CREATE TABLE if not exists address (
-     address_id serial PRIMARY KEY,
-     user_id integer NOT NULL,
-     addr_1 VARCHAR (40) NOT NULL,
-     addr_2 VARCHAR (40),
-     addr_3 VARCHAR (40),
-     province VARCHAR (30) NOT NULL ,
-     country VARCHAR (2) NOT NULL, -- Sigles...
-     postal_code VARCHAR (16) NOT NULL,
-     CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
-);
-
-
--- Falta:
-
--- Triggers
--- Functions
-
--- Functions
-
-*/
 CREATE EXTENSION if not exists pgcrypto; -- Crypt extension
-/*
--- https://www.postgresql.org/docs/8.3/pgcrypto.html
- /* example select from password given*/
 
--- CREATE or replace procedure is_alphanumeric(p_string varchar)
--- as $$
--- declare
--- --     not_alphanumeric exception;
---     v_string bool;
--- begin
---     case when not exists (
---     select regexp_matches(p_string,'^[a-zA-Z0-9]+$')
---     )
---     then raise exception 'not_alphanumeric';
---     else null;
---     end case;
---     /*raises exception if not alphanumeric*/
--- end; $$ language plpgsql;
-*/
+-- https://www.postgresql.org/docs/8.3/pgcrypto.html
 
     /* General Functions */
 
@@ -392,20 +201,6 @@ begin
     end case;
 end;
 $$ language plpgsql;
-
-/* Check if user_id exists */ /* Not worth to do/use */
-/*
-CREATE OR REPLACE procedure proc_check_user_id_exists(p_uid varchar)
-as $$
-begin
-    case when exists(select lower(username) from users where user_id=p_uid)
-        then raise exception
-            using errcode = 'P6202',
-                message = 'This ';
-        else null;
-        end case;
-end;
-$$ language plpgsql;*/
 
 CREATE OR REPLACE procedure proc_check_email_exists(p_email varchar)
 as $$
@@ -749,27 +544,6 @@ begin
 end;
 $$ LANGUAGE plpgsql;
 
-/* /* WHY FROM EMAIL. */
-create or replace function func_return_session_code_from_email(p_email varchar) returns varchar(60)
-as $$
-declare
-    v_string varchar(60);
-    v_user varchar;
-begin
-    if (func_check_email_exists(p_email)) then
-        select into v_user username from users where lower(email)=lower(p_email);
-        select into v_string func_return_session_code(v_user);
-        return v_string;
-    else
-        raise exception
-            using errcode = 'P6203',
-                message = 'Email not found';
-    end if;
-end;
-
-$$ language plpgsql; -- ??
-*/
-
 CREATE or replace procedure proc_credentials_user(p_uname users.username%TYPE, p_passwd users.password%TYPE)
 as $$
 declare
@@ -898,20 +672,7 @@ begin
     select sq.pmid into v_pmid from (SELECT row_number() over (order by user_payment_method_id)::integer as rn, user_payment_method_id as pmid from user_payment_methods where user_id=v_uid)
                                    as sq where sq.rn::integer=p_row_number::integer;
     delete from user_payment_methods where user_payment_method_id::integer=v_pmid::integer;
-/*    then raise exception
-        using errcode = 'P6205',
-                        message = 'Payment method not found',
-                        hint = 'Payment method not found';
 
-    else
-    null;
-end case;*/
-/*    delete from user_payment_methods where user_payment_method_id=(
-        select sq.upd as pmid from (
-            SELECT row_number() over (order by user_payment_method_id)::integer as rn, user_payment_method_id as upd from user_payment_methods where user_id=22)
-            as sq where sq.rn=p_row_number); /* one line */*/
-
---     delete from user_payment_methods where user_payment_method_id=(SELECT user_payment_method_id from user_payment_methods where user_id=v_uid and p_row_number=row_number() over (order by user_payment_method_id) );
 end;
 $$ language plpgsql;
 
@@ -955,36 +716,6 @@ begin
     end if;
 end;
 $$ language plpgsql;
-
-/* UNUSED, NO CHECKING, NO REASON TO CHECK BESIDES THE FIRST FIELD WHICH IS REQUIRED
-create or replace procedure check_shipping_address_l2(p_name_method varchar)
-as $$
-begin
-    /* 5 - 200 chars - empty */
-    if ((length(p_name_method::varchar) < 5 or length(p_name_method::varchar) > 200) and (length(p_name_method::varchar) is null or length(p_name_method::varchar) = 0) ) then
-        raise exception
-            using errcode = 'P3905',
-                message = 'Shipping address line 2 field does not meet the requirements',
-                hint = 'Shipping address line 2 needs to be from 5 to 200 or empty';
-    end if;
-end;
-$$ language plpgsql;
-
-create or replace procedure check_shipping_address_l3(p_name_method varchar)
-as $$
-begin
-    /* 5 - 200 chars - empty */
-    if ((length(p_name_method::varchar) < 5 or length(p_name_method::varchar) > 200) and (not length(p_name_method::varchar) is null and not length(p_name_method::varchar) = 0) ) then
-        raise exception
-            using errcode = 'P3906',
-                message = 'Shipping address line 3 field does not meet the requirements',
-                hint = 'Shipping address line 3 needs to be from 5 to 200 or empty';
-    end if;
-end;
-$$ language plpgsql;
-
-
- */
 
 CREATE OR REPLACE PROCEDURE proc_add_shipping_address(p_user_id integer,p_country varchar, p_city varchar, p_postalcode varchar, p_addline1 varchar,  p_addline2 varchar default null, p_addline3 varchar default null)
 as $$
@@ -1080,11 +811,3 @@ as $$
         update change_password_tokens set used_bool=true where change_password_token=p_token;
 end;
 $$ language plpgsql;
-
-
-
--- Triggers
-
--- Index
-
--- Display products,   (products,brand,category) grouped by product_father
