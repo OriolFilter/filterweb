@@ -73,6 +73,9 @@
     that way we can ensure that all the users are limited to the options that we specifically gave.
 \end{flushleft}
 
+\paragraph[Contact database List of Relations Listing]{Contact database Relations Listing}
+\input{db_contact_relations}
+\newpage
 
 \newpage
 \subsubsection[Shop database structure]{Shop database structure}
@@ -86,7 +89,9 @@
     that the user was deleted.
     \url{\repoURL blob/master/Dockerfiles/postgresql/sources/shop_skel.sql}
 \end{flushleft}
-
+\newpage
+\paragraph[Shop database List of Relations Listing]{Shop database Relations Listing}
+\input{db_shop_relations.tex}
 
 \subsubsection[Plugins enabled]{Plugins enabled}
 \begin{lstlisting}[language=SQL,label={lst:pgcrypto_enabling}]
@@ -255,6 +260,7 @@ POSTGRESQL:
     PHP and JavaScript uses these errors to format responses for the client based in the code received.
 \end{flushleft}
 
+\newpage
 \subsubsection{Error Codes}\label{subsubsec:error-codes}
 \begin{lstlisting}[language=yaml,label={lst:errorListing}]
 php & js:

@@ -1,0 +1,141 @@
+\subsection[Facilitate modify the email account]{Facilitate modify the email account}\label{subsec:facilitate-modify-the-email-account2}
+\begin{flushleft}
+In order to do this, we need to modify the entry in the \textbf{mailer.php} to get the values (username \& password)
+from an \textbf{environment variable}, once whe have done that, we need to add an entry in the \textbf{docker-compose.yaml}
+to give a value to that \textbf{environment variable}, also, this can variable can receive its value from another variable,
+which can ve located in the .env file to make it lest bothersome to modify.
+\end{flushleft}
+
+\newpage
+
+\subsection[Enable extended login]{Enable extended login}\label{subsec:enable-extended-login}
+\begin{flushleft}
+    By default, we could extend its session to a 30-day extension, or an entry year.
+\end{flushleft}
+
+\paragraph{Database}
+\begin{flushleft}
+    In the \textbf{database shop} we need to alter the table of \textbf{session\_tokens} and add a new column,
+    we can call it "\textit{extended}", and it's value will be \textit{bool}, and by default will have the value \textit{false}.
+\end{flushleft}
+\begin{flushleft}
+    Once the table is modified, we need to modify the procedure "\textit{proc\_enlarge\_login}", first, we need to create
+    a variable that will contain a "\textit{timestamp}" which we might want to call it v\_time, afterwards, before
+    updating the column expires\_on, we need to create an \textbf{if} that will check if the token in its table has the
+    "extended" value set as \textbf{true} and not be \textbf{nullable}, to maintain consistency among the entries.
+\end{flushleft}
+\begin{flushleft}
+
+    \textit{Note: To modify the arguments and return types of a function or procedure, we need to first remove the
+    statement, this can be accomplished by the query "\textbf{drop function/procedure NAME}", in case of being multiple
+    instances that uses the same name, will be required to specify its argument value types.}
+
+    In case of being true:
+    \begin{itemize}
+        \item v\_time = now() '30 day'::interval
+    \end{itemize}
+    In case of being false:
+    \begin{itemize}
+        \item v\_time = now() '30 minute'::interval
+    \end{itemize}
+\newpage
+    And finally we have to replace the current line of
+    \begin{lstlisting}[language=sql,label={lst:sql_extended1}]
+update session_tokens set expires_on=now() + '30 minute'::interval where session_token=p_token and expires_on<now() + '30 minute'::interval and expires_on>now();\end{lstlisting}
+    for
+    \begin{lstlisting}[language=sql,label={lst:sql_extended2}]
+update session_tokens set expires_on=v_time where session_token=p_token and expires_on<v_time and expires_on>now();\end{lstlisting}
+    This way the user will extend its 30-day token validation as long logs in during its valid time.
+
+\end{flushleft}
+\begin{flushleft}
+
+    Now that the enlarging procedure it's updated, we need to modify the \textbf{func\_return\_session\_token\_from\_credentials}
+    function, to a new argument, which will be \textbf{extended}, as a \textbf{bool} variable type.
+
+\end{flushleft}
+\begin{flushleft}
+
+    Keep in mind, that there are two entries of \textbf{func\_return\_session\_token\_from\_credentials},
+    one that uses a varchar, and another that uses an integer, both needs to contain the new argument, yet, first we
+    will modify the one that uses an integer.
+
+\end{flushleft}
+\begin{flushleft}
+
+    Like we did before, we need to check if the value of \textbf{extended} is true:
+    In case of being true:
+    \begin{itemize}
+        \item v\_time = now() '30 day'::interval
+    \end{itemize}
+    In case of being false:
+    \begin{itemize}
+        \item v\_time = now() '30 minute'::interval
+    \end{itemize}
+    And finally we have to replace the current line of
+    \begin{lstlisting}[language=sql,label={lst:sql_extended3}]
+insert into session_tokens(user_id,session_token) values(p_uid,v_string);\end{lstlisting}
+    for
+    \begin{lstlisting}[language=sql,label={lst:sql_extended4}]
+insert into session_tokens(user_id,session_token,expires_on) values(p_uid,v_string,v_time);\end{lstlisting}
+
+\end{flushleft}
+\begin{flushleft}
+
+    As we did in the previous \textbf{func\_return\_session\_token\_from\_credentials} function, now we have to modify
+    the one that uses a varchar as entry and add the new \textbf{extended} as a boolean type.
+
+    Now just left replacing this line for the new one.
+    \begin{lstlisting}[language=sql,label={lst:sql_extended5}]
+select into v_string func_return_session_code(v_uid,extended);\end{lstlisting}
+    For
+    \begin{lstlisting}[language=sql,label={lst:sql_extended6}]
+select into v_string func_return_session_code(v_uid,extended);\end{lstlisting}
+
+\end{flushleft}
+
+\paragraph{PHP}
+\begin{flushleft}
+    We will need to modify 2 classes, first we will start by the one called \textbf{Hotashi}
+
+    The first thing to do, is adding a new variable to the class, this can be acomplished adding this line:
+    \begin{lstlisting}[language=php,label={lst:php_extended1}]
+public string|null $lo_extend;\end{lstlisting}
+\end{flushleft}
+\begin{flushleft}
+    Afterwards, we need to modify its function called \textbf{get\_login\_vars} and add this next line:
+\begin{lstlisting}[language=php,label={lst:php_extended2}]
+(isset($_REQUEST['extend'])&& $_REQUEST['extend']==true)?$this->lo_extend=true:$this->lo_extend=false;\end{lstlisting}
+Keep in mind that with this instruction, in case of receiving the string "false" it will be interpreted as \textbf{true},
+to set it as \textbf{false}, it needs to receive the value '0';
+\end{flushleft}
+
+\begin{flushleft}
+Now, we need to modify the class \textbf{shop\_db\_manager}, specifically its function \textbf{login\_from\_credentials},
+since we need to update the query to use the new variable, here is an example of implementation:
+\begin{lstlisting}[language=php,label={lst:php_extended3}]
+public function login_from_credentials(hotashi &$hotashi)
+{
+    try {
+        $stmt = $this->dbconn->prepare(query: 'select * from func_return_session_token_from_credentials(?,?,?) as token;');
+        $stmt->execute(array($hotashi->uname,$hotashi->upass,$hotashi->lo_extend));
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $hotashi->stoken=$result["token"];
+    }
+    catch (PDOException $e){
+        $this->error_manager->db_error_handler($e->getCode());
+    }\end{lstlisting}
+
+\end{flushleft}
+
+\paragraph{Html}
+\begin{flushleft}
+    In the file login.php, we need to add a checkbox in the login form.
+\end{flushleft}
+
+\paragraph{JavaScript/Ajax}
+\begin{flushleft}
+    Finally, we need to add the checkbox status from the form, and insert it in the petition with the keyword
+    "extended", as we did in the PHP \textbf{Hotashi} class.
+\end{flushleft}
+
