@@ -130,6 +130,7 @@ sudo chmod +x /usr/local/bin/docker-compose
     or our \textbf{Domain Name}, in case we just wanted to test it, we could use "\textbf{localhost}".
 \end{flushleft}
 
+\newpage
 \subsubsection[Backups client deployment minimal customization]{Backups client deployment minimal customization}
 \begin{flushleft}
     \lstinputlisting[language=bash,label={lst:env_bk_pg}]{../bkcli_env_folder/.env_bk_pg}
@@ -144,17 +145,46 @@ sudo chmod +x /usr/local/bin/docker-compose
     Once we have modified both \textbf{.env\_bk\_pg} and \textbf{.env\_bk.\_nx\_logs}, we need to execute the next command in order to do
     a backup every day.
     \begin{lstlisting}[language=bash,label={lst:insert_to_cron}]
-echo "* * */1 * * $USER docker-compose -f $(pwd)/backup_dealer-compose.yml --env-file $(pwd)/bkcli_env_folder/.env_bk_pg up"
-echo "* * */1 * * $USER docker-compose -f $(pwd)/backup_dealer-compose.yml --env-file $(pwd)/bkcli_env_folder/.env_bk_ng_logs up"
+echo "* * */1 * * $USER docker-compose -f $(pwd)/backup_dealer-compose.yml --env-file $(pwd)/bkcli_env_folder/.env_bk_pg up" | sudo tee -a  /etc/cron.d/docker_backups
+echo "* * */1 * * $USER docker-compose -f $(pwd)/backup_dealer-compose.yml --env-file $(pwd)/bkcli_env_folder/.env_bk_ng_logs up"  | sudo tee -a  /etc/cron.d/docker_backups
     \end{lstlisting}
 \end{flushleft}
 
-\subsubsection[Backups server deployment minimal customization]{Main server customization}
+\newpage
+\subsubsection[Backups Server deployment minimal customization]{Backups Server deployment minimal customization}
 \begin{flushleft}
-    The next step is to
-    \lstinputlisting[label={lst:users_conf}]{../backup_server/users.conf}
+    In case that we desire to host the server \textbf{SFTP} during the testing, we can skip this step.
 \end{flushleft}
 
+\begin{flushleft}
+    The next step is copy the folder "backup\_server" to the device that we want to use as a backup server, this step
+    isn't necessary if we already have a \textbf{SFTP} server, or we desire to do local backups(which isn't recommendable).
 
-%docker-compose -f backup_dealer-compose.yml --env-file ./bkcli_env_folder/.env_bk_nx_logs up
-%docker-compose -f backup_dealer-compose.yml --env-file ./bkcli_env_folder/.env_bk_pg up
+    To copy the folder to a remote server we can use the command:
+\begin{lstlisting}[language=bash,label={lst:scp}]
+scp -r ./backup_server <user>@<host>:~
+\end{lstlisting}
+\end{flushleft}
+
+\subsection{Repository deployment booting services}\label{subsec:repository-deployment-booting-services}
+\subsubsection[Main Server Service Booting]{Main Server Service Booting}
+This can simply be done by executing the next command:
+\begin{lstlisting}[language=bash,label={lst:compose-up}]
+docker-compose build && docker-compose up
+\end{lstlisting}
+
+\subsubsection[Backup (Remote) Server Service Booting]{Backup (Remote) Server Service Booting}
+\textit{Reminder that the server needs to fulfill the requirements.}
+This can simply be done by executing the next command:
+\begin{lstlisting}[language=bash,label={lst:compose-up-bk-remote}]
+ssh <user>@<host> docker-compose -f backup_server/docker-compose.yml up -d
+\end{lstlisting}
+
+\subsubsection[Backup (Local) Server Service Booting]{Backup (Local) Server Service Booting}
+This can simply be done by executing the next command:
+\begin{lstlisting}[language=bash,label={lst:compose-up-bk-Local}]
+docker-compose -f backup_server/docker-compose.yml up -d
+\end{lstlisting}
+
+\newpage
+\subsection{Repository deployment further customization}\label{subsec:repository-deployment-further-customization}
