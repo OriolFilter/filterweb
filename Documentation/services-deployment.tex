@@ -188,3 +188,121 @@ docker-compose -f backup_server/docker-compose.yml up -d
 
 \newpage
 \subsection{Repository deployment further customization}\label{subsec:repository-deployment-further-customization}
+\subsubsection[Custom SSL Keys]{Custom SSL Keys}
+\begin{flushleft}
+    In order to change the current certificates, you need to replace them for yours, the location of each certificate
+    it's in the \textbf{docker-compose} document
+
+    This applies for the \textbf{NGINX} and \textbf{SFTP} containers.
+\end{flushleft}
+
+\subsubsection[Custom Keychains]{Custom Keychains}
+\paragraph{Requirements:} Keychain package installed.
+\begin{flushleft}
+
+    Once the requirements are fulfilled.
+    We can proceed to generate the keychains.
+    \begin{lstlisting}[label={lst:generating_keychain,language=bash}]
+ssh-keygen -t rsa -b 2048 -f ./id_rsa
+    \end{lstlisting}
+\end{flushleft}
+\begin{flushleft}
+    Once we have created the keys, it's time to replace them, remember that the files need to be replaced in the local
+    system AND the server in case the SFTP server is remote.
+\end{flushleft}
+\begin{flushleft}
+    In case of modifying the path to the keys in the docker-compose file, remember that the \textbf{backup dealer} also
+    makes use of these keys in order to login without need of password, so in case of changing its path, you need to do
+    it in both files.
+\end{flushleft}
+%
+
+\subsubsection[Adding more folders or modifying the current docker\_backup user]{Adding more folders or modifying the current docker\_backup user}
+\begin{flushleft}
+    In order to do this, we need to edit the file "\textit{users.conf}", located in the same folder as the \textbf{SFTP} server.
+    \lstinputlisting[language=bash,label={lst:users.conf}]{../backup_server/users.conf}
+    The file structure is:
+
+\begin{lstlisting}[language=bash,label={lst:users.conf_hash_structure}]
+USER:hashed_password:e:UID:GUID:folder_list
+\end{lstlisting}
+    In our case, since we don't need the user to have a password, since we are using keychains, we can just skip that field.
+    \begin{lstlisting}[language=bash,label={lst:users.conf_structure}]
+USER::UID:GUID:folder_list
+    \end{lstlisting}
+\end{flushleft}
+
+\subsubsection[Deploying Custom Databases]{Deploying Custom Databases}
+\begin{flushleft}
+    In order to use/create our custom databases, we have 2 options, using a volume or directory that already has them
+    created, or using the script that triggers if the directory "\textit{/data}" is empty, happen on mounting an empty
+    volume, or the first time the container starts.
+\end{flushleft}
+\paragraph{Script/Building explanation}
+\begin{flushleft}
+    This lines determine which files will search for:
+    \begin{lstlisting}[language=bash,label={lst:declare_array}]
+declare -a FORMAT_ARR=('_skel' '_users' '_val')
+declare -a DATABASE_ARR=( $( awk '{ gsub(","," "); gsub("  "," "); gsub(" ","\n"); print}' <<< "$BUILD_DATABASE_LIST" ) );
+    \end{lstlisting}
+    First we have an array declared with 3 values, this are the suffix that will be looked for when searching the SQL files.
+    In the second line, we receive the variable \textbf{BUILD\_DATABASE\_LIST}, which will be normalized, first, comas transform
+    in spaces,afterwards, double spaces transformed in single spaces, and finally the spaces left will be transformed in newlines,
+    which will be used to create new entries in the array.
+
+    \begin{flushleft}
+        Once the arrays are generated, the script will attempt to generate a database for every entry in the
+        \textbf{DATABASE\_ARR}, keep in mind that it's the values given by the user from the docker-compose configuration.
+    \end{flushleft}
+
+    \begin{lstlisting}[language=bash,label={lst:for_array}]
+for key in "${!FORMAT_ARR[@]}"
+do
+    sqlfile="${WORKDIR}/${database}${FORMAT_ARR[$key]}.sql"
+    \end{lstlisting}
+    Basically, will try to find an element that match the name \textbf{GIVEN\_DATABASE\_NAME}+SUFFIX from the array,
+    which means that for every entry in the \textbf{DATABASE\_ARR}, will search a "\textbf{DATABASE\_ARR}\_skel",
+    "\textbf{DATABASE\_ARR}\_users", "\textbf{DATABASE\_ARR}\_val", executed in this order, that's very important to
+    keep in mind in case we make use of multiple SQL files, since the order of their execute might alter the result.
+\end{flushleft}
+
+\paragraph{Configuration}
+\begin{flushleft}
+    The first step is to change the "\textbf{.env}" file with the desired database names, keep mind that the elements
+    can se separated by spaces or comas.
+    \lstinputlisting[language=bash,label={lst:.env}]{../.env}
+    Once the database names been renamed, it's time to replace the current \textbf{SQL} files in the folder
+    \textit{Dockerfiles/postgresql/sources}.
+\end{flushleft}
+
+\begin{flushleft}
+    For example, if we want to create the database "new\_database", the files must be named "new\_database\_skel.sql",
+    "new\_database\_users.sql", "new\_database\_val.sql".
+\end{flushleft}
+
+
+
+
+\newpage
+\subsubsection[Change the current email sender for your own one]{Change the current email sender for your own one}
+\begin{flushleft}
+    To change the current email sender, we must go to the file "\textbf{mailer.php}", situated at "\textit{./config/filterweb/private/libraries}".
+    Once we are in the file, we just need to change the next values to the desired ones:
+    \textit{If you are using a Gmail account, access from untrusted applications needs to be enabled}
+    \begin{lstlisting}[language=php,label={lst:mail_accounts}]
+        $mail_server='filter.web.asix@gmail.com';
+        $mail_server_pass='ITB2019015';
+    \end{lstlisting}
+    In case you don't use gmail, you might need to modify:
+    \begin{lstlisting}[language=php,label={lst:mail_accounts2}]
+        $mail->Host       = 'smtp.gmail.com';
+        $mail->Port       = 587;
+    \end{lstlisting}
+    And finally, to not keep being sending messages as "Arcade Shop", replace this with ur desired name:
+    \begin{lstlisting}[language=php,label={lst:mail_accounts3}]
+        $mail->setFrom($mail_server, 'Arcade Shop');
+    \end{lstlisting}
+
+
+\end{flushleft}
+
