@@ -260,7 +260,7 @@ for key in "${!FORMAT_ARR[@]}"
 do
     sqlfile="${WORKDIR}/${database}${FORMAT_ARR[$key]}.sql"
     \end{lstlisting}
-    Basically, will try to find an element that match the name \textbf{GIVEN\_DATABASE\_NAME}+SUFFIX from the array,
+    Basically, will try to find an element that match the name \textbf{GIVEN\_DATABASE\_NAME}+\textbf{SUFFIX} from the array,
     which means that for every entry in the \textbf{DATABASE\_ARR}, will search a "\textbf{DATABASE\_ARR}\_skel",
     "\textbf{DATABASE\_ARR}\_users", "\textbf{DATABASE\_ARR}\_val", executed in this order, that's very important to
     keep in mind in case we make use of multiple SQL files, since the order of their execute might alter the result.
