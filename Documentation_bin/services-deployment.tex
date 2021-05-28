@@ -135,12 +135,26 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 \newpage
 \subsubsection[Backups client deployment minimal customization]{Backups client deployment minimal customization}
+\paragraph{Backup to an SFTP server}
 \begin{flushleft}
     \lstinputlisting[language=bash,label={lst:env_bk_pg}]{../bkcli_env_folder/.env_bk_pg}
     \lstinputlisting[language=bash,label={lst:env_bk_nx}]{../bkcli_env_folder/.env_bk_nx_logs}
     First we need to specify the \textbf{SFTHOST} for the \textbf{SFTP} server address, either the \textbf{IP} or the
     \textbf{Domain Name}, in this case, we can't use "localhost", in case we hosted the \textbf{SFTP} server in the same machine
     than the \textbf{bakcup\_dealer}, we need to specify our local \textbf{IP}.
+
+    Remember that when uncompressing the files, using the command \textbf{tar}, add the flag \textbf{--same-owner}, to
+    maintain the file permissions.
+    This command will require root permissions.
+\end{flushleft}
+\paragraph{Backup to a local volume or directory}
+\begin{flushleft}
+    In order of doing backups to a local directory, we need to modify the file "\textbf{backup\_dealer-compose.yaml}, by
+    adding the volume or directory that we want to use, in this example we will use the directory \textbf{/mnt/backups}
+    \begin{lstlisting}[language=yaml,label={lst:local_backups_dir}]
+volumes:
+    "/mnt/backups:/mnt/slave:rw"
+    \end{lstlisting}
 \end{flushleft}
 
 \subsubsection[Cron periodical backups minimal customization]{Cron periodical backups minimal customization}

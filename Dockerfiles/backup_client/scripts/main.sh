@@ -23,8 +23,8 @@ then
 # Checks if all the variables required to do the backup are set up
 elif [ -n "$DESTINATIONFOLDER" ] && [ -n "$SFTPPORT" ] && [ -n "$SFTPUSER" ] && [ -n "$SFTPHOST" ] && [ -n "$SFTPDIR" ]
 then
-      tar ${V} -czfp "${HOLDERFOLDER}/${STRINGOUTPUT}.tar.gz" "${HOLDERFOLDER}/${STRINGOUTPUT}"
-      sftp ${V} -P "${SFTPPORT}" -o StrictHostKeyChecking=no "${SFTPUSER}@${SFTPHOST}:${SFTPDIR}" <<< "put ${HOLDERFOLDER}/${STRINGOUTPUT}.tar.gz"
+      tar ${V} -czfp "${DESTINATIONFOLDER}/${STRINGOUTPUT}.tar.gz" "${HOLDERFOLDER}/${STRINGOUTPUT}"
+      sftp ${V} -P "${SFTPPORT}" -o StrictHostKeyChecking=no "${SFTPUSER}@${SFTPHOST}:${SFTPDIR}" <<< "put ${DESTINATIONFOLDER}/${STRINGOUTPUT}.tar.gz"
 else
 # In case of not doing anything shows this message
   printf "Not enough variables set up, skipping...\n"
