@@ -189,14 +189,4 @@ postgresql:
 - https://www.ups.com/es/en/help-center/technology-support/developer-resource-center.page
 
 
-## Improvements
-
-### Shipping address
-
-- Confirm address
-- Improve regex
-
-### Add functionalities
-
-- Add products to database -> Add featured table
-- Allow orders -> 
+## MORE INFORMATION IN THE PDF FILE "main.pdf"
