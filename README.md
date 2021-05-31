@@ -190,3 +190,6 @@ postgresql:
 
 
 ## MORE INFORMATION IN THE PDF FILE "main.pdf"
+
+Link presentacio.
+> https://docs.google.com/presentation/d/1xPwmFePuRJv50QdumFKMzrOtEG61osY0Cnw4RzXSNws/edit?usp=sharing
