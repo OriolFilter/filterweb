@@ -1,4 +1,25 @@
 #!/bin/bash
+ ##########################
+# @Oriol Filter Anson    #
+# @13/05/2021            #
+##########################
+
+#########################################
+# Script intended for dockerfiles usage #
+#########################################
+
+##############################################################################
+# Uses tar on $ORIGINFOLDER and exports it to a remote ftp server using sftp #
+# Doesnt need a password since it's using generated RSA authentication       #
+##############################################################################
+
+#####################################################
+# SFTPUSER     user used in the sftp server         #
+# SFTPPORT     port used in the sftp server         #
+# SFTPHOST     host used in the sftp server         #
+# SFTPDIR      directory used in the sftp server    #
+# PREFIX       prefix used when generating the file #
+#####################################################
 
 # Clear files BEFORE and AFTER
 # shellcheck disable=SC2115
